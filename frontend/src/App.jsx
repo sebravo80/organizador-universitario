@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import WeeklyView from './pages/WeeklyView';
+import Courses from './pages/Courses';
+import Tasks from './pages/Tasks';
 import Navbar from './components/Navbar';
 import './App.css';
 
@@ -11,7 +14,9 @@ function App() {
         <main className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            {/* Más rutas se añadirán después */}
+            <Route path="/weekly" element={<WeeklyView />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/tasks" element={<Tasks />} />
           </Routes>
         </main>
       </div>

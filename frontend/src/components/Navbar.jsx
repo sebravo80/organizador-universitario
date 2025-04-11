@@ -10,7 +10,9 @@ function Navbar() {
         </Typography>
         <Box>
           <Button color="inherit" component={Link} to="/">Dashboard</Button>
-          {/* Más botones se añadirán después */}
+          <Button color="inherit" component={Link} to="/weekly">Horario</Button>
+          <Button color="inherit" component={Link} to="/courses">Ramos</Button>
+          <Button color="inherit" component={Link} to="/tasks">Tareas</Button>
         </Box>
       </Toolbar>
     </AppBar>
