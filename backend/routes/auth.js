@@ -3,12 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+<<<<<<< HEAD
 const auth = require('../middleware/auth');
+=======
+>>>>>>> 65e09aa99b9189cafe0f3fef03e98f508429446a
 
 // @route   POST api/auth/register
 // @desc    Registrar usuario
 // @access  Public
 router.post('/register', async (req, res) => {
+<<<<<<< HEAD
   const { name, email, password } = req.body;
 
   try {
@@ -52,12 +56,16 @@ router.post('/register', async (req, res) => {
     console.error(err.message);
     res.status(500).send('Error en el servidor');
   }
+=======
+  res.send('Ruta de registro');
+>>>>>>> 65e09aa99b9189cafe0f3fef03e98f508429446a
 });
 
 // @route   POST api/auth/login
 // @desc    Autenticar usuario y obtener token
 // @access  Public
 router.post('/login', async (req, res) => {
+<<<<<<< HEAD
   const { email, password } = req.body;
 
   try {
@@ -106,6 +114,9 @@ router.get('/user', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Error en el servidor');
   }
+=======
+  res.send('Ruta de login');
+>>>>>>> 65e09aa99b9189cafe0f3fef03e98f508429446a
 });
 
 module.exports = router;
