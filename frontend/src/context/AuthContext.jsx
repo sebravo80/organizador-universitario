@@ -1,91 +1,79 @@
+// src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
-import { authService } from '../services/api';
+import { register, login, getCurrentUser, logout, isAuthenticated } from '../services/authService';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuth, setIsAuth] = useState(false);
 
-  // Cargar usuario al iniciar
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
+    // Verificar si el usuario está autenticado al cargar la aplicación
+    const checkAuth = async () => {
+      if (isAuthenticated()) {
+        try {
+          const userData = await getCurrentUser();
+          setUser(userData);
+          setIsAuth(true);
+        } catch (err) {
+          console.error('Error al obtener usuario:', err);
+          localStorage.removeItem('token');
         }
-
-        const res = await authService.getCurrentUser();
-        setUser(res.data);
-        setIsAuthenticated(true);
-      } catch (err) {
-        localStorage.removeItem('token');
-        setError(err.response?.data?.msg || 'Error al cargar usuario');
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    loadUser();
+    checkAuth();
   }, []);
 
   // Registrar usuario
-  const register = async (formData) => {
+  const registerUser = async (userData) => {
+    setError(null);
     try {
-      const res = await authService.register(formData);
-      localStorage.setItem('token', res.data.token);
-      
-      // Cargar datos del usuario
-      const userRes = await authService.getCurrentUser();
-      setUser(userRes.data);
-      setIsAuthenticated(true);
-      setError(null);
+      const data = await register(userData);
+      setUser(data.user || await getCurrentUser());
+      setIsAuth(true);
       return true;
     } catch (err) {
-      setError(err.response?.data?.msg || 'Error al registrar');
+      setError(err.msg || 'Error al registrar usuario');
       return false;
     }
   };
 
   // Iniciar sesión
-  const login = async (formData) => {
+  const loginUser = async (userData) => {
+    setError(null);
     try {
-      const res = await authService.login(formData);
-      localStorage.setItem('token', res.data.token);
-      
-      // Cargar datos del usuario
-      const userRes = await authService.getCurrentUser();
-      setUser(userRes.data);
-      setIsAuthenticated(true);
-      setError(null);
+      const data = await login(userData);
+      setUser(data.user || await getCurrentUser());
+      setIsAuth(true);
       return true;
     } catch (err) {
-      setError(err.response?.data?.msg || 'Error al iniciar sesión');
+      setError(err.msg || 'Credenciales inválidas');
       return false;
     }
   };
 
   // Cerrar sesión
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logoutUser = () => {
+    logout();
     setUser(null);
-    setIsAuthenticated(false);
+    setIsAuth(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
         loading,
         error,
-        register,
-        login,
-        logout
+        isAuth,
+        register: registerUser,
+        login: loginUser,
+        logout: logoutUser
       }}
     >
       {children}

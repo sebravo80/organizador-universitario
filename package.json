@@ -1,0 +1,13 @@
+{
+  "name": "organizador-universitario",
+  "version": "1.0.0",
+  "description": "Aplicación para organizar tareas universitarias",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "install-deps": "concurrently \"cd backend && npm install\" \"cd frontend && npm install\""
+  },
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}

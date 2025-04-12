@@ -1,19 +1,17 @@
-import { useState } from 'react';
+// src/pages/Courses.jsx
+import { useState, useEffect } from 'react';
+import { getCourses, createCourse, deleteCourse } from '../services/courseService';
 import { 
-  Box, Typography, Paper, Table, TableBody, TableCell, 
-  TableContainer, TableHead, TableRow, Button, Dialog,
-  DialogTitle, DialogContent, DialogActions, TextField
+  Container, Typography, Button, Grid, Card, CardContent, 
+  CardActions, TextField, Dialog, DialogTitle, DialogContent, 
+  DialogActions, CircularProgress, Alert 
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 
 function Courses() {
-  const [courses, setCourses] = useState([
-    { id: 1, name: 'Matemáticas', code: 'MAT101', professor: 'Dr. García', schedule: 'Lun/Mie 10:00-12:00', room: 'A-101' },
-    { id: 2, name: 'Física', code: 'FIS201', professor: 'Dra. Rodríguez', schedule: 'Mar/Jue 14:00-16:00', room: 'B-203' },
-    { id: 3, name: 'Programación', code: 'PRG301', professor: 'Ing. López', schedule: 'Mie/Vie 08:00-10:00', room: 'LAB-01' }
-  ]);
-
-  const [open, setOpen] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const [newCourse, setNewCourse] = useState({
     name: '',
     code: '',
@@ -22,68 +20,137 @@ function Courses() {
     room: ''
   });
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // Cargar cursos al montar el componente
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const data = await getCourses();
+        setCourses(data);
+        setError(null);
+      } catch (err) {
+        setError('Error al cargar los cursos');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    loadCourses();
+  }, []);
+
+  // Manejar cambios en el formulario
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewCourse(prev => ({ ...prev, [name]: value }));
+    setNewCourse({
+      ...newCourse,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = () => {
-    setCourses([...courses, { ...newCourse, id: courses.length + 1 }]);
-    setNewCourse({ name: '', code: '', professor: '', schedule: '', room: '' });
-    handleClose();
+  // Crear un nuevo curso
+  const handleCreateCourse = async () => {
+    try {
+      setLoading(true);
+      const course = await createCourse(newCourse);
+      setCourses([...courses, course]);
+      setNewCourse({
+        name: '',
+        code: '',
+        professor: '',
+        schedule: '',
+        room: ''
+      });
+      setOpenDialog(false);
+      setError(null);
+    } catch (err) {
+      setError('Error al crear el curso');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Eliminar un curso
+  const handleDeleteCourse = async (id) => {
+    try {
+      setLoading(true);
+      await deleteCourse(id);
+      setCourses(courses.filter(course => course._id !== id));
+      setError(null);
+    } catch (err) {
+      setError('Error al eliminar el curso');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">
-          Mis Ramos
-        </Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<AddIcon />}
-          onClick={handleOpen}
-        >
-          Añadir Ramo
-        </Button>
-      </Box>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Código</TableCell>
-              <TableCell>Profesor</TableCell>
-              <TableCell>Horario</TableCell>
-              <TableCell>Sala</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {courses.map((course) => (
-              <TableRow key={course.id}>
-                <TableCell>{course.name}</TableCell>
-                <TableCell>{course.code}</TableCell>
-                <TableCell>{course.professor}</TableCell>
-                <TableCell>{course.schedule}</TableCell>
-                <TableCell>{course.room}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Diálogo para añadir nuevo ramo */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Añadir Nuevo Ramo</DialogTitle>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Mis Cursos
+      </Typography>
+      
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={() => setOpenDialog(true)}
+        sx={{ mb: 3 }}
+      >
+        Añadir Curso
+      </Button>
+      
+      {loading && courses.length === 0 ? (
+        <CircularProgress />
+      ) : (
+        <Grid container spacing={3}>
+          {courses.map((course) => (
+            <Grid item xs={12} sm={6} md={4} key={course._id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" component="div">
+                    {course.name}
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Código: {course.code}
+                  </Typography>
+                  <Typography variant="body2">
+                    Profesor: {course.professor}
+                  </Typography>
+                  <Typography variant="body2">
+                    Horario: {course.schedule}
+                  </Typography>
+                  <Typography variant="body2">
+                    Sala: {course.room}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" color="primary">Editar</Button>
+                  <Button 
+                    size="small" 
+                    color="error"
+                    onClick={() => handleDeleteCourse(course._id)}
+                  >
+                    Eliminar
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+      
+      {/* Diálogo para añadir curso */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Añadir Nuevo Curso</DialogTitle>
         <DialogContent>
           <TextField
+            autoFocus
             margin="dense"
             name="name"
-            label="Nombre del Ramo"
+            label="Nombre del Curso"
+            type="text"
             fullWidth
             variant="outlined"
             value={newCourse.name}
@@ -93,6 +160,7 @@ function Courses() {
             margin="dense"
             name="code"
             label="Código"
+            type="text"
             fullWidth
             variant="outlined"
             value={newCourse.code}
@@ -102,6 +170,7 @@ function Courses() {
             margin="dense"
             name="professor"
             label="Profesor"
+            type="text"
             fullWidth
             variant="outlined"
             value={newCourse.professor}
@@ -111,6 +180,7 @@ function Courses() {
             margin="dense"
             name="schedule"
             label="Horario"
+            type="text"
             fullWidth
             variant="outlined"
             value={newCourse.schedule}
@@ -120,6 +190,7 @@ function Courses() {
             margin="dense"
             name="room"
             label="Sala"
+            type="text"
             fullWidth
             variant="outlined"
             value={newCourse.room}
@@ -127,11 +198,13 @@ function Courses() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">Guardar</Button>
+          <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+          <Button onClick={handleCreateCourse} variant="contained">
+            Guardar
+          </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Container>
   );
 }
 
