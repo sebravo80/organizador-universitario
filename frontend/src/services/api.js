@@ -1,6 +1,6 @@
+// src/services/api.js
 import axios from 'axios';
 
-// Crear una instancia de axios con la URL base
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
   headers: {
@@ -8,7 +8,7 @@ const api = axios.create({
   }
 });
 
-// Interceptor para añadir el token a todas las peticiones
+// Interceptor para añadir el token a las solicitudes
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -18,6 +18,19 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores de respuesta
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Si el error es 401 (no autorizado), limpiar el token y redirigir a login
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
