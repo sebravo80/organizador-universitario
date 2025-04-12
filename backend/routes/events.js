@@ -2,9 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
-
-const Event = require('../models/Event');
-const Course = require('../models/Course');
+const { Event, Course } = require('../models');
 
 // @route   GET api/events
 // @desc    Obtener todos los eventos del usuario
@@ -62,19 +60,24 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Errores de validación:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
     
     try {
+      console.log('Datos de evento recibidos:', req.body);
       const { title, description, start, end, allDay, course, type, recurrence } = req.body;
       
       // Verificar que el curso existe y pertenece al usuario
       if (course) {
+        console.log('Verificando curso:', course);
         const courseDoc = await Course.findById(course);
         if (!courseDoc) {
+          console.log('Curso no encontrado');
           return res.status(404).json({ msg: 'Curso no encontrado' });
         }
         if (courseDoc.user.toString() !== req.user.id) {
+          console.log('Usuario no autorizado para este curso');
           return res.status(401).json({ msg: 'No autorizado' });
         }
       }
@@ -91,15 +94,17 @@ router.post(
         user: req.user.id
       });
       
+      console.log('Evento a guardar:', newEvent);
       const event = await newEvent.save();
       
       // Poblar el campo course para devolverlo en la respuesta
       await event.populate('course', 'name code');
       
+      console.log('Evento guardado exitosamente');
       res.json(event);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Error del servidor');
+      console.error('Error al crear evento:', err);
+      res.status(500).json({ msg: 'Error del servidor', error: err.message });
     }
   }
 );

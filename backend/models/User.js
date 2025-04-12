@@ -1,7 +1,7 @@
-// backend/models/User.js
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -21,4 +21,6 @@ const UserSchema = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('user', UserSchema);
+const User = mongoose.model('user', UserSchema);
+
+module.exports = User;

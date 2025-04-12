@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const Task = require('../models/Task');
-const Course = require('../models/Course');
+const { Task, Course } = require('../models');
 
 // @route   GET api/tasks
 // @desc    Obtener todas las tareas del usuario

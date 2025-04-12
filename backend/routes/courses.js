@@ -1,58 +1,75 @@
 const express = require('express');
 const router = express.Router();
+const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
-const Course = require('../models/Course');
+const { Course } = require('../models');
 
 // @route   GET api/courses
 // @desc    Obtener todos los cursos del usuario
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
-    const courses = await Course.find({ user: req.user.id }).sort({ date: -1 });
+    const courses = await Course.find({ user: req.user.id }).sort({ name: 1 });
     res.json(courses);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error en el servidor');
+    res.status(500).send('Error del servidor');
   }
 });
 
 // @route   POST api/courses
-// @desc    Crear un curso
+// @desc    Crear un nuevo curso
 // @access  Private
-router.post('/', auth, async (req, res) => {
-  const { name, code, professor, schedule, room } = req.body;
+router.post(
+  '/',
+  [
+    auth,
+    [
+      check('name', 'El nombre es obligatorio').not().isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  try {
-    const newCourse = new Course({
-      name,
-      code,
-      professor,
-      schedule,
-      room,
-      user: req.user.id
-    });
+    const { name, code, professor, schedule, location, color } = req.body;
 
-    const course = await newCourse.save();
-    res.json(course);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Error en el servidor');
+    try {
+      const newCourse = new Course({
+        name,
+        code,
+        professor,
+        schedule,
+        location,
+        color,
+        user: req.user.id
+      });
+
+      const course = await newCourse.save();
+      res.json(course);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Error del servidor');
+    }
   }
-});
+);
 
 // @route   PUT api/courses/:id
 // @desc    Actualizar un curso
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
-  const { name, code, professor, schedule, room } = req.body;
+  const { name, code, professor, schedule, location, color } = req.body;
 
   // Construir objeto de curso
   const courseFields = {};
   if (name) courseFields.name = name;
-  if (code) courseFields.code = code;
-  if (professor) courseFields.professor = professor;
-  if (schedule) courseFields.schedule = schedule;
-  if (room) courseFields.room = room;
+  if (code !== undefined) courseFields.code = code;
+  if (professor !== undefined) courseFields.professor = professor;
+  if (schedule !== undefined) courseFields.schedule = schedule;
+  if (location !== undefined) courseFields.location = location;
+  if (color) courseFields.color = color;
 
   try {
     let course = await Course.findById(req.params.id);
@@ -73,7 +90,7 @@ router.put('/:id', auth, async (req, res) => {
     res.json(course);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error en el servidor');
+    res.status(500).send('Error del servidor');
   }
 });
 
@@ -96,7 +113,7 @@ router.delete('/:id', auth, async (req, res) => {
     res.json({ msg: 'Curso eliminado' });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Error en el servidor');
+    res.status(500).send('Error del servidor');
   }
 });
 

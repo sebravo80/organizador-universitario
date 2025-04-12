@@ -1,17 +1,17 @@
 // src/pages/WeeklyView.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Box, Paper, CircularProgress, 
-  Alert, Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, FormControl, InputLabel, Select, MenuItem
+  Container, Typography, Paper, Box, Button, 
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, FormControl, InputLabel, Select, MenuItem,
+  FormControlLabel, Checkbox, CircularProgress, Alert
 } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
-import { getEvents, createEvent, updateEvent, deleteEvent } from '../services/scheduleService';
+import { getEvents, createEvent, updateEvent, deleteEvent } from '../services/eventService';
 import { getCourses } from '../services/courseService';
 
 function WeeklyView() {
@@ -19,30 +19,41 @@ function WeeklyView() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentEventId, setCurrentEventId] = useState(null);
+  const [success, setSuccess] = useState(null);
   
+  // Estado para el diálogo de evento
+  const [openEventDialog, setOpenEventDialog] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [eventForm, setEventForm] = useState({
     title: '',
+    description: '',
     start: new Date(),
-    end: new Date(new Date().getTime() + 60 * 60 * 1000), // +1 hora
+    end: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hora después
     allDay: false,
     course: '',
-    color: '#4285F4'
+    type: 'otro'
   });
   
-  const calendarRef = useRef(null);
-
-  // Cargar eventos y cursos al montar el componente
+  // Cargar eventos y cursos
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Cargar eventos y cursos en paralelo
         const [eventsData, coursesData] = await Promise.all([
-          getEvents(),
-          getCourses()
+          getEvents().catch(err => {
+            console.error('Error al cargar eventos:', err);
+            throw err;
+          }),
+          getCourses().catch(err => {
+            console.error('Error al cargar cursos:', err);
+            throw err;
+          })
         ]);
+        
+        console.log('Eventos cargados:', eventsData.length);
+        console.log('Cursos cargados:', coursesData.length);
         
         // Formatear eventos para FullCalendar
         const formattedEvents = eventsData.map(event => ({
@@ -51,27 +62,68 @@ function WeeklyView() {
           start: event.start,
           end: event.end,
           allDay: event.allDay,
-          backgroundColor: event.color,
-          borderColor: event.color,
           extendedProps: {
-            course: event.course
-          }
+            description: event.description,
+            course: event.course,
+            type: event.type
+          },
+          backgroundColor: event.course?.color || '#3788d8'
         }));
         
         setEvents(formattedEvents);
         setCourses(coursesData);
         setError(null);
       } catch (err) {
-        setError('Error al cargar los datos');
-        console.error(err);
+        console.error('Error al cargar datos:', err);
+        setError('Error al cargar los datos. Por favor, intenta de nuevo más tarde.');
       } finally {
         setLoading(false);
       }
     };
-
-    loadData();
+    
+    fetchData();
   }, []);
-
+  
+  // Manejar clic en fecha/hora
+  const handleDateClick = (info) => {
+    // Resetear formulario
+    setEventForm({
+      title: '',
+      description: '',
+      start: info.date,
+      end: new Date(info.date.getTime() + 60 * 60 * 1000), // 1 hora después
+      allDay: info.allDay,
+      course: '',
+      type: 'otro'
+    });
+    
+    setEditingEvent(null);
+    setOpenEventDialog(true);
+  };
+  
+  // Manejar clic en evento
+  const handleEventClick = (info) => {
+    const event = info.event;
+    
+    // Llenar formulario con datos del evento
+    setEventForm({
+      title: event.title,
+      description: event.extendedProps.description || '',
+      start: new Date(event.start),
+      end: event.end ? new Date(event.end) : null,
+      allDay: event.allDay,
+      course: event.extendedProps.course?._id || '',
+      type: event.extendedProps.type || 'otro'
+    });
+    
+    setEditingEvent({
+      _id: event.id,
+      ...event.extendedProps
+    });
+    
+    setOpenEventDialog(true);
+  };
+  
   // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -80,148 +132,116 @@ function WeeklyView() {
       [name]: name === 'allDay' ? checked : value
     });
   };
-
-  // Manejar cambio de fecha de inicio
-  const handleStartChange = (newDate) => {
+  
+  // Manejar cambios en las fechas
+  const handleDateChange = (name, date) => {
     setEventForm({
       ...eventForm,
-      start: newDate,
-      // Si la fecha de fin es anterior a la nueva fecha de inicio, actualizarla
-      end: newDate > eventForm.end ? new Date(newDate.getTime() + 60 * 60 * 1000) : eventForm.end
+      [name]: date
     });
   };
-
-  // Manejar cambio de fecha de fin
-  const handleEndChange = (newDate) => {
-    setEventForm({
-      ...eventForm,
-      end: newDate
-    });
-  };
-
-  // Manejar cambio de color
-  const handleColorChange = (e) => {
-    setEventForm({
-      ...eventForm,
-      color: e.target.value
-    });
-  };
-
-  // Abrir diálogo para crear evento en fecha seleccionada
-  const handleDateSelect = (selectInfo) => {
-    setEventForm({
-      title: '',
-      start: selectInfo.start,
-      end: selectInfo.end,
-      allDay: selectInfo.allDay,
-      course: '',
-      color: '#4285F4'
-    });
-    setIsEditing(false);
-    setOpenDialog(true);
-  };
-
-  // Abrir diálogo para editar evento existente
-  const handleEventClick = (clickInfo) => {
-    const event = clickInfo.event;
-    setEventForm({
-      title: event.title,
-      start: new Date(event.start),
-      end: new Date(event.end || event.start),
-      allDay: event.allDay,
-      course: event.extendedProps.course ? event.extendedProps.course._id : '',
-      color: event.backgroundColor
-    });
-    setCurrentEventId(event.id);
-    setIsEditing(true);
-    setOpenDialog(true);
-  };
-
-  // Cerrar diálogo
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setIsEditing(false);
-    setCurrentEventId(null);
-  };
-
-  // Guardar evento (crear o actualizar)
+  
+  // Guardar evento
   const handleSaveEvent = async () => {
     try {
       setLoading(true);
+      setError(null);
       
-      const eventData = {
-        title: eventForm.title,
-        start: eventForm.start,
-        end: eventForm.end,
-        allDay: eventForm.allDay,
-        course: eventForm.course || null,
-        color: eventForm.color
+      // Formatear fechas a ISO
+      const formattedEvent = {
+        ...eventForm,
+        start: eventForm.start instanceof Date ? eventForm.start.toISOString() : eventForm.start,
+        end: eventForm.end instanceof Date ? eventForm.end.toISOString() : eventForm.end
       };
       
-      if (isEditing) {
+      console.log('Enviando evento formateado:', formattedEvent);
+      
+      let savedEvent;
+      if (editingEvent) {
         // Actualizar evento existente
-        const updatedEvent = await updateEvent(currentEventId, eventData);
-        
-        // Actualizar eventos en el estado
-        setEvents(events.map(event => 
-          event.id === currentEventId ? {
-            id: updatedEvent._id,
-            title: updatedEvent.title,
-            start: updatedEvent.start,
-            end: updatedEvent.end,
-            allDay: updatedEvent.allDay,
-            backgroundColor: updatedEvent.color,
-            borderColor: updatedEvent.color,
-            extendedProps: {
-              course: updatedEvent.course
-            }
-          } : event
-        ));
+        savedEvent = await updateEvent(editingEvent._id, formattedEvent);
+        console.log('Evento actualizado:', savedEvent);
       } else {
         // Crear nuevo evento
-        const newEvent = await createEvent(eventData);
-        
-        // Añadir nuevo evento al estado
-        setEvents([...events, {
-          id: newEvent._id,
-          title: newEvent.title,
-          start: newEvent.start,
-          end: newEvent.end,
-          allDay: newEvent.allDay,
-          backgroundColor: newEvent.color,
-          borderColor: newEvent.color,
-          extendedProps: {
-            course: newEvent.course
-          }
-        }]);
+        savedEvent = await createEvent(formattedEvent);
+        console.log('Evento creado:', savedEvent);
       }
       
-      handleCloseDialog();
-      setError(null);
+      // Actualizar lista de eventos
+      await fetchEvents();
+      
+      // Cerrar diálogo y mostrar mensaje de éxito
+      setOpenEventDialog(false);
+      setSuccess(editingEvent ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
+      
+      // Ocultar mensaje de éxito después de 3 segundos
+      setTimeout(() => {
+        setSuccess(null);
+      }, 3000);
     } catch (err) {
-      setError(`Error al ${isEditing ? 'actualizar' : 'crear'} el evento`);
-      console.error(err);
+      console.error('Error al guardar evento:', err);
+      setError('Error al guardar el evento: ' + (err.msg || err.message || 'Error desconocido'));
     } finally {
       setLoading(false);
     }
   };
-
+  
   // Eliminar evento
   const handleDeleteEvent = async () => {
+    if (!editingEvent) return;
+    
     try {
       setLoading(true);
-      await deleteEvent(currentEventId);
-      setEvents(events.filter(event => event.id !== currentEventId));
-      handleCloseDialog();
       setError(null);
+      
+      await deleteEvent(editingEvent._id);
+      
+      // Actualizar lista de eventos
+      await fetchEvents();
+      
+      // Cerrar diálogo y mostrar mensaje de éxito
+      setOpenEventDialog(false);
+      setSuccess('Evento eliminado correctamente');
+      
+      // Ocultar mensaje de éxito después de 3 segundos
+      setTimeout(() => {
+        setSuccess(null);
+      }, 3000);
     } catch (err) {
-      setError('Error al eliminar el evento');
-      console.error(err);
+      console.error('Error al eliminar evento:', err);
+      setError('Error al eliminar el evento: ' + (err.msg || err.message || 'Error desconocido'));
     } finally {
       setLoading(false);
     }
   };
-
+  
+  // Cargar eventos
+  const fetchEvents = async () => {
+    try {
+      const eventsData = await getEvents();
+      
+      // Formatear eventos para FullCalendar
+      const formattedEvents = eventsData.map(event => ({
+        id: event._id,
+        title: event.title,
+        start: event.start,
+        end: event.end,
+        allDay: event.allDay,
+        extendedProps: {
+          description: event.description,
+          course: event.course,
+          type: event.type
+        },
+        backgroundColor: event.course?.color || '#3788d8'
+      }));
+      
+      setEvents(formattedEvents);
+    } catch (err) {
+      console.error('Error al cargar eventos:', err);
+      setError('Error al cargar los eventos. Por favor, intenta de nuevo más tarde.');
+    }
+  };
+  
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -229,63 +249,107 @@ function WeeklyView() {
       </Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
       
-      {loading && events.length === 0 ? (
-        <CircularProgress />
-      ) : (
-        <Paper sx={{ p: 2 }}>
-          <Box sx={{ height: 'calc(100vh - 200px)' }}>
-            <FullCalendar
-              ref={calendarRef}
-              plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-              }}
-              locale={esLocale}
-              events={events}
-              selectable={true}
-              selectMirror={true}
-              dayMaxEvents={true}
-              weekends={true}
-              select={handleDateSelect}
-              eventClick={handleEventClick}
-              height="100%"
-              allDaySlot={true}
-              slotMinTime="07:00:00"
-              slotMaxTime="22:00:00"
-            />
+      <Paper sx={{ p: 2 }}>
+        {loading && !events.length ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+            <CircularProgress />
           </Box>
-        </Paper>
-      )}
+        ) : (
+          <FullCalendar
+            plugins={[timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'timeGridWeek,timeGridDay'
+            }}
+            events={events}
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            weekends={true}
+            locale={esLocale}
+            allDaySlot={true}
+            slotMinTime="07:00:00"
+            slotMaxTime="22:00:00"
+            height="auto"
+            dateClick={handleDateClick}
+            eventClick={handleEventClick}
+            eventTimeFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              meridiem: false,
+              hour12: false
+            }}
+          />
+        )}
+      </Paper>
       
-      {/* Diálogo para añadir/editar evento */}
-      <Dialog 
-        open={openDialog} 
-        onClose={handleCloseDialog}
-        fullWidth
-        maxWidth="sm"
-      >
+      {/* Diálogo para crear/editar evento */}
+      <Dialog open={openEventDialog} onClose={() => setOpenEventDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {isEditing ? 'Editar Evento' : 'Nuevo Evento'}
+          {editingEvent ? 'Editar Evento' : 'Nuevo Evento'}
         </DialogTitle>
+        
         <DialogContent>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          
           <TextField
-            autoFocus
-            margin="dense"
-            name="title"
-            label="Título"
-            type="text"
             fullWidth
-            variant="outlined"
+            label="Título"
+            name="title"
             value={eventForm.title}
             onChange={handleChange}
+            margin="normal"
             required
-            sx={{ mb: 2 }}
           />
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          
+          <TextField
+            fullWidth
+            label="Descripción"
+            name="description"
+            value={eventForm.description}
+            onChange={handleChange}
+            margin="normal"
+            multiline
+            rows={3}
+          />
+          
+          <Box sx={{ mt: 2 }}>
+            <DateTimePicker
+              label="Fecha y hora de inicio"
+              value={eventForm.start}
+              onChange={(date) => handleDateChange('start', date)}
+              renderInput={(params) => <TextField {...params} fullWidth margin="normal" required />}
+            />
+          </Box>
+          
+          <Box sx={{ mt: 2 }}>
+            <DateTimePicker
+              label="Fecha y hora de fin"
+              value={eventForm.end}
+              onChange={(date) => handleDateChange('end', date)}
+              renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+              disabled={eventForm.allDay}
+            />
+          </Box>
+          
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={eventForm.allDay}
+                onChange={handleChange}
+                name="allDay"
+              />
+            }
+            label="Todo el día"
+            sx={{ mt: 1 }}
+          />
+          
+          <FormControl fullWidth margin="normal">
             <InputLabel>Curso</InputLabel>
             <Select
               name="course"
@@ -294,60 +358,47 @@ function WeeklyView() {
               label="Curso"
             >
               <MenuItem value="">Ninguno</MenuItem>
-              {courses.map(course => (
+              {courses.map((course) => (
                 <MenuItem key={course._id} value={course._id}>
                   {course.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <DateTimePicker
-            label="Inicio"
-            value={eventForm.start}
-            onChange={handleStartChange}
-            renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 2 }} />}
-          />
-          <DateTimePicker
-            label="Fin"
-            value={eventForm.end}
-            onChange={handleEndChange}
-            renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 2 }} />}
-            minDateTime={eventForm.start}
-          />
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Color</InputLabel>
+          
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Tipo</InputLabel>
             <Select
-              name="color"
-              value={eventForm.color}
-              onChange={handleColorChange}
-              label="Color"
+              name="type"
+              value={eventForm.type}
+              onChange={handleChange}
+              label="Tipo"
             >
-              <MenuItem value="#4285F4" sx={{ color: '#4285F4' }}>Azul</MenuItem>
-              <MenuItem value="#EA4335" sx={{ color: '#EA4335' }}>Rojo</MenuItem>
-              <MenuItem value="#FBBC05" sx={{ color: '#FBBC05' }}>Amarillo</MenuItem>
-              <MenuItem value="#34A853" sx={{ color: '#34A853' }}>Verde</MenuItem>
-              <MenuItem value="#8E24AA" sx={{ color: '#8E24AA' }}>Púrpura</MenuItem>
-              <MenuItem value="#F4511E" sx={{ color: '#F4511E' }}>Naranja</MenuItem>
+              <MenuItem value="clase">Clase</MenuItem>
+              <MenuItem value="examen">Examen</MenuItem>
+              <MenuItem value="taller">Taller</MenuItem>
+              <MenuItem value="otro">Otro</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
+        
         <DialogActions>
-          {isEditing && (
+          {editingEvent && (
             <Button 
               onClick={handleDeleteEvent} 
               color="error"
-              sx={{ mr: 'auto' }}
+              disabled={loading}
             >
               Eliminar
             </Button>
           )}
-          <Button onClick={handleCloseDialog}>Cancelar</Button>
+          <Button onClick={() => setOpenEventDialog(false)}>Cancelar</Button>
           <Button 
             onClick={handleSaveEvent} 
-            variant="contained"
-            disabled={!eventForm.title}
+            variant="contained" 
+            disabled={loading}
           >
-            Guardar
+            {loading ? <CircularProgress size={24} /> : 'Guardar'}
           </Button>
         </DialogActions>
       </Dialog>

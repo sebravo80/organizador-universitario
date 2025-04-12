@@ -4,11 +4,8 @@ const Schema = mongoose.Schema;
 const TaskSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  course: {
-    type: Schema.Types.ObjectId,
-    ref: 'Course'
+    ref: 'user',
+    required: true
   },
   title: {
     type: String,
@@ -18,7 +15,8 @@ const TaskSchema = new Schema({
     type: String
   },
   dueDate: {
-    type: Date
+    type: Date,
+    required: true
   },
   priority: {
     type: String,
@@ -29,10 +27,16 @@ const TaskSchema = new Schema({
     type: Boolean,
     default: false
   },
-  date: {
+  course: {
+    type: Schema.Types.ObjectId,
+    ref: 'course'
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Task', TaskSchema);
+const Task = mongoose.model('task', TaskSchema);
+
+module.exports = Task;
