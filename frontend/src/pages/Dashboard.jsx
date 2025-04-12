@@ -1,15 +1,14 @@
-// src/pages/Dashboard.jsx
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { 
-  Container, Grid, Paper, Typography, Box, CircularProgress, 
-  Alert, List, ListItem, ListItemText, Divider, Chip,
-  Card, CardContent, Button
+  Container, Grid, Paper, Typography, Box, 
+  List, ListItem, ListItemText, Divider, 
+  Chip, CircularProgress, Alert
 } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
 import { getCourses } from '../services/courseService';
 import { getTasks } from '../services/taskService';
-import { getEvents } from '../services/scheduleService';
+import { getEvents } from '../services/eventService';
+import TaskCountdown from '../components/TaskCountdown';
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -20,9 +19,11 @@ function Dashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Cargar cursos, tareas y eventos en paralelo
         const [coursesData, tasksData, eventsData] = await Promise.all([
           getCourses(),
           getTasks(),
@@ -30,44 +31,44 @@ function Dashboard() {
         ]);
         
         setCourses(coursesData);
-        setTasks(tasksData);
-        setEvents(eventsData);
+        
+        // Filtrar tareas no completadas
+        const pendingTasks = tasksData.filter(task => !task.completed);
+        setTasks(pendingTasks);
+        
+        // Filtrar eventos futuros
+        const now = new Date();
+        const upcomingEvents = eventsData.filter(event => new Date(event.start) > now);
+        // Ordenar por fecha
+        upcomingEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+        setEvents(upcomingEvents);
+        
         setError(null);
       } catch (err) {
-        setError('Error al cargar los datos');
-        console.error(err);
+        console.error('Error al cargar datos del dashboard:', err);
+        setError('Error al cargar los datos. Por favor, intenta de nuevo más tarde.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadData();
+    fetchData();
   }, []);
 
-  // Filtrar tareas pendientes y ordenarlas por fecha
-  const pendingTasks = tasks
-    .filter(task => !task.completed)
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  // Función para formatear fecha
+  const formatDate = (dateString) => {
+    const options = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
 
-  // Obtener eventos próximos (próximos 7 días)
-  const now = new Date();
-  const nextWeek = new Date(now);
-  nextWeek.setDate(now.getDate() + 7);
-  
-  const upcomingEvents = events
-    .filter(event => {
-      const eventDate = new Date(event.start);
-      return eventDate >= now && eventDate <= nextWeek;
-    })
-    .sort((a, b) => new Date(a.start) - new Date(b.start));
-
-  // Obtener estadísticas
-  const totalCourses = courses.length;
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-  // Obtener color según prioridad
+  // Función para obtener color según prioridad
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'alta': return 'error';
@@ -77,23 +78,19 @@ function Dashboard() {
     }
   };
 
-  // Formatear fecha
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('es-ES', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
-      </Box>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
     );
   }
 
@@ -103,239 +100,167 @@ function Dashboard() {
         Bienvenido, {user?.name || 'Usuario'}
       </Typography>
       
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      
       <Grid container spacing={3}>
-        {/* Estadísticas */}
-        <Grid item xs={12} md={4}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 140,
-            }}
-          >
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Cursos
+        {/* Resumen de cursos */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Mis Cursos ({courses.length})
             </Typography>
-            <Typography component="p" variant="h4">
-              {totalCourses}
-            </Typography>
-            <Typography color="text.secondary" sx={{ flex: 1 }}>
-              cursos registrados
-            </Typography>
-            <div>
-              <Link to="/courses" style={{ textDecoration: 'none' }}>
-                <Button size="small" color="primary">
-                  Ver cursos
-                </Button>
-              </Link>
-            </div>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 140,
-            }}
-          >
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Tareas
-            </Typography>
-            <Typography component="p" variant="h4">
-              {pendingTasks.length}
-            </Typography>
-            <Typography color="text.secondary" sx={{ flex: 1 }}>
-              tareas pendientes
-            </Typography>
-            <div>
-              <Link to="/tasks" style={{ textDecoration: 'none' }}>
-                <Button size="small" color="primary">
-                  Ver tareas
-                </Button>
-              </Link>
-            </div>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 140,
-            }}
-          >
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Progreso
-            </Typography>
-            <Typography component="p" variant="h4">
-              {completionRate}%
-            </Typography>
-            <Typography color="text.secondary" sx={{ flex: 1 }}>
-              tareas completadas
-            </Typography>
-            <div>
-              <Link to="/weekly" style={{ textDecoration: 'none' }}>
-                <Button size="small" color="primary">
-                  Ver horario
-                </Button>
-              </Link>
-            </div>
+            {courses.length === 0 ? (
+              <Alert severity="info">
+                No tienes cursos registrados. ¡Añade tu primer curso!
+              </Alert>
+            ) : (
+              <List>
+                {courses.slice(0, 5).map((course, index) => (
+                  <Box key={course._id}>
+                    {index > 0 && <Divider />}
+                    <ListItem>
+                      <ListItemText
+                        primary={course.name}
+                        secondary={`${course.code} - ${course.professor}`}
+                      />
+                    </ListItem>
+                  </Box>
+                ))}
+                {courses.length > 5 && (
+                  <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+                    Y {courses.length - 5} más...
+                  </Typography>
+                )}
+              </List>
+            )}
           </Paper>
         </Grid>
         
         {/* Tareas pendientes */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Tareas Pendientes
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Tareas Pendientes ({tasks.length})
             </Typography>
-            {pendingTasks.length === 0 ? (
-              <Alert severity="info">No tienes tareas pendientes</Alert>
+            {tasks.length === 0 ? (
+              <Alert severity="success">
+                ¡No tienes tareas pendientes!
+              </Alert>
             ) : (
-              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {pendingTasks.slice(0, 5).map((task, index) => (
+              <List>
+                {tasks.slice(0, 5).map((task, index) => (
                   <Box key={task._id}>
-                    {index > 0 && <Divider component="li" />}
-                    <ListItem
-                      alignItems="flex-start"
-                      secondaryAction={
-                        <Chip 
-                          label={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} 
-                          size="small" 
-                          color={getPriorityColor(task.priority)}
-                        />
-                      }
-                    >
+                    {index > 0 && <Divider />}
+                    <ListItem>
                       <ListItemText
                         primary={task.title}
                         secondary={
                           <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              {task.course ? task.course.name : 'Sin curso'} - 
-                            </Typography>
-                            {` Vence: ${formatDate(task.dueDate)}`}
+                            {task.course?.name && `${task.course.name} - `}
+                            {new Date(task.dueDate).toLocaleDateString()}
                           </>
                         }
+                      />
+                      <Chip 
+                        label={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} 
+                        size="small" 
+                        color={getPriorityColor(task.priority)}
                       />
                     </ListItem>
                   </Box>
                 ))}
-                {pendingTasks.length > 5 && (
-                  <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Link to="/tasks" style={{ textDecoration: 'none' }}>
-                      <Button size="small">
-                        Ver todas ({pendingTasks.length})
-                      </Button>
-                    </Link>
-                  </Box>
+                {tasks.length > 5 && (
+                  <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+                    Y {tasks.length - 5} más...
+                  </Typography>
                 )}
               </List>
             )}
           </Paper>
         </Grid>
         
-        {/* Eventos próximos */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Eventos Próximos
+        {/* Próximos eventos */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Próximos Eventos
             </Typography>
-            {upcomingEvents.length === 0 ? (
-              <Alert severity="info">No tienes eventos próximos</Alert>
+            {events.length === 0 ? (
+              <Alert severity="info">
+                No tienes eventos próximos programados.
+              </Alert>
             ) : (
-              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {upcomingEvents.slice(0, 5).map((event, index) => (
+              <List>
+                {events.slice(0, 5).map((event, index) => (
                   <Box key={event._id}>
-                    {index > 0 && <Divider component="li" />}
-                    <ListItem
-                      alignItems="flex-start"
-                      secondaryAction={
-                        <Box 
-                          sx={{ 
-                            width: 12, 
-                            height: 12, 
-                            borderRadius: '50%', 
-                            bgcolor: event.color || '#4285F4' 
-                          }} 
-                        />
-                      }
-                    >
+                    {index > 0 && <Divider />}
+                    <ListItem>
                       <ListItemText
                         primary={event.title}
                         secondary={
                           <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              {event.course ? event.course.name : 'Sin curso'} - 
-                            </Typography>
-                            {` ${formatDate(event.start)}`}
+                            {event.course?.name && `${event.course.name} - `}
+                            {formatDate(event.start)}
+                            {event.end && ` hasta ${formatDate(event.end)}`}
                           </>
                         }
+                      />
+                      <Chip 
+                        label={event.type || 'Evento'} 
+                        size="small" 
+                        color={event.type === 'examen' ? 'error' : 'primary'}
                       />
                     </ListItem>
                   </Box>
                 ))}
-                {upcomingEvents.length > 5 && (
-                  <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Link to="/weekly" style={{ textDecoration: 'none' }}>
-                      <Button size="small">
-                        Ver todos ({upcomingEvents.length})
-                      </Button>
-                    </Link>
-                  </Box>
-                )}
               </List>
             )}
           </Paper>
         </Grid>
         
-        {/* Cursos */}
+        {/* Cuenta regresiva de tareas */}
+        <Grid item xs={12}>
+          <TaskCountdown />
+        </Grid>
+        
+        {/* Resumen del semestre */}
         <Grid item xs={12}>
           <Paper sx={{ p: 2 }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              Mis Cursos
+            <Typography variant="h6" gutterBottom>
+              Resumen del Semestre
             </Typography>
-            {courses.length === 0 ? (
-              <Alert severity="info">No tienes cursos registrados</Alert>
-            ) : (
-              <Grid container spacing={2}>
-                {courses.map(course => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
-                    <Card>
-                      <CardContent>
-                        <Typography variant="h6" component="div">
-                          {course.name}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          {course.code}
-                        </Typography>
-                        <Typography variant="body2">
-                          {course.professor}
-                        </Typography>
-                        <Typography variant="body2">
-                          {course.schedule}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={3}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h4" color="primary">
+                    {courses.length}
+                  </Typography>
+                  <Typography variant="body1">Cursos</Typography>
+                </Box>
               </Grid>
-            )}
+              <Grid item xs={12} sm={3}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h4" color="error">
+                    {tasks.filter(t => t.priority === 'alta').length}
+                  </Typography>
+                  <Typography variant="body1">Tareas Prioritarias</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h4" color="warning.main">
+                    {events.filter(e => e.type === 'examen').length}
+                  </Typography>
+                  <Typography variant="body1">Exámenes</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h4" color="success.main">
+                    {tasks.filter(t => t.completed).length}
+                  </Typography>
+                  <Typography variant="body1">Tareas Completadas</Typography>
+                </Box>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       </Grid>
