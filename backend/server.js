@@ -23,6 +23,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/courses', require('./routes/courses'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/schedule', require('./routes/schedule'));
+app.use('/api/events', require('./routes/events'));
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)

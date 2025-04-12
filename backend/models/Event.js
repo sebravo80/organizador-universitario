@@ -4,36 +4,43 @@ const Schema = mongoose.Schema;
 const EventSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  course: {
-    type: Schema.Types.ObjectId,
-    ref: 'Course'
+    ref: 'user',
+    required: true
   },
   title: {
     type: String,
     required: true
+  },
+  description: {
+    type: String
   },
   start: {
     type: Date,
     required: true
   },
   end: {
-    type: Date,
-    required: true
+    type: Date
   },
   allDay: {
     type: Boolean,
     default: false
   },
-  color: {
-    type: String,
-    default: '#4285F4'
+  course: {
+    type: Schema.Types.ObjectId,
+    ref: 'course'
   },
-  date: {
+  type: {
+    type: String,
+    enum: ['clase', 'examen', 'taller', 'otro'],
+    default: 'otro'
+  },
+  recurrence: {
+    type: Object
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Event', EventSchema);
+module.exports = mongoose.model('event', EventSchema);

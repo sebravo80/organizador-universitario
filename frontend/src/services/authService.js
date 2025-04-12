@@ -45,3 +45,23 @@ export const logout = () => {
 export const isAuthenticated = () => {
   return localStorage.getItem('token') ? true : false;
 };
+
+// Actualizar perfil de usuario
+export const updateUser = async (userData) => {
+  try {
+    const response = await api.put('/auth/user', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+// Cambiar contraseña
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await api.put('/auth/password', passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
