@@ -35,8 +35,10 @@ try {
 
 // Middleware
 app.use(express.json());
+
+// Configuración de CORS
 app.use(cors({
-  origin: 'http://localhost:5173', // URL de tu frontend
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // URL de tu frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'x-auth-token']
 }));
@@ -69,6 +71,15 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === 'development' ? err.message : 'Error interno'
   });
 });
+
+// Servir archivos estáticos en producción
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 
