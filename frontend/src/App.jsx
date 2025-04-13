@@ -15,6 +15,7 @@ import WeeklyView from './pages/WeeklyView';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Events from './pages/Events'; // Importa el componente de eventos
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -63,6 +64,7 @@ function App() {
             <Route path="/courses" element={<Courses />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/weekly" element={<WeeklyView />} />
+            <Route path="/events" element={<Events />} /> {/* Agrega esta línea */}
             <Route path="/profile" element={<Profile />} />
           </Route>
           

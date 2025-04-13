@@ -5,11 +5,14 @@ import api from '../services/api';
 import { 
   Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
-  Card, CardContent, CardHeader, Button
+  Card, CardContent, CardHeader, Button,
+  Chip
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import CodeIcon from '@mui/icons-material/Code';
+import RoomIcon from '@mui/icons-material/Room';
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -74,6 +77,20 @@ const Dashboard = () => {
     return format(date, 'p', { locale: es });
   };
   
+  // Obtener color de prioridad
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'Alta':
+        return 'error';
+      case 'Media':
+        return 'warning';
+      case 'Baja':
+        return 'success';
+      default:
+        return 'default';
+    }
+  };
+  
   if (loading) {
     return (
       <Container maxWidth="lg">
@@ -118,10 +135,43 @@ const Dashboard = () => {
                       <div key={course._id}>
                         <ListItem>
                           <ListItemText
-                            primary={course.name}
+                            primary={
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Box 
+                                  component="span" 
+                                  sx={{ 
+                                    width: 12, 
+                                    height: 12, 
+                                    borderRadius: '50%', 
+                                    backgroundColor: course.color,
+                                    display: 'inline-block',
+                                    mr: 1
+                                  }} 
+                                />
+                                {course.name}
+                                {course.courseCode && (
+                                  <Chip 
+                                    size="small" 
+                                    label={course.courseCode} 
+                                    sx={{ ml: 1 }}
+                                    icon={<CodeIcon />}
+                                  />
+                                )}
+                              </Box>
+                            }
                             secondary={
                               <>
-                                {course.professor && `Profesor: ${course.professor}`}
+                                {course.professor && (
+                                  <Box component="span" display="block">
+                                    Profesor: {course.professor}
+                                  </Box>
+                                )}
+                                {course.room && (
+                                  <Box component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
+                                    {course.room}
+                                  </Box>
+                                )}
                                 {course.scheduleStrings && course.scheduleStrings.length > 0 && (
                                   <Box component="span" display="block">
                                     Horario: {course.scheduleStrings.join(', ')}
@@ -160,14 +210,21 @@ const Dashboard = () => {
                       <div key={task._id}>
                         <ListItem>
                           <ListItemText
-                            primary={task.title}
+                            primary={
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                {task.title}
+                                <Chip 
+                                  size="small" 
+                                  label={task.priority} 
+                                  color={getPriorityColor(task.priority)}
+                                  sx={{ ml: 1 }}
+                                />
+                              </Box>
+                            }
                             secondary={
                               <>
                                 <Box component="span" display="block">
                                   Vence: {formatDate(task.dueDate)}
-                                </Box>
-                                <Box component="span" display="block">
-                                  Prioridad: {task.priority}
                                 </Box>
                                 {task.course && (
                                   <Box component="span" display="block">
@@ -217,8 +274,9 @@ const Dashboard = () => {
                                   Hora: {formatTime(event.startDate)} - {formatTime(event.endDate)}
                                 </Box>
                                 {event.location && (
-                                  <Box component="span" display="block">
-                                    Lugar: {event.location}
+                                  <Box component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
+                                    {event.location}
                                   </Box>
                                 )}
                               </>

@@ -26,7 +26,11 @@ const EventSchema = mongoose.Schema({
   },
   color: {
     type: String,
-    default: '#2ecc71'
+    default: '#4CAF50'
+  },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'course'
   },
   date: {
     type: Date,

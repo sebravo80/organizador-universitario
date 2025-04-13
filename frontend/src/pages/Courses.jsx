@@ -17,6 +17,8 @@ import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import RoomIcon from '@mui/icons-material/Room';
+import CodeIcon from '@mui/icons-material/Code';
 
 const Courses = () => {
   const { isAuth } = useContext(AuthContext);
@@ -24,11 +26,15 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estado para el formulario de nuevo curso
+  // Estado para el formulario de curso
   const [open, setOpen] = useState(false);
-  const [newCourse, setNewCourse] = useState({
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentCourseId, setCurrentCourseId] = useState(null);
+  const [courseForm, setCourseForm] = useState({
     name: '',
     professor: '',
+    courseCode: '',
+    room: '',
     color: '#3498db',
     scheduleStrings: []
   });
@@ -72,17 +78,56 @@ const Courses = () => {
     }
   }, [isAuth]);
   
-  // Abrir diálogo
-  const handleOpen = () => {
+  // Abrir diálogo para crear curso
+  const handleOpenCreate = () => {
+    setIsEditing(false);
+    setCurrentCourseId(null);
+    setCourseForm({
+      name: '',
+      professor: '',
+      courseCode: '',
+      room: '',
+      color: '#3498db',
+      scheduleStrings: []
+    });
+    setTempSchedule({
+      day: 'Lunes',
+      startTime: null,
+      endTime: null
+    });
+    setOpen(true);
+  };
+  
+  // Abrir diálogo para editar curso
+  const handleOpenEdit = (course) => {
+    setIsEditing(true);
+    setCurrentCourseId(course._id);
+    setCourseForm({
+      name: course.name,
+      professor: course.professor || '',
+      courseCode: course.courseCode || '',
+      room: course.room || '',
+      color: course.color || '#3498db',
+      scheduleStrings: course.scheduleStrings || []
+    });
+    setTempSchedule({
+      day: 'Lunes',
+      startTime: null,
+      endTime: null
+    });
     setOpen(true);
   };
   
   // Cerrar diálogo
   const handleClose = () => {
     setOpen(false);
-    setNewCourse({
+    setIsEditing(false);
+    setCurrentCourseId(null);
+    setCourseForm({
       name: '',
       professor: '',
+      courseCode: '',
+      room: '',
       color: '#3498db',
       scheduleStrings: []
     });
@@ -95,8 +140,8 @@ const Courses = () => {
   
   // Manejar cambios en el formulario
   const handleChange = (e) => {
-    setNewCourse({
-      ...newCourse,
+    setCourseForm({
+      ...courseForm,
       [e.target.name]: e.target.value
     });
   };
@@ -125,9 +170,9 @@ const Courses = () => {
     const scheduleString = `${dayAbbr} ${formattedStartTime}-${formattedEndTime}`;
     
     // Agregar horario al curso
-    setNewCourse({
-      ...newCourse,
-      scheduleStrings: [...newCourse.scheduleStrings, scheduleString]
+    setCourseForm({
+      ...courseForm,
+      scheduleStrings: [...courseForm.scheduleStrings, scheduleString]
     });
     
     // Resetear horario temporal
@@ -140,35 +185,44 @@ const Courses = () => {
   
   // Eliminar horario
   const removeSchedule = (index) => {
-    setNewCourse({
-      ...newCourse,
-      scheduleStrings: newCourse.scheduleStrings.filter((_, i) => i !== index)
+    setCourseForm({
+      ...courseForm,
+      scheduleStrings: courseForm.scheduleStrings.filter((_, i) => i !== index)
     });
   };
   
-  // Crear curso
-  const createCourse = async () => {
+  // Guardar curso (crear o actualizar)
+  const saveCourse = async () => {
     try {
       // Validar que se haya ingresado un nombre
-      if (!newCourse.name.trim()) {
+      if (!courseForm.name.trim()) {
         setError('Por favor, ingresa un nombre para el curso.');
         return;
       }
       
-      console.log('Enviando datos del curso:', newCourse);
+      console.log('Enviando datos del curso:', courseForm);
       
-      const res = await api.post('/courses', newCourse);
-      
-      // Agregar el nuevo curso a la lista
-      setCourses([...courses, res.data]);
+      if (isEditing) {
+        // Actualizar curso existente
+        const res = await api.put(`/courses/${currentCourseId}`, courseForm);
+        
+        // Actualizar el curso en la lista
+        setCourses(courses.map(course => course._id === currentCourseId ? res.data : course));
+      } else {
+        // Crear nuevo curso
+        const res = await api.post('/courses', courseForm);
+        
+        // Agregar el nuevo curso a la lista
+        setCourses([...courses, res.data]);
+      }
       
       // Cerrar diálogo
       handleClose();
       
       setError(null);
     } catch (err) {
-      console.error('Error al crear curso:', err);
-      setError('Error al crear el curso. Por favor, intenta nuevamente.');
+      console.error('Error al guardar curso:', err);
+      setError(`Error al ${isEditing ? 'actualizar' : 'crear'} el curso. Por favor, intenta nuevamente.`);
     }
   };
   
@@ -197,7 +251,7 @@ const Courses = () => {
         <Button 
           variant="contained" 
           startIcon={<AddIcon />}
-          onClick={handleOpen}
+          onClick={handleOpenCreate}
           sx={{ mb: 3 }}
         >
           Nuevo Curso
@@ -228,9 +282,23 @@ const Courses = () => {
                       {course.name}
                     </Typography>
                     
+                    {course.courseCode && (
+                      <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <CodeIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        Código: {course.courseCode}
+                      </Typography>
+                    )}
+                    
                     {course.professor && (
                       <Typography variant="body1" color="text.secondary" gutterBottom>
                         Profesor: {course.professor}
+                      </Typography>
+                    )}
+                    
+                    {course.room && (
+                      <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        Sala: {course.room}
                       </Typography>
                     )}
                     
@@ -250,13 +318,15 @@ const Courses = () => {
                   <CardActions>
                     <IconButton 
                       aria-label="editar"
-                      // onClick={() => handleEdit(course._id)}
+                      onClick={() => handleOpenEdit(course)}
+                      title="Editar curso"
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton 
                       aria-label="eliminar"
                       onClick={() => deleteCourse(course._id)}
+                      title="Eliminar curso"
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -268,9 +338,9 @@ const Courses = () => {
         )}
       </Box>
       
-      {/* Diálogo para crear nuevo curso */}
+      {/* Diálogo para crear/editar curso */}
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogTitle>Nuevo Curso</DialogTitle>
+        <DialogTitle>{isEditing ? 'Editar Curso' : 'Nuevo Curso'}</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ mt: 1 }}>
             <TextField
@@ -280,8 +350,19 @@ const Courses = () => {
               id="name"
               label="Nombre del curso"
               name="name"
-              value={newCourse.name}
+              value={courseForm.name}
               onChange={handleChange}
+            />
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              id="courseCode"
+              label="Código del curso"
+              name="courseCode"
+              value={courseForm.courseCode}
+              onChange={handleChange}
+              placeholder="Ej: MAT1001"
             />
             
             <TextField
@@ -290,8 +371,19 @@ const Courses = () => {
               id="professor"
               label="Profesor"
               name="professor"
-              value={newCourse.professor}
+              value={courseForm.professor}
               onChange={handleChange}
+            />
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              id="room"
+              label="Sala"
+              name="room"
+              value={courseForm.room}
+              onChange={handleChange}
+              placeholder="Ej: A-101"
             />
             
             <TextField
@@ -301,7 +393,7 @@ const Courses = () => {
               label="Color"
               name="color"
               type="color"
-              value={newCourse.color}
+              value={courseForm.color}
               onChange={handleChange}
               sx={{ mb: 3 }}
             />
@@ -364,11 +456,11 @@ const Courses = () => {
               </Grid>
             </Grid>
             
-            {newCourse.scheduleStrings.length > 0 && (
+            {courseForm.scheduleStrings.length > 0 && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle1">Horarios agregados:</Typography>
                 <List>
-                  {newCourse.scheduleStrings.map((schedule, index) => (
+                  {courseForm.scheduleStrings.map((schedule, index) => (
                     <ListItem 
                       key={index}
                       secondaryAction={
@@ -387,7 +479,9 @@ const Courses = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={createCourse} variant="contained">Crear</Button>
+          <Button onClick={saveCourse} variant="contained">
+            {isEditing ? 'Guardar cambios' : 'Crear'}
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

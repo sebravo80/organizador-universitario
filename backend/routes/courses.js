@@ -22,11 +22,13 @@ router.get('/', auth, async (req, res) => {
 // @access  Private
 router.post('/', auth, async (req, res) => {
   try {
-    const { name, professor, scheduleStrings, color } = req.body;
+    const { name, professor, courseCode, room, scheduleStrings, color } = req.body;
     
     console.log('Recibida solicitud para crear curso:', {
       name,
       professor,
+      courseCode,
+      room,
       scheduleStrings,
       color
     });
@@ -35,6 +37,8 @@ router.post('/', auth, async (req, res) => {
     const newCourse = new Course({
       name,
       professor,
+      courseCode,
+      room,
       scheduleStrings: scheduleStrings || [],
       color,
       user: req.user.id
@@ -82,12 +86,14 @@ router.get('/:id', auth, async (req, res) => {
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
-    const { name, professor, scheduleStrings, color } = req.body;
+    const { name, professor, courseCode, room, scheduleStrings, color } = req.body;
     
     // Construir objeto de curso
     const courseFields = {};
     if (name) courseFields.name = name;
     if (professor !== undefined) courseFields.professor = professor;
+    if (courseCode !== undefined) courseFields.courseCode = courseCode;
+    if (room !== undefined) courseFields.room = room;
     if (scheduleStrings) courseFields.scheduleStrings = scheduleStrings;
     if (color) courseFields.color = color;
     

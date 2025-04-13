@@ -10,10 +10,15 @@ const CourseSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  courseCode: {
+    type: String
+  },
   professor: {
     type: String
   },
-  // Usaremos un array de strings para los horarios
+  room: {
+    type: String
+  },
   scheduleStrings: [String],
   color: {
     type: String,
