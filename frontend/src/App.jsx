@@ -15,7 +15,7 @@ import WeeklyView from './pages/WeeklyView';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import Events from './pages/Events'; // Importa el componente de eventos
+import Events from './pages/Events';
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
