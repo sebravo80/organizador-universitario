@@ -1,271 +1,242 @@
+// src/pages/Dashboard.jsx
 import { useState, useEffect, useContext } from 'react';
-import { 
-  Container, Grid, Paper, Typography, Box, 
-  List, ListItem, ListItemText, Divider, 
-  Chip, CircularProgress, Alert
-} from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
-import { getCourses } from '../services/courseService';
-import { getTasks } from '../services/taskService';
-import { getEvents } from '../services/eventService';
-import TaskCountdown from '../components/TaskCountdown';
+import api from '../services/api';
+import { 
+  Container, Typography, Box, Grid, Paper, 
+  List, ListItem, ListItemText, Divider, 
+  Card, CardContent, CardHeader, Button
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-function Dashboard() {
-  const { user } = useContext(AuthContext);
+const Dashboard = () => {
+  const { user, isAuth } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Cargar cursos, tareas y eventos en paralelo
-        const [coursesData, tasksData, eventsData] = await Promise.all([
-          getCourses(),
-          getTasks(),
-          getEvents()
-        ]);
+        // Obtener cursos
+        const coursesRes = await api.get('/courses');
+        setCourses(coursesRes.data);
         
-        setCourses(coursesData);
+        // Obtener tareas
+        const tasksRes = await api.get('/tasks');
+        setTasks(tasksRes.data);
         
-        // Filtrar tareas no completadas
-        const pendingTasks = tasksData.filter(task => !task.completed);
-        setTasks(pendingTasks);
-        
-        // Filtrar eventos futuros
-        const now = new Date();
-        const upcomingEvents = eventsData.filter(event => new Date(event.start) > now);
-        // Ordenar por fecha
-        upcomingEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
-        setEvents(upcomingEvents);
+        // Obtener eventos
+        const eventsRes = await api.get('/events');
+        setEvents(eventsRes.data);
         
         setError(null);
       } catch (err) {
-        console.error('Error al cargar datos del dashboard:', err);
-        setError('Error al cargar los datos. Por favor, intenta de nuevo más tarde.');
+        console.error('Error al cargar datos:', err);
+        setError('Error al cargar los datos. Por favor, intenta nuevamente.');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchData();
-  }, []);
-
-  // Función para formatear fecha
-  const formatDate = (dateString) => {
-    const options = { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
-  };
-
-  // Función para obtener color según prioridad
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'alta': return 'error';
-      case 'media': return 'warning';
-      case 'baja': return 'success';
-      default: return 'default';
+    
+    if (isAuth) {
+      fetchData();
     }
+  }, [isAuth]);
+  
+  // Obtener tareas próximas (ordenadas por fecha de vencimiento)
+  const upcomingTasks = tasks
+    .filter(task => task.status !== 'Completada')
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .slice(0, 5);
+  
+  // Obtener eventos próximos (ordenados por fecha de inicio)
+  const upcomingEvents = events
+    .filter(event => new Date(event.startDate) >= new Date())
+    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+    .slice(0, 5);
+  
+  // Formatear fecha
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'PPP', { locale: es });
   };
-
+  
+  // Formatear hora
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'p', { locale: es });
+  };
+  
   if (loading) {
     return (
-      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
+      <Container maxWidth="lg">
+        <Box sx={{ mt: 4 }}>
+          <Typography>Cargando datos...</Typography>
+        </Box>
       </Container>
     );
   }
-
-  if (error) {
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error">{error}</Alert>
-      </Container>
-    );
-  }
-
+  
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Bienvenido, {user?.name || 'Usuario'}
-      </Typography>
-      
-      <Grid container spacing={3}>
-        {/* Resumen de cursos */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Mis Cursos ({courses.length})
-            </Typography>
-            {courses.length === 0 ? (
-              <Alert severity="info">
-                No tienes cursos registrados. ¡Añade tu primer curso!
-              </Alert>
-            ) : (
-              <List>
-                {courses.slice(0, 5).map((course, index) => (
-                  <Box key={course._id}>
-                    {index > 0 && <Divider />}
-                    <ListItem>
-                      <ListItemText
-                        primary={course.name}
-                        secondary={`${course.code} - ${course.professor}`}
-                      />
-                    </ListItem>
-                  </Box>
-                ))}
-                {courses.length > 5 && (
-                  <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-                    Y {courses.length - 5} más...
-                  </Typography>
+    <Container maxWidth="lg">
+      <Box sx={{ mt: 4, mb: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Bienvenido, {user?.name}
+        </Typography>
+        
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
+        
+        <Grid container spacing={3}>
+          {/* Cursos */}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardHeader 
+                title="Mis Cursos" 
+                action={
+                  <Button component={Link} to="/courses" size="small">
+                    Ver todos
+                  </Button>
+                }
+              />
+              <CardContent>
+                {courses.length === 0 ? (
+                  <Typography>No tienes cursos registrados.</Typography>
+                ) : (
+                  <List>
+                    {courses.slice(0, 5).map(course => (
+                      <div key={course._id}>
+                        <ListItem>
+                          <ListItemText
+                            primary={course.name}
+                            secondary={
+                              <>
+                                {course.professor && `Profesor: ${course.professor}`}
+                                {course.scheduleStrings && course.scheduleStrings.length > 0 && (
+                                  <Box component="span" display="block">
+                                    Horario: {course.scheduleStrings.join(', ')}
+                                  </Box>
+                                )}
+                              </>
+                            }
+                          />
+                        </ListItem>
+                        <Divider />
+                      </div>
+                    ))}
+                  </List>
                 )}
-              </List>
-            )}
-          </Paper>
-        </Grid>
-        
-        {/* Tareas pendientes */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Tareas Pendientes ({tasks.length})
-            </Typography>
-            {tasks.length === 0 ? (
-              <Alert severity="success">
-                ¡No tienes tareas pendientes!
-              </Alert>
-            ) : (
-              <List>
-                {tasks.slice(0, 5).map((task, index) => (
-                  <Box key={task._id}>
-                    {index > 0 && <Divider />}
-                    <ListItem>
-                      <ListItemText
-                        primary={task.title}
-                        secondary={
-                          <>
-                            {task.course?.name && `${task.course.name} - `}
-                            {new Date(task.dueDate).toLocaleDateString()}
-                          </>
-                        }
-                      />
-                      <Chip 
-                        label={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} 
-                        size="small" 
-                        color={getPriorityColor(task.priority)}
-                      />
-                    </ListItem>
-                  </Box>
-                ))}
-                {tasks.length > 5 && (
-                  <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-                    Y {tasks.length - 5} más...
-                  </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          {/* Tareas próximas */}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardHeader 
+                title="Tareas Próximas" 
+                action={
+                  <Button component={Link} to="/tasks" size="small">
+                    Ver todas
+                  </Button>
+                }
+              />
+              <CardContent>
+                {upcomingTasks.length === 0 ? (
+                  <Typography>No tienes tareas pendientes.</Typography>
+                ) : (
+                  <List>
+                    {upcomingTasks.map(task => (
+                      <div key={task._id}>
+                        <ListItem>
+                          <ListItemText
+                            primary={task.title}
+                            secondary={
+                              <>
+                                <Box component="span" display="block">
+                                  Vence: {formatDate(task.dueDate)}
+                                </Box>
+                                <Box component="span" display="block">
+                                  Prioridad: {task.priority}
+                                </Box>
+                                {task.course && (
+                                  <Box component="span" display="block">
+                                    Curso: {task.course.name}
+                                  </Box>
+                                )}
+                              </>
+                            }
+                          />
+                        </ListItem>
+                        <Divider />
+                      </div>
+                    ))}
+                  </List>
                 )}
-              </List>
-            )}
-          </Paper>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          {/* Eventos próximos */}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardHeader 
+                title="Eventos Próximos" 
+                action={
+                  <Button component={Link} to="/weekly" size="small">
+                    Ver calendario
+                  </Button>
+                }
+              />
+              <CardContent>
+                {upcomingEvents.length === 0 ? (
+                  <Typography>No tienes eventos próximos.</Typography>
+                ) : (
+                  <List>
+                    {upcomingEvents.map(event => (
+                      <div key={event._id}>
+                        <ListItem>
+                          <ListItemText
+                            primary={event.title}
+                            secondary={
+                              <>
+                                <Box component="span" display="block">
+                                  Fecha: {formatDate(event.startDate)}
+                                </Box>
+                                <Box component="span" display="block">
+                                  Hora: {formatTime(event.startDate)} - {formatTime(event.endDate)}
+                                </Box>
+                                {event.location && (
+                                  <Box component="span" display="block">
+                                    Lugar: {event.location}
+                                  </Box>
+                                )}
+                              </>
+                            }
+                          />
+                        </ListItem>
+                        <Divider />
+                      </div>
+                    ))}
+                  </List>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        
-        {/* Próximos eventos */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Próximos Eventos
-            </Typography>
-            {events.length === 0 ? (
-              <Alert severity="info">
-                No tienes eventos próximos programados.
-              </Alert>
-            ) : (
-              <List>
-                {events.slice(0, 5).map((event, index) => (
-                  <Box key={event._id}>
-                    {index > 0 && <Divider />}
-                    <ListItem>
-                      <ListItemText
-                        primary={event.title}
-                        secondary={
-                          <>
-                            {event.course?.name && `${event.course.name} - `}
-                            {formatDate(event.start)}
-                            {event.end && ` hasta ${formatDate(event.end)}`}
-                          </>
-                        }
-                      />
-                      <Chip 
-                        label={event.type || 'Evento'} 
-                        size="small" 
-                        color={event.type === 'examen' ? 'error' : 'primary'}
-                      />
-                    </ListItem>
-                  </Box>
-                ))}
-              </List>
-            )}
-          </Paper>
-        </Grid>
-        
-        {/* Cuenta regresiva de tareas */}
-        <Grid item xs={12}>
-          <TaskCountdown />
-        </Grid>
-        
-        {/* Resumen del semestre */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Resumen del Semestre
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={3}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="primary">
-                    {courses.length}
-                  </Typography>
-                  <Typography variant="body1">Cursos</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="error">
-                    {tasks.filter(t => t.priority === 'alta').length}
-                  </Typography>
-                  <Typography variant="body1">Tareas Prioritarias</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="warning.main">
-                    {events.filter(e => e.type === 'examen').length}
-                  </Typography>
-                  <Typography variant="body1">Exámenes</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="success.main">
-                    {tasks.filter(t => t.completed).length}
-                  </Typography>
-                  <Typography variant="body1">Tareas Completadas</Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </Grid>
+      </Box>
     </Container>
   );
-}
+};
 
 export default Dashboard;

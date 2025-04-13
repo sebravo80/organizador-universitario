@@ -8,29 +8,23 @@ const api = axios.create({
   }
 });
 
-// Interceptor para añadir el token a las solicitudes
+// Interceptor para mostrar las solicitudes en la consola (solo en desarrollo)
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['x-auth-token'] = token;
-    }
+  config => {
+    console.log('Enviando solicitud:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      data: config.data ? (
+        config.url.includes('/auth') || config.url.includes('/users') 
+          ? { ...config.data, password: config.data.password ? '***' : undefined }
+          : config.data
+      ) : undefined
+    });
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Interceptor para manejar errores de respuesta
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Si el error es 401 (no autorizado), limpiar el token y redirigir a login
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+  error => {
+    console.error('Error en la solicitud:', error);
     return Promise.reject(error);
   }
 );

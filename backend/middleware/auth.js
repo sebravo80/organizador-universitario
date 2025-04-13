@@ -1,5 +1,6 @@
 // backend/middleware/auth.js
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 module.exports = function(req, res, next) {
   // Obtener token del header
@@ -14,11 +15,10 @@ module.exports = function(req, res, next) {
     // Verificar token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Añadir usuario al request
+    // Agregar usuario al request
     req.user = decoded.user;
     next();
   } catch (err) {
-    console.error('Error en middleware auth:', err.message);
     res.status(401).json({ msg: 'Token no válido' });
   }
 };

@@ -1,11 +1,14 @@
+// backend/models/Task.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const TaskSchema = new Schema({
+const TaskSchema = mongoose.Schema({
   user: {
-    type: Schema.Types.ObjectId,
-    ref: 'user',
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users'
+  },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'courses'
   },
   title: {
     type: String,
@@ -20,23 +23,18 @@ const TaskSchema = new Schema({
   },
   priority: {
     type: String,
-    enum: ['baja', 'media', 'alta'],
-    default: 'media'
+    enum: ['Baja', 'Media', 'Alta'],
+    default: 'Media'
   },
-  completed: {
-    type: Boolean,
-    default: false
+  status: {
+    type: String,
+    enum: ['Pendiente', 'En progreso', 'Completada'],
+    default: 'Pendiente'
   },
-  course: {
-    type: Schema.Types.ObjectId,
-    ref: 'course'
-  },
-  createdAt: {
+  date: {
     type: Date,
     default: Date.now
   }
 });
 
-const Task = mongoose.model('task', TaskSchema);
-
-module.exports = Task;
+module.exports = mongoose.model('task', TaskSchema);

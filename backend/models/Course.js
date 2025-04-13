@@ -1,42 +1,28 @@
 // backend/models/Course.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-// Definir el esquema
-const CourseSchema = new Schema({
+const CourseSchema = mongoose.Schema({
   user: {
-    type: Schema.Types.ObjectId,
-    ref: 'user',
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users'
   },
   name: {
     type: String,
     required: true
   },
-  code: {
-    type: String
-  },
   professor: {
     type: String
   },
-  schedule: {
-    type: String
-  },
-  location: {
-    type: String
-  },
+  // Usaremos un array de strings para los horarios
+  scheduleStrings: [String],
   color: {
     type: String,
-    default: '#3788d8'
+    default: '#3498db'
   },
-  createdAt: {
+  date: {
     type: Date,
     default: Date.now
   }
 });
 
-// Registrar el modelo
-const Course = mongoose.model('course', CourseSchema);
-
-// Exportar el modelo
-module.exports = Course;
+module.exports = mongoose.model('course', CourseSchema);
