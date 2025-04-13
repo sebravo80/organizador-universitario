@@ -1,129 +1,85 @@
 // src/components/TaskCountdown.jsx
 import { useState, useEffect } from 'react';
-import { 
-  Box, Typography, Paper, List, ListItem, ListItemText, 
-  Chip, Divider, Alert, CircularProgress
-} from '@mui/material';
-import { getTasks } from '../services/taskService';
+import { Box, Typography } from '@mui/material';
+import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 
-// Función para calcular días restantes
-const getDaysRemaining = (dueDate) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+const TaskCountdown = ({ dueDate }) => {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0
+  });
   
-  const due = new Date(dueDate);
-  due.setHours(0, 0, 0, 0);
+  const [isExpired, setIsExpired] = useState(false);
   
-  const diffTime = due - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  return diffDays;
-};
-
-// Función para obtener color según días restantes
-const getCountdownColor = (days) => {
-  if (days < 0) return 'error';
-  if (days === 0) return 'error';
-  if (days <= 2) return 'warning';
-  if (days <= 5) return 'info';
-  return 'success';
-};
-
-// Función para obtener texto según días restantes
-const getCountdownText = (days) => {
-  if (days < 0) return `¡Vencida hace ${Math.abs(days)} ${Math.abs(days) === 1 ? 'día' : 'días'}!`;
-  if (days === 0) return '¡Vence hoy!';
-  if (days === 1) return 'Vence mañana';
-  return `Faltan ${days} días`;
-};
-
-function TaskCountdown() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        setLoading(true);
-        const tasksData = await getTasks();
-        
-        // Filtrar tareas no completadas
-        const pendingTasks = tasksData.filter(task => !task.completed);
-        
-        // Ordenar por días restantes (primero las más urgentes)
-        pendingTasks.sort((a, b) => {
-          const daysA = getDaysRemaining(a.dueDate);
-          const daysB = getDaysRemaining(b.dueDate);
-          return daysA - daysB;
-        });
-        
-        setTasks(pendingTasks);
-        setError(null);
-      } catch (err) {
-        setError('Error al cargar las tareas');
-        console.error(err);
-      } finally {
-        setLoading(false);
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const due = new Date(dueDate);
+      
+      // Verificar si la fecha de vencimiento ya pasó
+      if (due <= now) {
+        setIsExpired(true);
+        return;
       }
+      
+      // Calcular tiempo restante
+      const days = differenceInDays(due, now);
+      const hours = differenceInHours(due, now) % 24;
+      const minutes = differenceInMinutes(due, now) % 60;
+      
+      setTimeLeft({ days, hours, minutes });
     };
-
-    loadTasks();
-  }, []);
-
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress size={30} />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return <Alert severity="error">{error}</Alert>;
-  }
-
-  if (tasks.length === 0) {
-    return <Alert severity="info">No tienes tareas pendientes</Alert>;
-  }
-
+    
+    // Calcular tiempo restante inicialmente
+    calculateTimeLeft();
+    
+    // Actualizar cada minuto
+    const interval = setInterval(calculateTimeLeft, 60000);
+    
+    // Limpiar intervalo al desmontar
+    return () => clearInterval(interval);
+  }, [dueDate]);
+  
+  // Determinar color según el tiempo restante
+  const getColor = () => {
+    if (isExpired) {
+      return 'error.main';
+    }
+    
+    if (timeLeft.days === 0) {
+      if (timeLeft.hours < 6) {
+        return 'error.main';
+      } else {
+        return 'warning.main';
+      }
+    } else if (timeLeft.days <= 2) {
+      return 'warning.main';
+    } else {
+      return 'success.main';
+    }
+  };
+  
   return (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Cuenta regresiva de tareas
-      </Typography>
-      <List>
-        {tasks.slice(0, 5).map((task, index) => {
-          const daysRemaining = getDaysRemaining(task.dueDate);
-          const countdownColor = getCountdownColor(daysRemaining);
-          const countdownText = getCountdownText(daysRemaining);
-          
-          return (
-            <Box key={task._id}>
-              {index > 0 && <Divider />}
-              <ListItem>
-                <ListItemText
-                  primary={task.title}
-                  secondary={
-                    <>
-                      {task.course?.name && `${task.course.name} - `}
-                      {new Date(task.dueDate).toLocaleDateString()}
-                    </>
-                  }
-                />
-                <Chip
-                  label={countdownText}
-                  color={countdownColor}
-                  size="small"
-                  sx={{ ml: 1 }}
-                />
-              </ListItem>
-            </Box>
-          );
-        })}
-      </List>
-    </Paper>
+    <Box sx={{ 
+      p: 1, 
+      borderRadius: 1,
+      backgroundColor: `${getColor()}20`,
+      display: 'inline-block'
+    }}>
+      {isExpired ? (
+        <Typography variant="body2" color="error.main" fontWeight="bold">
+          ¡Vencida!
+        </Typography>
+      ) : (
+        <Typography variant="body2" color={getColor()} fontWeight="bold">
+          {timeLeft.days > 0 && `${timeLeft.days} día${timeLeft.days !== 1 ? 's' : ''} `}
+          {timeLeft.hours > 0 && `${timeLeft.hours} hora${timeLeft.hours !== 1 ? 's' : ''} `}
+          {timeLeft.days === 0 && `${timeLeft.minutes} minuto${timeLeft.minutes !== 1 ? 's' : ''}`}
+        </Typography>
+      )}
+    </Box>
   );
-}
+};
 
 export default TaskCountdown;

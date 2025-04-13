@@ -6,10 +6,6 @@ const TaskSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users'
   },
-  course: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'courses'
-  },
   title: {
     type: String,
     required: true
@@ -17,13 +13,17 @@ const TaskSchema = mongoose.Schema({
   description: {
     type: String
   },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'course'
+  },
   dueDate: {
     type: Date,
     required: true
   },
   priority: {
     type: String,
-    enum: ['Baja', 'Media', 'Alta'],
+    enum: ['Alta', 'Media', 'Baja'], // Cambiado a mayúsculas iniciales
     default: 'Media'
   },
   status: {
