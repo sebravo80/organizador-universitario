@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: organizador-universitario-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        fromDatabase:
+          name: mongodb
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+databases:
+  - name: mongodb
+    databaseName: organizador-db
+    ipAllowList: []  # Permite acceso desde cualquier lugar
