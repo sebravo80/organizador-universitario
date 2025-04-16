@@ -20,32 +20,16 @@ export const AuthProvider = ({ children }) => {
       
       console.log('Intentando iniciar sesión con:', { email });
       
-      // Usar fetch directamente para ver más detalles
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+      // CAMBIADO: Usa api en lugar de fetch directamente
+      const response = await api.post('/auth', { email, password });
       
-      console.log('Respuesta del servidor:', {
-        status: response.status,
-        statusText: response.statusText
-      });
-      
-      const data = await response.json();
-      console.log('Datos de respuesta:', data);
-      
-      if (!response.ok) {
-        throw { response: { status: response.status, data } };
-      }
+      console.log('Respuesta del servidor:', response.data);
       
       // Guardar token en localStorage
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', response.data.token);
       
       // Configurar token en headers
-      api.defaults.headers.common['x-auth-token'] = data.token;
+      api.defaults.headers.common['x-auth-token'] = response.data.token;
       
       // Cargar datos del usuario
       const userRes = await api.get('/auth');
