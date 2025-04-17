@@ -15,6 +15,32 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthContext } from '../context/AuthContext';
 
+const styles = {
+  navbar: {
+    backgroundColor: 'var(--primary-color)',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  },
+  logo: {
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  activeLink: {
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: '-4px',
+      left: 0,
+      width: '100%',
+      height: '3px',
+      backgroundColor: 'var(--accent-color)',
+      borderRadius: '3px',
+    }
+  }
+};
+
 function Navbar() {
   const { user, isAuth, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -74,7 +100,7 @@ function Navbar() {
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={styles.navbar}>
         <Toolbar>
           {isAuth && (
             <IconButton
@@ -89,7 +115,7 @@ function Navbar() {
             </IconButton>
           )}
           
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ...styles.logo }}>
             <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               Organizador Universitario
             </RouterLink>

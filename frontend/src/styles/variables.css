@@ -1,0 +1,18 @@
+:root {
+  /* Colores primarios */
+  --primary-color: #2c3e50;       /* Azul oscuro */
+  --secondary-color: #3498db;     /* Azul claro */
+  --accent-color: #e74c3c;        /* Rojo/Acento */
+  
+  /* Colores neutros */
+  --background-light: #f8f9fa;
+  --background-dark: #343a40;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  
+  /* Colores de estado */
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+}
