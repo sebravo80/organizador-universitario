@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/organizador-universitario/', 
   server: {
-    port: 5173, 
+    port: 5173, // Cambia esto si es necesario
   },
 });

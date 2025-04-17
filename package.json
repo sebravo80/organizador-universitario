@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "Aplicación para organizar tareas universitarias",
   "main": "index.js",
-  "homepage": "https://tu-usuario-github.github.io/organizador-universitario",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
     "start": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
     "install-deps": "concurrently \"cd backend && npm install\" \"cd frontend && npm install\""
     

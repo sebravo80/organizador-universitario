@@ -2,9 +2,7 @@
 import axios from 'axios';
 
 // Determinar la URL base según el entorno
-const baseURL = import.meta.env.PROD 
-  ? 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api' 
-  : 'http://localhost:5000/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL,
