@@ -37,11 +37,13 @@ try {
 app.use(express.json());
 
 // Configuración de CORS
-// En tu archivo server.js del backend
 app.use(cors({
-  origin: ['https://diatomeauniversitaria.netlify.app', 'http://localhost:5173'],
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL || 'https://diatomeauniversitaria.netlify.app/'] 
+    : ['https://diatomeauniversitaria.netlify.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'x-auth-token']
+  allowedHeaders: ['Content-Type', 'x-auth-token'],
+  credentials: true
 }));
 
 // Middleware para registrar todas las solicitudes

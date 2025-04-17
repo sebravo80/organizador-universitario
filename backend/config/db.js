@@ -9,7 +9,6 @@ const connectDB = async () => {
     }
     
     console.log('Intentando conectar a MongoDB...');
-    console.log('URI:', process.env.MONGO_URI.replace(/mongodb\+srv:\/\/([^:]+):([^@]+)@/, 'mongodb+srv://****:****@'));
     
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
@@ -20,7 +19,7 @@ const connectDB = async () => {
     return conn;
   } catch (err) {
     console.error(`Error al conectar a MongoDB: ${err.message}`);
-    throw err; // Propagar el error para que sea manejado por el servidor
+    throw err;
   }
 };
 
