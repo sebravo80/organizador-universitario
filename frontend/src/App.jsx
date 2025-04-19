@@ -2,6 +2,8 @@ import { useContext } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
+import './App.css';
+import './styles/theme.css';
 
 // Componentes
 import Navbar from './components/Navbar';

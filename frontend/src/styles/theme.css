@@ -1,22 +1,81 @@
 :root {
   /* Tema claro (predeterminado) */
-  --bg-primary: #f8f9fa;
-  --bg-secondary: #ffffff;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --border-color: #dee2e6;
+  --bg-primary: #ffffff;
+  --bg-secondary: #545454;
+  --bg-terciary: #890035;
+  --text-primary: #9f9f9f;
+  --text-secondary: #000000;
+  --text-terciary: #000000;
+  --border-color: #333333;
+  --border-color-secondary: #99003b;
+  --card-bg: #252525;
+  --navbar-bg: #99003b;
+  --focus-color: #4c001d00;
 }
 
 [data-theme="dark"] {
-  --bg-primary: #121212;
+  --bg-primary: #242424;
   --bg-secondary: #1e1e1e;
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a0a0;
+  --bg-terciary: #3e0018;
+  --text-primary: #9f9f9f;
+  --text-secondary: #ffffff;
+  --text-terciary: #ffffff;
   --border-color: #333333;
+  --border-color-secondary: #4c001d;
+  --card-bg: #252525;
+  --navbar-bg: #4c001d;
+  --focus-color: #4c001d00;
 }
 
 body {
   background-color: var(--bg-primary);
-  color: var(--text-primary);
+  color: var(--text-terciary);
   transition: all 0.3s ease;
+}
+
+
+.MuiPaper-root {
+  background-color: var(--card-bg) !important;
+  color: var(--text-terciary) !important;
+}
+
+.MuiAppBar-root {
+  background-color: var(--navbar-bg) !important;
+  color: var(--text-terciary) !important;
+}
+
+[data-theme="dark"] .MuiAppBar-root {
+  color: var(--text-terciary) !important;
+}
+
+.MuiButtonBase-root {
+  background-color: var(--bg-terciary) !important;
+  color: var(--text-terciary) !important;
+  border: 0px solid var(--border-color) !important;
+}
+
+.MuiInputBase-root {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 0px solid var(--border-color) !important;
+}
+
+.MuiInputLabel-root {
+  color: var(--text-secondary) !important;
+
+  transition: color 0.3s ease;
+  &:focus {
+    color: var(--focus-color) !important;
+  }
+}
+
+.MuiOutlinedInput-root {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-terciary) !important;
+  border: 0.5cap solid var(--border-color-secondary) !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--focus-color) !important;
+  transition: border-color 0.3s ease !important;
 }

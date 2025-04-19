@@ -1,12 +1,20 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
+  // Obtener preferencia del tema del localStorage o usar claro por defecto
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark';
+  });
 
+  // Efecto para actualizar el atributo data-theme en el elemento HTML
   useEffect(() => {
-    localStorage.setItem('darkMode', darkMode);
+    // Guardar preferencia en localStorage
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    
+    // Aplicar el tema al elemento HTML
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
