@@ -19,7 +19,7 @@
   --bg-terciary: #3e0018;
   --text-primary: #9f9f9f;
   --text-secondary: #ffffff;
-  --text-terciary: #ffffff;
+  --text-terciary: #7b7b7b;
   --border-color: #333333;
   --border-color-secondary: #4c001d;
   --card-bg: #252525;
@@ -45,7 +45,7 @@ body {
 }
 
 [data-theme="dark"] .MuiPaper-root.MuiCard-root {
-  background-color: #ca7093 !important; /* Color oscuro para el tema dark */
+  background-color: #ffffff !important; /* Color oscuro para el tema dark */
 }
 
 .MuiAppBar-root {
