@@ -32,3 +32,30 @@ body {
 .priority-low {
   background-color: rgba(0, 128, 0, 0.1);
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (min-width: 1024px) {
+  .app-container {
+    min-height: 100vh;
+  }
+  
+  .content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 20px;
+  }
+}
