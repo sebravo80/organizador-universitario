@@ -39,6 +39,15 @@ body {
   color: var(--text-terciary) !important;
 }
 
+/* Modificación para el fondo de las tarjetas */
+.MuiPaper-root.MuiCard-root {
+  background-color: #f0f4f8 !important; /* Color claro para el tema light */
+}
+
+[data-theme="dark"] .MuiPaper-root.MuiCard-root {
+  background-color: #940039 !important; /* Color oscuro para el tema dark */
+}
+
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
   color: var(--text-terciary) !important;
@@ -79,3 +88,4 @@ body {
   border-color: var(--focus-color) !important;
   transition: border-color 0.3s ease !important;
 }
+
