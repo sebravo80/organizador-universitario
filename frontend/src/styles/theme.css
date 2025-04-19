@@ -31,6 +31,11 @@ body {
   backdrop-filter: blur(5px) !important;
 }
 
+/* Añadir estilos específicos para el texto dentro de las tarjetas */
+.MuiPaper-root.MuiCard-root .MuiTypography-root {
+  color: #000000 !important; /* Negro para mejor contraste en tarjetas claras */
+}
+
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
   color: var(--text-terciary) !important;
