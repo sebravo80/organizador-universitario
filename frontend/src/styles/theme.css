@@ -1,5 +1,4 @@
 :root {
-  /* Aplicar directamente valores del tema oscuro como predeterminados */
   --bg-primary: #242424;
   --bg-secondary: #1e1e1e;
   --bg-terciary: #72002a;
@@ -8,30 +7,33 @@
   --text-terciary: #7b7b7b;
   --border-color: #333333;
   --border-color-secondary: #72002a;
-  --card-bg: #252525;
+  --card-bg: rgba(37, 37, 37, 0.85); /* Cambiamos para agregar transparencia */
   --navbar-bg: #72002a;
   --focus-color: #4c001d00;
 }
 
 body {
-  background-color: var(--bg-primary);
   color: var(--text-terciary);
   transition: all 0.3s ease;
+  /* Eliminamos el background-color de aquí ya que se establece en index.css */
 }
 
 .MuiPaper-root {
   background-color: var(--card-bg) !important;
   color: var(--text-terciary) !important;
+  backdrop-filter: blur(5px) !important; /* Efecto de desenfoque para mejorar legibilidad */
 }
 
 /* Modificación para el fondo de las tarjetas */
 .MuiPaper-root.MuiCard-root {
-  background-color: #1e1e1e !important; /* Solo tema oscuro */
+  background-color: rgba(255, 255, 255, 0.85) !important; /* Fondo oscuro con transparencia */
+  backdrop-filter: blur(5px) !important;
 }
 
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
   color: var(--text-terciary) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important; /* Añadir sombra para destacar */
 }
 
 .MuiButtonBase-root {
