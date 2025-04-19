@@ -1,19 +1,5 @@
 :root {
-  /* Tema claro (predeterminado) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #545454;
-  --bg-terciary: #890035;
-  --text-primary: #9f9f9f;
-  --text-secondary: #000000;
-  --text-terciary: #000000;
-  --border-color: #333333;
-  --border-color-secondary: #99003b;
-  --card-bg: #252525;
-  --navbar-bg: #99003b;
-  --focus-color: #4c001d00;
-}
-
-[data-theme="dark"] {
+  /* Aplicar directamente valores del tema oscuro como predeterminados */
   --bg-primary: #242424;
   --bg-secondary: #1e1e1e;
   --bg-terciary: #72002a;
@@ -33,7 +19,6 @@ body {
   transition: all 0.3s ease;
 }
 
-
 .MuiPaper-root {
   background-color: var(--card-bg) !important;
   color: var(--text-terciary) !important;
@@ -41,19 +26,11 @@ body {
 
 /* Modificación para el fondo de las tarjetas */
 .MuiPaper-root.MuiCard-root {
-  background-color: #f0f4f8 !important; /* Color claro para el tema light */
-}
-
-[data-theme="dark"] .MuiPaper-root.MuiCard-root {
-  background-color: #ffffff !important; /* Color oscuro para el tema dark */
+  background-color: #1e1e1e !important; /* Solo tema oscuro */
 }
 
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
-  color: var(--text-terciary) !important;
-}
-
-[data-theme="dark"] .MuiAppBar-root {
   color: var(--text-terciary) !important;
 }
 

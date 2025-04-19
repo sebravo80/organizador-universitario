@@ -32,28 +32,3 @@ body {
 .priority-low {
   background-color: rgba(0, 128, 0, 0.1);
 }
-
-/* Estilo para el botón de cambio de tema */
-.theme-toggle-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  margin-left: 10px;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  transition: background-color 0.3s ease;
-}
-
-.theme-toggle-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .theme-toggle-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}

@@ -123,7 +123,16 @@ function Navbar() {
             </RouterLink>
           </Typography>
           
-          {isAuth ? (
+          {!user ? (
+            <Box>
+              <Button color="inherit" component={RouterLink} to="/login">
+                Iniciar sesión
+              </Button>
+              <Button color="inherit" component={RouterLink} to="/register">
+                Registrarse
+              </Button>
+            </Box>
+          ) : (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
                 size="large"
@@ -167,24 +176,7 @@ function Navbar() {
                 </MenuItem>
               </Menu>
             </Box>
-          ) : (
-            <Box>
-              <Button color="inherit" component={RouterLink} to="/login">
-                Iniciar sesión
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/register">
-                Registrarse
-              </Button>
-            </Box>
           )}
-          
-          <button 
-            onClick={toggleTheme} 
-            className="theme-toggle-btn" 
-            aria-label="Cambiar tema"
-          >
-            {darkMode ? '☀️' : '🌙'}
-          </button>
         </Toolbar>
       </AppBar>
       
