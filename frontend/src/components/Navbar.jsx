@@ -14,6 +14,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const styles = {
   navbar: {
@@ -43,6 +44,7 @@ const styles = {
 
 function Navbar() {
   const { user, isAuth, logout } = useContext(AuthContext);
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -175,6 +177,14 @@ function Navbar() {
               </Button>
             </Box>
           )}
+          
+          <button 
+            onClick={toggleTheme} 
+            className="theme-toggle-btn" 
+            aria-label="Cambiar tema"
+          >
+            {darkMode ? '☀️' : '🌙'}
+          </button>
         </Toolbar>
       </AppBar>
       

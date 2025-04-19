@@ -67,3 +67,28 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Estilos responsivos para pantallas grandes */
+@media (min-width: 768px) {
+  #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    place-items: normal;
+  }
+  
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: block;
+  }
+}
+
+/* Corregir el elemento con excesivo espacio */
+.css-i9gxme {
+  flex-grow: 0 !important;
+}
