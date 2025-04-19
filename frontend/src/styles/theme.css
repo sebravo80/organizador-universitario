@@ -5,9 +5,10 @@
   --text-primary: #9f9f9f;
   --text-secondary: #ffffff;
   --text-terciary: #7b7b7b;
+  --text-quaternary: #ffffff;
   --border-color: #333333;
   --border-color-secondary: #72002a;
-  --card-bg: rgba(37, 37, 37, 0.85); /* Cambiamos para agregar transparencia */
+  --card-bg: rgba(37, 37, 37, 0.85); 
   --navbar-bg: #72002a;
   --focus-color: #4c001d00;
 }
@@ -15,7 +16,6 @@
 body {
   color: var(--text-terciary);
   transition: all 0.3s ease;
-  /* Eliminamos el background-color de aquí ya que se establece en index.css */
 }
 
 .MuiPaper-root {
@@ -38,7 +38,7 @@ body {
 
 .MuiButtonBase-root {
   background-color: var(--bg-terciary) !important;
-  color: var(--text-terciary) !important;
+  color: var(--text-quaternary) !important;
   border: 0px solid var(--border-color) !important;
 }
 
@@ -50,7 +50,6 @@ body {
 
 .MuiInputLabel-root {
   color: var(--text-secondary) !important;
-
   transition: color 0.3s ease;
   &:focus {
     color: var(--focus-color) !important;
@@ -66,5 +65,14 @@ body {
 .MuiOutlinedInput-notchedOutline {
   border-color: var(--focus-color) !important;
   transition: border-color 0.3s ease !important;
+}
+
+.MuiTypography-root {
+  color: var(--text-quaternary) !important;
+  transition: color 0.3s ease;
+}
+
+.MuiBox-root {
+backdrop-filter: blur(5px) !important; 
 }
 
