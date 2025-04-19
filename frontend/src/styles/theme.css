@@ -16,14 +16,14 @@
 [data-theme="dark"] {
   --bg-primary: #242424;
   --bg-secondary: #1e1e1e;
-  --bg-terciary: #3e0018;
+  --bg-terciary: #72002a;
   --text-primary: #9f9f9f;
   --text-secondary: #ffffff;
   --text-terciary: #7b7b7b;
   --border-color: #333333;
-  --border-color-secondary: #4c001d;
+  --border-color-secondary: #72002a;
   --card-bg: #252525;
-  --navbar-bg: #4c001d;
+  --navbar-bg: #72002a;
   --focus-color: #4c001d00;
 }
 
