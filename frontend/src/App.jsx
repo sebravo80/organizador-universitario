@@ -52,7 +52,7 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar />
         
-        <Box component="main" sx={{ flexGrow: 0, pt: 8, pb: 4 }}>
+        <Box component="main" sx={{ flexGrow: 1, pt: 8, pb: 4 }}>
           <Routes>
             {/* Rutas públicas (solo accesibles si NO está autenticado) */}
             <Route element={<PublicRoute />}>
