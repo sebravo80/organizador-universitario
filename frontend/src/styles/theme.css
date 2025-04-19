@@ -45,7 +45,7 @@ body {
 }
 
 [data-theme="dark"] .MuiPaper-root.MuiCard-root {
-  background-color: #940039 !important; /* Color oscuro para el tema dark */
+  background-color: #ca7093 !important; /* Color oscuro para el tema dark */
 }
 
 .MuiAppBar-root {
