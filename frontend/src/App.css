@@ -150,3 +150,15 @@ main {
     padding: 0 20px;
   }
 }
+
+.css-i9gxme {
+  flex-grow: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.main-content-container {
+  flex-grow: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
