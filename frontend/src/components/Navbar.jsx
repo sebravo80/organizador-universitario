@@ -13,6 +13,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import CalculateIcon from '@mui/icons-material/Calculate';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 
@@ -72,6 +73,7 @@ function Navbar() {
     { text: 'Cursos', icon: <BookIcon />, path: '/courses' },
     { text: 'Tareas', icon: <AssignmentIcon />, path: '/tasks' },
     { text: 'Horario', icon: <CalendarMonthIcon />, path: '/weekly' },
+    { text: 'Calculadora de Notas', path: '/grade-calculator', icon: <CalculateIcon /> },
   ];
   
   const drawer = (

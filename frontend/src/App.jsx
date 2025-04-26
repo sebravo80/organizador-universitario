@@ -17,6 +17,7 @@ import WeeklyView from './pages/WeeklyView';
 import NewLogin from './pages/NewLogin'; 
 import Profile from './pages/Profile';
 import Events from './pages/Events';
+import GradeCalculator from './pages/GradeCalculator';
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -67,6 +68,7 @@ function App() {
             <Route path="/weekly" element={<WeeklyView />} />
             <Route path="/events" element={<Events />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/grade-calculator" element={<GradeCalculator />} /> {/* Nueva ruta */}
           </Route>
           
           {/* Redirección por defecto */}
