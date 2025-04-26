@@ -6,7 +6,6 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  /* Eliminamos el background-color para que no interfiera con la imagen de fondo */
 }
 
 .app {
@@ -18,12 +17,10 @@ body {
 .content {
   flex: 1;
   padding: 20px;
-  /* Añadimos un pequeño z-index para asegurarnos que esté por encima del fondo */
   position: relative;
   z-index: 1;
 }
 
-/* Estilos para prioridades de tareas con más opacidad para mejor contraste */
 .priority-high {
   background-color: rgba(255, 0, 0, 0.2);
 }

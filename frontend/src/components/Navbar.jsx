@@ -121,63 +121,9 @@ function Navbar() {
             <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               Organizador Universitario
             </RouterLink>
-          </Typography>
-          
-          {!user ? (
-            <Box>
-              <Button color="inherit" component={RouterLink} to="/login">
-                Iniciar sesión
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/register">
-                Registrarse
-              </Button>
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-                  {user?.name?.charAt(0) || 'U'}
-                </Avatar>
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem onClick={handleMenuClose}>
-                  <ListItemIcon>
-                    <AccountCircleIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Perfil</ListItemText>
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <ListItemIcon>
-                    <LogoutIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Cerrar sesión</ListItemText>
-                </MenuItem>
-              </Menu>
-            </Box>
-          )}
+          </Typography>          
         </Toolbar>
+        
       </AppBar>
       
       <Drawer

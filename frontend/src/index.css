@@ -79,7 +79,25 @@ button:focus-visible {
   }
 }
 
-/* Corregir el elemento con excesivo espacio */
+/* Mejoras generales para dispositivos móviles */
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+  }
+  
+  button {
+    padding: 0.5em 1em;
+  }
+  
+  #root {
+    padding: 0.5rem;
+  }
+}
+
 .css-i9gxme {
   flex-grow: 0 !important;
 }

@@ -14,8 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Tasks from './pages/Tasks';
 import WeeklyView from './pages/WeeklyView';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import NewLogin from './pages/NewLogin'; 
 import Profile from './pages/Profile';
 import Events from './pages/Events';
 
@@ -56,8 +55,8 @@ function App() {
         <Routes>
           {/* Rutas públicas (solo accesibles si NO está autenticado) */}
           <Route element={<PublicRoute />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<NewLogin />} /> {/* Solo usamos NewLogin */}
+            {/* La ruta register ya no es necesaria porque está integrada en el nuevo login */}
           </Route>
           
           {/* Rutas privadas (requieren autenticación) */}
@@ -66,7 +65,7 @@ function App() {
             <Route path="/courses" element={<Courses />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/weekly" element={<WeeklyView />} />
-            <Route path="/events" element={<Events />} /> {/* Agrega esta línea */}
+            <Route path="/events" element={<Events />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
           
