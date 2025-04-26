@@ -17,13 +17,13 @@ const TaskCountdown = ({ dueDate }) => {
       const now = new Date();
       const due = new Date(dueDate);
       
-      // Verificar si la fecha de vencimiento ya pasó
+      // Se verifica si la fecha de vencimiento ya pasó
       if (due <= now) {
         setIsExpired(true);
         return;
       }
       
-      // Calcular tiempo restante
+      // Se calcula el tiempo restante
       const days = differenceInDays(due, now);
       const hours = differenceInHours(due, now) % 24;
       const minutes = differenceInMinutes(due, now) % 60;
@@ -31,17 +31,17 @@ const TaskCountdown = ({ dueDate }) => {
       setTimeLeft({ days, hours, minutes });
     };
     
-    // Calcular tiempo restante inicialmente
+    // Se calcula el tiempo restante inicialmente
     calculateTimeLeft();
     
-    // Actualizar cada minuto
+    // Se actualiza cada minuto
     const interval = setInterval(calculateTimeLeft, 60000);
     
-    // Limpiar intervalo al desmontar
+    // Se limpia intervalo al desmontar
     return () => clearInterval(interval);
   }, [dueDate]);
   
-  // Determinar color según el tiempo restante
+  // Se determina el color según el tiempo restante
   const getColor = () => {
     if (isExpired) {
       return 'error.main';

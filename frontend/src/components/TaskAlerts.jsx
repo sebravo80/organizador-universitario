@@ -1,4 +1,3 @@
-// src/components/TaskAlerts.jsx
 import { useState, useEffect } from 'react';
 import { 
   Snackbar, Alert, Button, Dialog, DialogTitle, 
@@ -7,7 +6,7 @@ import {
 } from '@mui/material';
 import { getTasks } from '../services/taskService';
 
-// Reutilizamos las funciones de cálculo de días
+// Funciones de cálculo de días
 const getDaysRemaining = (dueDate) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -52,7 +51,7 @@ function TaskAlerts() {
         // Filtrar tareas no completadas
         const pendingTasks = tasksData.filter(task => task.status !== 'Completada');
         
-        // Tareas urgentes (vencen hoy o mañana)
+        // Tareas urgentes (que vencen hoy o mañana)
         const urgent = pendingTasks.filter(task => {
           const days = getDaysRemaining(task.dueDate);
           return days >= 0 && days <= 2;
@@ -73,7 +72,7 @@ function TaskAlerts() {
         }
         
         if (overdue.length > 0) {
-          // Esperar un poco para no mostrar ambas notificaciones a la vez
+          // Esperar unos segundos para no mostrar ambas notificaciones a la vez
           setTimeout(() => {
             setOpenOverdueSnackbar(true);
           }, 5000);

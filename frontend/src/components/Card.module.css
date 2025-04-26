@@ -31,7 +31,6 @@
   color: var(--text-secondary);
 }
 
-/* Variantes por tipo de actividad */
 .exam { border-left: 4px solid var(--danger); }
 .assignment { border-left: 4px solid var(--accent-color); }
 .lab { border-left: 4px solid var(--info); }
