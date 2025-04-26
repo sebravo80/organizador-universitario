@@ -14,6 +14,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CalculateIcon from '@mui/icons-material/Calculate';
+import PersonIcon from '@mui/icons-material/Person';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 
@@ -62,6 +63,11 @@ function Navbar() {
     setAnchorEl(null);
   };
   
+  const handleProfileClick = () => {
+    navigate('/profile');
+    handleMenuClose();
+  };
+
   const handleLogout = () => {
     logout();
     handleMenuClose();
@@ -124,8 +130,50 @@ function Navbar() {
               Organizador Universitario
             </RouterLink>
           </Typography>          
+
+          {isAuth && (
+            <div style={{ marginLeft: 'auto' }}>
+              <IconButton
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+                edge="end"
+                aria-label="perfil de usuario"
+              >
+                <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.dark' }}>
+                  {user?.name?.charAt(0) || <AccountCircleIcon />}
+                </Avatar>
+              </IconButton>
+              
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                PaperProps={{
+                  elevation: 2,
+                  sx: { minWidth: 200 }
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              >
+                <MenuItem onClick={handleProfileClick}>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Mi Perfil" />
+                </MenuItem>
+                
+                <Divider />
+                
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Cerrar Sesión" />
+                </MenuItem>
+              </Menu>
+            </div>
+          )}
         </Toolbar>
-        
       </AppBar>
       
       <Drawer
