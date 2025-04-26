@@ -6,21 +6,19 @@ import {
   Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
-  Chip, Avatar, ListItemAvatar
+  Chip
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
-import SchoolIcon from '@mui/icons-material/School';
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
-  const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -40,10 +38,6 @@ const Dashboard = () => {
         // Obtener eventos
         const eventsRes = await api.get('/events');
         setEvents(eventsRes.data);
-        
-        // Obtener notas
-        const gradesRes = await api.get('/grades');
-        setGrades(gradesRes.data);
         
         setError(null);
       } catch (err) {
@@ -70,43 +64,6 @@ const Dashboard = () => {
     .filter(event => new Date(event.startDate) >= new Date())
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
     .slice(0, 5);
-  
-  // Agrupar notas por curso
-  const groupedGrades = grades.reduce((acc, grade) => {
-    const courseId = grade.course._id;
-    if (!acc[courseId]) {
-      acc[courseId] = {
-        course: grade.course,
-        grades: []
-      };
-    }
-    acc[courseId].grades.push(grade);
-    return acc;
-  }, {});
-  
-  // Calcular promedio de notas para un curso
-  const calculateAverage = (grades) => {
-    if (grades.length === 0) return 0;
-    
-    // Calcular la suma de (nota * porcentaje)
-    let weightedSum = 0;
-    let totalWeight = 0;
-    
-    grades.forEach(grade => {
-      weightedSum += (grade.score * (grade.weight / 100));
-      totalWeight += (grade.weight / 100);
-    });
-    
-    // Si los pesos no suman 100%, normalizar
-    return totalWeight > 0 ? (weightedSum / totalWeight) : 0;
-  };
-  
-  // Estado de aprobación por curso
-  const getApprovalStatus = (average) => {
-    if (average >= 4.0) return { label: 'Aprobado', color: 'success' };
-    if (average >= 3.5) return { label: 'En riesgo', color: 'warning' };
-    return { label: 'Reprobado', color: 'error' };
-  };
   
   // Formatear fecha
   const formatDate = (dateString) => {
@@ -329,60 +286,6 @@ const Dashboard = () => {
                         <Divider />
                       </div>
                     ))}
-                  </List>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          {/* Notas y Promedios */}
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader 
-                title="Mis Promedios" 
-                action={
-                  <Button component={Link} to="/grades" size="small">
-                    Ver todos
-                  </Button>
-                }
-              />
-              <CardContent>
-                {Object.values(groupedGrades).length === 0 ? (
-                  <Typography>No tienes notas registradas.</Typography>
-                ) : (
-                  <List>
-                    {Object.values(groupedGrades).map(({ course, grades }) => {
-                      const average = calculateAverage(grades);
-                      const status = getApprovalStatus(average);
-                      
-                      return (
-                        <div key={course._id}>
-                          <ListItem>
-                            <ListItemAvatar>
-                              <Avatar style={{ backgroundColor: course.color }}>
-                                <SchoolIcon />
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText 
-                              primary={course.name}
-                              secondary={
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.5 }}>
-                                  <Typography variant="body2">
-                                    Promedio: <strong>{average.toFixed(1)}</strong>
-                                  </Typography>
-                                  <Chip 
-                                    label={status.label} 
-                                    color={status.color}
-                                    size="small"
-                                  />
-                                </Box>
-                              }
-                            />
-                          </ListItem>
-                          <Divider />
-                        </div>
-                      );
-                    })}
                   </List>
                 )}
               </CardContent>

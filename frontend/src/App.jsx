@@ -17,10 +17,6 @@ import WeeklyView from './pages/WeeklyView';
 import NewLogin from './pages/NewLogin'; 
 import Profile from './pages/Profile';
 import Events from './pages/Events';
-// Importar los componentes de recuperación de contraseña
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Grades from './pages/Grades';
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -59,10 +55,8 @@ function App() {
         <Routes>
           {/* Rutas públicas (solo accesibles si NO está autenticado) */}
           <Route element={<PublicRoute />}>
-            <Route path="/login" element={<NewLogin />} />
-            {/* Añadir rutas para recuperación de contraseña */}
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/login" element={<NewLogin />} /> {/* Solo usamos NewLogin */}
+            {/* La ruta register ya no es necesaria porque está integrada en el nuevo login */}
           </Route>
           
           {/* Rutas privadas (requieren autenticación) */}
@@ -72,7 +66,6 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/weekly" element={<WeeklyView />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/grades" element={<Grades />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
           
