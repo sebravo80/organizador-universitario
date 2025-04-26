@@ -50,7 +50,7 @@ function TaskAlerts() {
         const tasksData = await getTasks();
         
         // Filtrar tareas no completadas
-        const pendingTasks = tasksData.filter(task => !task.completed);
+        const pendingTasks = tasksData.filter(task => task.status !== 'Completada');
         
         // Tareas urgentes (vencen hoy o mañana)
         const urgent = pendingTasks.filter(task => {
