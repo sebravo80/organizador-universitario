@@ -20,6 +20,7 @@ import Events from './pages/Events';
 // Importar los componentes de recuperación de contraseña
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Grades from './pages/Grades';
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -71,6 +72,7 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/weekly" element={<WeeklyView />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/grades" element={<Grades />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
           

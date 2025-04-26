@@ -62,6 +62,7 @@ try {
   app.use('/api/courses', require('./routes/courses'));
   app.use('/api/tasks', require('./routes/tasks'));
   app.use('/api/events', require('./routes/events'));
+  app.use('/api/grades', require('./routes/grades')); // Añadir nueva ruta para notas
 } catch (err) {
   logError(err);
 }

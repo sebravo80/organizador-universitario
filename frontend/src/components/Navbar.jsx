@@ -13,6 +13,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EventIcon from '@mui/icons-material/Event';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SchoolIcon from '@mui/icons-material/School';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 
@@ -168,6 +169,14 @@ function Navbar() {
                   </ListItemIcon>
                   Cerrar sesión
                 </MenuItem>
+                {isAuth && (
+                  <MenuItem component={RouterLink} to="/grades" onClick={handleMenuClose}>
+                    <ListItemIcon>
+                      <SchoolIcon fontSize="small" />
+                    </ListItemIcon>
+                    Notas
+                  </MenuItem>
+                )}
               </Menu>
             </>
           )}
