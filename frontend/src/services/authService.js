@@ -71,3 +71,25 @@ export const changePassword = async (passwordData) => {
     throw error.response?.data || error;
   }
 };
+
+// Solicitar restablecimiento de contraseña
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Error en solicitud de recuperación:', error.response?.data || error);
+    throw error.response?.data || error;
+  }
+};
+
+// Restablecer contraseña con token
+export const resetPassword = async (token, password) => {
+  try {
+    const response = await api.post(`/auth/reset-password/${token}`, { password });
+    return response.data;
+  } catch (error) {
+    console.error('Error al restablecer contraseña:', error.response?.data || error);
+    throw error.response?.data || error;
+  }
+};

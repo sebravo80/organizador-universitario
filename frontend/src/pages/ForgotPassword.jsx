@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import { forgotPassword } from '../services/authService';
 import '../styles/newLogin.css';
 
 const ForgotPassword = () => {
@@ -16,11 +16,11 @@ const ForgotPassword = () => {
       setError('');
       setSuccess('');
 
-      const res = await api.post('/auth/forgot-password', { email });
-      setSuccess(res.data.msg);
+      const res = await forgotPassword(email);
+      setSuccess(res.msg);
       setEmail('');
     } catch (err) {
-      setError(err.response?.data?.msg || 'Error al solicitar restablecimiento');
+      setError(err.msg || 'Error al solicitar restablecimiento');
     } finally {
       setLoading(false);
     }

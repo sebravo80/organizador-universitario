@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+import { resetPassword } from '../services/authService';
 import '../styles/newLogin.css';
 
 const ResetPassword = () => {
@@ -27,8 +27,8 @@ const ResetPassword = () => {
       setLoading(true);
       setError('');
       
-      await api.post(`/auth/reset-password/${token}`, { password });
-      setSuccess('Contraseña actualizada correctamente');
+      const res = await resetPassword(token, password);
+      setSuccess(res.msg);
       
       // Redirigir al login después de 3 segundos
       setTimeout(() => {
@@ -36,7 +36,7 @@ const ResetPassword = () => {
       }, 3000);
       
     } catch (err) {
-      setError(err.response?.data?.msg || 'Error al restablecer contraseña');
+      setError(err.msg || 'Error al restablecer contraseña');
     } finally {
       setLoading(false);
     }
