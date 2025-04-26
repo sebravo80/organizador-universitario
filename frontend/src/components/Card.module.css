@@ -1,15 +1,16 @@
 .card {
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  background-color: white;
+  background-color: #272727;
+  border: 1px solid rgba(114, 0, 42, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .cardHeader {
@@ -18,20 +19,15 @@
   gap: 10px;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #333;
 }
 
 .cardTitle {
   margin: 0;
-  color: var(--primary-color);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .cardBody {
-  color: var(--text-secondary);
+  color: #b0b0b0;
 }
-
-.exam { border-left: 4px solid var(--danger); }
-.assignment { border-left: 4px solid var(--accent-color); }
-.lab { border-left: 4px solid var(--info); }
-.project { border-left: 4px solid var(--success); }

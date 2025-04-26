@@ -1,45 +1,46 @@
 :root {
-  --bg-primary: #242424;
+  --bg-primary: #121212;
   --bg-secondary: #1e1e1e;
   --bg-terciary: #72002a;
-  --text-primary: #9f9f9f;
-  --text-secondary: #ffffff;
-  --text-terciary: #7b7b7b;
+  --text-primary: #ffffff;
+  --text-secondary: #efefef;
+  --text-terciary: #b0b0b0;
   --text-quaternary: #ffffff;
-  --item-list1: #22000c;
+  --item-list1: #ffffff;
   --border-color: #333333;
   --border-color-secondary: #72002a;
-  --card-bg: rgba(37, 37, 37, 0.85); 
+  --card-bg: rgba(39, 39, 39, 0.9);
   --navbar-bg: #72002a;
-  --focus-color: #4c001d00;
+  --focus-color: rgba(76, 0, 29, 0.5);
 }
 
 body {
-  color: var(--text-terciary);
+  color: var(--text-primary);
   transition: all 0.3s ease;
 }
 
 .MuiPaper-root {
   background-color: var(--card-bg) !important;
-  color: var(--text-terciary) !important;
-  backdrop-filter: blur(5px) !important; /* Efecto de desenfoque para mejorar legibilidad */
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(5px) !important;
 }
 
 /* Modificación para el fondo de las tarjetas */
 .MuiPaper-root.MuiCard-root {
-  background-color: rgba(255, 255, 255, 0.85) !important; /* Fondo oscuro con transparencia */
+  background-color: rgba(39, 39, 39, 0.9) !important;
   backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(114, 0, 42, 0.2);
 }
 
 /* Añadir estilos específicos para el texto dentro de las tarjetas */
 .MuiPaper-root.MuiCard-root .MuiTypography-root {
-  color: #000000 !important; /* Negro para mejor contraste en tarjetas claras */
+  color: var(--text-primary) !important;
 }
 
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
-  color: var(--text-terciary) !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important; /* Añadir sombra para destacar */
+  color: var(--text-primary) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
 .MuiButtonBase-root {
@@ -49,7 +50,7 @@ body {
 }
 
 .MuiInputBase-root {
-  background-color: var(--bg-primary) !important;
+  background-color: var(--bg-secondary) !important;
   color: var(--text-primary) !important;
   border: 0px solid var(--border-color) !important;
 }
@@ -57,32 +58,24 @@ body {
 .MuiInputLabel-root {
   color: var(--text-secondary) !important;
   transition: color 0.3s ease;
-  &:focus {
-    color: var(--focus-color) !important;
-  }
+}
+
+.MuiInputLabel-root:focus {
+  color: var(--bg-terciary) !important;
 }
 
 .MuiOutlinedInput-root {
-  background-color: var(--bg-primary) !important;
-  color: var(--text-terciary) !important;
-  border: 0.5cap solid var(--border-color-secondary) !important;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color-secondary) !important;
 }
 
 .MuiOutlinedInput-notchedOutline {
-  border-color: var(--focus-color) !important;
+  border-color: rgba(114, 0, 42, 0.5) !important;
   transition: border-color 0.3s ease !important;
 }
 
-.MuiTypography-root {
-  color: var(--text-quaternary) !important;
-  transition: color 0.3s ease;
-}
-
-.MuiBox-root {
-backdrop-filter: blur(5px) !important; 
-}
-
 .MuiListItemText-root {
-  color: var(--item-list1) !important;
+  color: var(--text-primary) !important;
   transition: color 0.3s ease;
 }

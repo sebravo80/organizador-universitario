@@ -6,13 +6,20 @@
   
   /* Colores neutros */
   --background-light: #f8f9fa;
-  --background-dark: #343a40;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
+  --background-dark: #121212;  /* Oscuro más moderno */
+  --text-primary: #ffffff;     /* Texto principal blanco */
+  --text-secondary: #b0b0b0;   /* Texto secundario gris claro */
   
-  /* Colores de estado */
+  /* Colores de estado - se mantienen para preservar los colores de las prioridades */
   --success: #28a745;
   --warning: #ffc107;
   --danger: #dc3545;
   --info: #17a2b8;
+  
+  /* Colores para tema oscuro */
+  --dark-bg-primary: #121212;    /* Fondo principal */
+  --dark-bg-secondary: #1e1e1e;  /* Fondo secundario */
+  --dark-bg-tertiary: #72002a;   /* Burdeos para acentos */
+  --dark-surface: #272727;       /* Superficies como tarjetas */
+  --dark-border: #333333;        /* Bordes sutiles */
 }
