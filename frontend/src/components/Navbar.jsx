@@ -1,44 +1,28 @@
 // src/components/Navbar.jsx
 import { useState, useContext } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { 
-  AppBar, Toolbar, Typography, Button, IconButton, 
-  Box, Drawer, List, ListItem, ListItemIcon, 
-  ListItemText, Divider, Avatar, Menu, MenuItem
+import {
+  AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuItem, Drawer,
+  List, ListItem, ListItemIcon, ListItemText, Divider, Avatar, Tooltip
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BookIcon from '@mui/icons-material/Book';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventIcon from '@mui/icons-material/Event';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 
+// Estilos
 const styles = {
   navbar: {
-    backgroundColor: 'var(--primary-color)',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
   },
   logo: {
-    fontWeight: 'bold',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
-  activeLink: {
-    position: 'relative',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      bottom: '-4px',
-      left: 0,
-      width: '100%',
-      height: '3px',
-      backgroundColor: 'var(--accent-color)',
-      borderRadius: '3px',
-    }
+    fontWeight: 600,
   }
 };
 
@@ -48,6 +32,7 @@ function Navbar() {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
   
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -67,10 +52,16 @@ function Navbar() {
     navigate('/login');
   };
   
+  const handleProfileClick = () => {
+    handleMenuClose();
+    navigate('/profile');
+  };
+  
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
     { text: 'Cursos', icon: <BookIcon />, path: '/courses' },
     { text: 'Tareas', icon: <AssignmentIcon />, path: '/tasks' },
+    { text: 'Eventos', icon: <EventIcon />, path: '/events' },
     { text: 'Horario', icon: <CalendarMonthIcon />, path: '/weekly' },
   ];
   
@@ -121,9 +112,66 @@ function Navbar() {
             <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               Organizador Universitario
             </RouterLink>
-          </Typography>          
+          </Typography>
+          
+          {isAuth && (
+            <>
+              <Tooltip title="Opciones de usuario">
+                <IconButton
+                  onClick={handleProfileMenuOpen}
+                  size="large"
+                  edge="end"
+                  color="inherit"
+                  aria-label="perfil de usuario"
+                  aria-controls={openUserMenu ? 'user-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={openUserMenu ? 'true' : undefined}
+                >
+                  <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.dark' }}>
+                    {user?.name?.charAt(0) || 'U'}
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="user-menu"
+                anchorEl={anchorEl}
+                open={openUserMenu}
+                onClose={handleMenuClose}
+                MenuListProps={{
+                  'aria-labelledby': 'user-button',
+                }}
+                PaperProps={{
+                  elevation: 3,
+                  sx: { 
+                    minWidth: '200px',
+                    mt: 1.5
+                  }
+                }}
+              >
+                {user && (
+                  <MenuItem disabled sx={{ opacity: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                      {user.name}
+                    </Typography>
+                  </MenuItem>
+                )}
+                <Divider />
+                <MenuItem onClick={handleProfileClick}>
+                  <ListItemIcon>
+                    <AccountCircleIcon fontSize="small" />
+                  </ListItemIcon>
+                  Perfil
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
+                  Cerrar sesión
+                </MenuItem>
+              </Menu>
+            </>
+          )}
         </Toolbar>
-        
       </AppBar>
       
       <Drawer
