@@ -46,14 +46,21 @@ const GradeCalculator = () => {
     setGrades(
       grades.map(grade => {
         if (grade.id === id) {
-          // Para las notas, aseguramos que estén en el rango 1.0 - 7.0
           if (field === 'grade') {
-            const numValue = parseFloat(value.replace(',', '.'));
-            if (!isNaN(numValue)) {
-              if (numValue > 7) value = '7.0';
-              else if (numValue < 1) value = '1.0';
+            // Permitir ingresar cualquier valor, pero asegurar formato correcto
+            value = value.replace(',', '.');
+            
+            // Validar que sea un número o esté vacío
+            if (value !== "" && isNaN(parseFloat(value))) {
+              return grade; // Si no es un número válido, no actualizar
             }
           }
+          
+          if (field === 'percentage') {
+            // Asegurar que el porcentaje sea un número entero
+            value = parseInt(value) || 0;
+          }
+          
           return { ...grade, [field]: value };
         }
         return grade;
@@ -73,6 +80,11 @@ const GradeCalculator = () => {
 
     // Validar que todas las notas tengan valores válidos
     const invalidGrades = grades.filter(grade => {
+      // Si la nota está vacía
+      if (!grade.grade.toString().trim()) {
+        return true;
+      }
+      
       const numGrade = parseFloat(grade.grade.toString().replace(',', '.'));
       return isNaN(numGrade) || numGrade < 1 || numGrade > 7;
     });
@@ -155,10 +167,23 @@ const GradeCalculator = () => {
                         <TextField
                           variant="standard"
                           type="text"
-                          inputProps={{ inputMode: 'decimal', style: { textAlign: 'center' } }}
+                          placeholder="1.0-7.0"
+                          inputProps={{ 
+                            inputMode: 'decimal', 
+                            style: { textAlign: 'center' }
+                          }}
                           value={grade.grade}
                           onChange={(e) => updateGrade(grade.id, 'grade', e.target.value)}
-                          sx={{ width: '70px' }}
+                          helperText={
+                            parseFloat(grade.grade.replace(',', '.')) > 7 || 
+                            parseFloat(grade.grade.replace(',', '.')) < 1 && grade.grade !== "" 
+                              ? "Fuera de rango" 
+                              : " "
+                          }
+                          error={parseFloat(grade.grade.replace(',', '.')) > 7 || 
+                                parseFloat(grade.grade.replace(',', '.')) < 1 && 
+                                grade.grade !== ""}
+                          sx={{ width: '80px' }}
                         />
                       </TableCell>
                       <TableCell align="center">
