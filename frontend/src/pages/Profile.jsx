@@ -97,7 +97,10 @@ function Profile() {
     setSuccess(null);
     
     try {
-      const updatedUser = await updateUser(profileForm);
+      const updatedUser = await updateUser({
+        name: profileForm.name,
+        email: profileForm.email
+      });
       setUser(updatedUser);
       setSuccess('¡Perfil actualizado correctamente!');
     } catch (err) {

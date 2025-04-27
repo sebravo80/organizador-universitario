@@ -42,7 +42,7 @@ export const isAuthenticated = () => {
 // Obtener datos del usuario actual
 export const getCurrentUser = async () => {
   try {
-    const response = await api.get('/auth/user');
+    const response = await api.get('/auth'); // Ruta corregida
     return response.data;
   } catch (error) {
     console.error('Error al obtener usuario:', error.response?.data || error);

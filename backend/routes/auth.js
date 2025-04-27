@@ -197,4 +197,82 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
+// @route   PUT api/auth/user
+// @desc    Actualizar perfil de usuario
+// @access  Private
+router.put('/user', auth, async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    
+    // Verificar si se proporcionaron los campos
+    if (!name && !email) {
+      return res.status(400).json({ msg: 'No se proporcionaron datos para actualizar' });
+    }
+    
+    // Construir objeto de usuario
+    const userFields = {};
+    if (name) userFields.name = name;
+    if (email) {
+      // Verificar que el email no esté ya en uso por otro usuario
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser.id !== req.user.id) {
+        return res.status(400).json({ msg: 'El correo electrónico ya está registrado' });
+      }
+      userFields.email = email;
+    }
+    
+    // Actualizar usuario
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: userFields },
+      { new: true }
+    ).select('-password');
+    
+    res.json(user);
+  } catch (err) {
+    console.error('Error al actualizar perfil:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
+// @route   PUT api/auth/password
+// @desc    Cambiar contraseña de usuario
+// @access  Private
+router.put('/password', auth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    // Verificar si se proporcionaron todos los campos
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ msg: 'Por favor, proporciona tu contraseña actual y la nueva' });
+    }
+    
+    // Validar longitud de la nueva contraseña
+    if (newPassword.length < 6) {
+      return res.status(400).json({ msg: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+    
+    // Obtener usuario
+    const user = await User.findById(req.user.id);
+    
+    // Verificar contraseña actual
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'La contraseña actual es incorrecta' });
+    }
+    
+    // Encriptar nueva contraseña
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    
+    // Guardar cambios
+    await user.save();
+    
+    res.json({ msg: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    console.error('Error al cambiar contraseña:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
 module.exports = router;
