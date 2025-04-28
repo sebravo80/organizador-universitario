@@ -96,7 +96,7 @@ const Events = () => {
       endDate: oneHourLater,
       location: '',
       color: '#4CAF50',
-      course: ''
+      course: 'Ninguno'
     });
     
     setOpen(true);
