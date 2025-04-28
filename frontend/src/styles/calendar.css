@@ -63,3 +63,39 @@
 .fc .fc-timegrid-col:nth-child(odd) .fc-timegrid-col-frame {
   background-color: rgba(0, 0, 0, 0.08);
 }
+
+/* Estilos para el fondo de las celdas del calendario con mayor especificidad */
+.fc .fc-timegrid-col-bg .fc-non-business,
+.fc .fc-timegrid-col-bg .fc-bg-event,
+.fc .fc-timegrid-bg,
+.fc .fc-daygrid-day-bg,
+.fc .fc-scrollgrid-sync-inner,
+.fc .fc-timegrid-slots table,
+.fc .fc-timegrid-cols table,
+.fc .fc-timegrid-slots,
+.fc .fc-timegrid-slots td,
+.fc .fc-col-header,
+.fc .fc-timegrid-axis,
+.fc .fc-timegrid-slot,
+.fc .fc-daygrid-day-frame {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Estilos para los encabezados del día con mayor especificidad */
+.fc .fc-col-header-cell,
+.fc .fc-timegrid-axis {
+  background-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Asegurar que los eventos se vean bien sobre el fondo oscuro */
+.fc-event {
+  border-radius: 3px !important;
+  font-size: 0.85em !important;
+}
+
+/* Hacer que las líneas divisorias sean más visibles */
+.fc-theme-standard td, 
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}

@@ -70,6 +70,35 @@ const WeeklyView = () => {
     }
   }, [isAuth]);
   
+  // Añade este useEffect para aplicar estilos directamente a los elementos del DOM
+  useEffect(() => {
+    if (!loading) {
+      const applyStyles = () => {
+        // Selecciona todas las celdas del calendario
+        const cells = document.querySelectorAll('.fc-timegrid-slot, .fc-daygrid-day, .fc-col-header-cell, .fc-timegrid-axis');
+        cells.forEach(cell => {
+          cell.style.backgroundColor = 'rgba(0, 0, 0, 0.12)';
+        });
+        
+        // Selecciona los encabezados
+        const headers = document.querySelectorAll('.fc-col-header-cell, .fc-timegrid-axis');
+        headers.forEach(header => {
+          header.style.backgroundColor = 'rgba(0, 0, 0, 0.18)';
+        });
+      };
+      
+      // Aplica los estilos iniciales y configura un observer para cambios en el DOM
+      applyStyles();
+      const observer = new MutationObserver(applyStyles);
+      observer.observe(document.querySelector('.fc'), { 
+        childList: true, 
+        subtree: true 
+      });
+      
+      return () => observer.disconnect();
+    }
+  }, [loading]);
+  
   // Convertir eventos para FullCalendar
   const calendarEvents = [
     // Eventos
@@ -267,19 +296,13 @@ const WeeklyView = () => {
             sx={{ 
               height: 'calc(100vh - 200px)', 
               minHeight: '600px',
-              '& .fc-timegrid-slot, & .fc-daygrid-day': {
-                backgroundColor: 'rgba(0, 0, 0, 0.1) !important',
-              },
-              '& .fc-timegrid-slot-lane': {
-                borderColor: 'rgba(255, 255, 255, 0.1) !important',
-              },
-              '& .fc-col-header-cell': {
-                backgroundColor: 'rgba(0, 0, 0, 0.15) !important',
-              },
-              '& .fc-timegrid-axis': {
-                backgroundColor: 'rgba(0, 0, 0, 0.15) !important',
+              '& .fc': {
+                '--fc-page-bg-color': 'transparent',
+                '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
+                '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
               }
             }}
+            className="custom-calendar-container"
           >
             <FullCalendar
               plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
