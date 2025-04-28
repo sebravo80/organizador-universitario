@@ -96,19 +96,13 @@ const Events = () => {
       endDate: oneHourLater,
       location: '',
       color: '#4CAF50',
-      course: 'Ninguno'
+      course: "Selecciona un curso"
     });
     
     setOpen(true);
     setIsEditing(false);
   };
 
-  // Inicializar un nuevo evento
-  const handleAddEvent = () => {
-    resetForm(); // Utiliza la función de reseteo
-    setIsEditing(false);
-    setOpenDialog(true);
-  };
   
   // Abrir diálogo para editar evento
   const handleOpenEdit = (event) => {
