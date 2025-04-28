@@ -23,3 +23,43 @@
 .darkMode .calendar-slot-lane {
   background-color: rgba(0, 0, 0, 0.3) !important;
 }
+
+/* Estilos generales del calendario */
+.fc .fc-timegrid-slot, 
+.fc .fc-daygrid-day-frame {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezados de día más oscuros */
+.fc .fc-col-header-cell {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Columna de horas más oscura */
+.fc .fc-timegrid-axis {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Líneas divisorias más sutiles */
+.fc .fc-timegrid-slot-lane {
+  border-color: rgba(100, 100, 100, 0.2) !important;
+}
+
+/* Hover sobre las celdas para mejor interactividad */
+.fc .fc-timegrid-slot:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Estilo para el día actual */
+.fc .fc-day-today {
+  background-color: rgba(66, 165, 245, 0.1) !important;
+}
+
+/* Mejora la apariencia de las celdas alternando colores ligeramente */
+.fc .fc-timegrid-col:nth-child(even) .fc-timegrid-col-frame {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.fc .fc-timegrid-col:nth-child(odd) .fc-timegrid-col-frame {
+  background-color: rgba(0, 0, 0, 0.08);
+}
