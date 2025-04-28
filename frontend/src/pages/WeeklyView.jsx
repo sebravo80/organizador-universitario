@@ -262,7 +262,24 @@ const WeeklyView = () => {
         {loading ? (
           <Typography>Cargando calendario...</Typography>
         ) : (
-          <Box sx={{ height: 'calc(100vh - 200px)', minHeight: '600px' }}>
+          <Box 
+            sx={{ 
+              height: 'calc(100vh - 200px)', 
+              minHeight: '600px',
+              '& .fc-timegrid-slot, & .fc-daygrid-day': {
+                backgroundColor: 'rgba(0, 0, 0, 0.1) !important',
+              },
+              '& .fc-timegrid-slot-lane': {
+                borderColor: 'rgba(255, 255, 255, 0.1) !important',
+              },
+              '& .fc-col-header-cell': {
+                backgroundColor: 'rgba(0, 0, 0, 0.15) !important',
+              },
+              '& .fc-timegrid-axis': {
+                backgroundColor: 'rgba(0, 0, 0, 0.15) !important',
+              }
+            }}
+          >
             <FullCalendar
               plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
               initialView="timeGridWeek"
