@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AuthContext } from '../context/AuthContext';
-import { updateUser, changePassword } from '../services/authService';
+import { updateUser, changePassword, getUserInfo } from '../services/authService';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
@@ -97,15 +97,32 @@ function Profile() {
     setSuccess(null);
     
     try {
+      console.log("Enviando datos para actualizar:", profileForm);
       const updatedUser = await updateUser({
         name: profileForm.name,
         email: profileForm.email
       });
-      setUser(updatedUser);
-      setSuccess('¡Perfil actualizado correctamente!');
+      
+      // Verifica que updatedUser sea válido antes de actualizar el estado
+      if (updatedUser && updatedUser._id) {
+        setUser(updatedUser);
+        setSuccess('¡Perfil actualizado correctamente!');
+        console.log("Usuario actualizado:", updatedUser);
+      } else {
+        throw new Error("La respuesta del servidor no tiene el formato esperado");
+      }
     } catch (err) {
+      console.error("Error completo:", err);
       setError('Error al actualizar el perfil. Inténtalo nuevamente.');
-      console.error(err);
+      
+      try {
+        const currentUser = await getUserInfo();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      } catch (fetchErr) {
+        console.error("Error al intentar obtener datos actualizados:", fetchErr);
+      }
     } finally {
       setLoading(false);
     }

@@ -40,26 +40,35 @@ export const isAuthenticated = () => {
 };
 
 // Obtener datos del usuario actual
-export const getCurrentUser = async () => {
+export const getUserInfo = async () => {
   try {
-    const response = await api.get('/auth'); // Ruta corregida
+    const response = await api.get('/auth');
     return response.data;
   } catch (error) {
-    console.error('Error al obtener usuario:', error.response?.data || error);
-    throw error.response?.data || error;
+    console.error('Error al obtener información del usuario:', error);
+    throw error;
   }
 };
 
 // Actualizar perfil de usuario
 export const updateUser = async (userData) => {
   try {
-    console.log("Datos enviados al servidor:", userData);
+    console.log("Datos enviados para actualización:", userData);
     const response = await api.put('/auth/user', userData);
-    console.log("Respuesta del servidor:", response.data);
-    return response.data;
+    console.log("Respuesta recibida:", response);
+    
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error(`Error: ${response.status}`);
+    }
   } catch (error) {
-    console.error('Error al actualizar usuario:', error.response?.data || error);
-    throw error.response?.data || error;
+    console.error('Error en updateUser:', error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
   }
 };
 
