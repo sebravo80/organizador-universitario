@@ -231,8 +231,8 @@ const Events = () => {
     try {
       const eventData = {
         ...eventForm,
-        // Si course es una cadena vacía, envíala tal cual
-        // El backend la manejará como null
+        // Convertir explícitamente una cadena vacía a null
+        course: eventForm.course === "" ? null : eventForm.course
       };
       
       if (isEditing) {
@@ -440,7 +440,7 @@ const Events = () => {
                 onChange={handleChange}
                 displayEmpty
               >
-                <MenuItem value="">Ninguno</MenuItem>
+                <MenuItem value=""></MenuItem>
                 {courses.map(course => (
                   <MenuItem key={course._id} value={course._id}>
                     {course.name}

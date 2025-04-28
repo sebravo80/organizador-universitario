@@ -34,8 +34,8 @@ router.post('/', auth, async (req, res) => {
       endDate,
       location,
       color,
-      // Asignar course solo si no está vacío
-      ...(course ? { course } : {}),
+      // Tratar la cadena vacía como null
+      course: course === "" ? null : course,
       user: req.user.id
     });
     
