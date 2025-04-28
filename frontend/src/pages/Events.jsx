@@ -89,6 +89,21 @@ const Events = () => {
     setOpen(true);
     setIsEditing(false);
   };
+
+  // Inicializar un nuevo evento
+  const handleAddEvent = () => {
+    setEventForm({
+      title: '',
+      description: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      location: '',
+      color: '#3788d8',
+      course: '', // Inicializar con cadena vacía para seleccionar "Ninguno" por defecto
+    });
+    setIsEditing(false);
+    setOpenDialog(true);
+  };
   
   // Abrir diálogo para editar evento
   const handleOpenEdit = (event) => {
@@ -429,19 +444,20 @@ const Events = () => {
               onChange={handleChange}
             />
             
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="course-label">Curso relacionado</InputLabel>
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="course-select-label">Curso</InputLabel>
               <Select
-                labelId="course-label"
+                labelId="course-select-label"
                 id="course"
                 name="course"
                 value={eventForm.course || ""}
-                label="Curso relacionado"
                 onChange={handleChange}
-                displayEmpty
+                label="Curso"
               >
-                <MenuItem value=""></MenuItem>
-                {courses.map(course => (
+                <MenuItem value="">
+                  <em>Ninguno</em>
+                </MenuItem>
+                {courses.map((course) => (
                   <MenuItem key={course._id} value={course._id}>
                     {course.name}
                   </MenuItem>
