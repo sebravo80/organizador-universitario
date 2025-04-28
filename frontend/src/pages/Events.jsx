@@ -42,6 +42,19 @@ const Events = () => {
     course: ''
   });
   
+  // Función para resetear el formulario
+  const resetForm = () => {
+    setEventForm({
+      title: '',
+      description: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      location: '',
+      color: '#3788d8',
+      course: '', // Asegúrate de que sea cadena vacía y no null
+    });
+  };
+
   // Cargar eventos y cursos
   useEffect(() => {
     const fetchData = async () => {
@@ -92,15 +105,7 @@ const Events = () => {
 
   // Inicializar un nuevo evento
   const handleAddEvent = () => {
-    setEventForm({
-      title: '',
-      description: '',
-      startDate: new Date(),
-      endDate: new Date(),
-      location: '',
-      color: '#3788d8',
-      course: '', // Inicializar con cadena vacía para seleccionar "Ninguno" por defecto
-    });
+    resetForm(); // Utiliza la función de reseteo
     setIsEditing(false);
     setOpenDialog(true);
   };
@@ -450,9 +455,10 @@ const Events = () => {
                 labelId="course-select-label"
                 id="course"
                 name="course"
-                value={eventForm.course || ""}
+                value={eventForm.course === null || eventForm.course === undefined ? "" : eventForm.course}
                 onChange={handleChange}
                 label="Curso"
+                displayEmpty
               >
                 <MenuItem value="">
                   <em>Ninguno</em>
