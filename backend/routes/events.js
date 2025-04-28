@@ -34,7 +34,8 @@ router.post('/', auth, async (req, res) => {
       endDate,
       location,
       color,
-      course,
+      // Asignar course solo si no está vacío
+      ...(course ? { course } : {}),
       user: req.user.id
     });
     
@@ -94,7 +95,13 @@ router.put('/:id', auth, async (req, res) => {
     if (endDate) eventFields.endDate = endDate;
     if (location !== undefined) eventFields.location = location;
     if (color) eventFields.color = color;
-    if (course !== undefined) eventFields.course = course || null;
+    
+    // Manejar correctamente el campo course
+    if (course === '') {
+      eventFields.course = null;  // Explícitamente establecer null cuando está vacío
+    } else if (course) {
+      eventFields.course = course;
+    }
     
     let event = await Event.findById(req.params.id);
     
