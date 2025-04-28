@@ -53,7 +53,9 @@ export const getCurrentUser = async () => {
 // Actualizar perfil de usuario
 export const updateUser = async (userData) => {
   try {
+    console.log("Datos enviados al servidor:", userData);
     const response = await api.put('/auth/user', userData);
+    console.log("Respuesta del servidor:", response.data);
     return response.data;
   } catch (error) {
     console.error('Error al actualizar usuario:', error.response?.data || error);
