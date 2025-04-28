@@ -1,0 +1,25 @@
+/* Estilos para las celdas del calendario */
+.calendar-slot-label,
+.calendar-day-cell,
+.calendar-day-header,
+.calendar-slot-lane {
+  background-color: rgba(0, 0, 0, 0.1) !important; /* Fondo ligeramente oscuro */
+}
+
+/* Personalización adicional para las celdas de hora */
+.fc-timegrid-slot, .fc-daygrid-day {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Ajustar el color de las líneas divisorias para mejor contraste */
+.fc-timegrid-slot-lane {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Para el modo oscuro (opcional) */
+.darkMode .calendar-slot-label,
+.darkMode .calendar-day-cell,
+.darkMode .calendar-day-header,
+.darkMode .calendar-slot-lane {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}

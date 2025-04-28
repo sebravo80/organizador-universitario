@@ -289,6 +289,10 @@ const WeeklyView = () => {
                 minute: '2-digit',
                 meridiem: false
               }}
+              slotLabelClassNames="calendar-slot-label"
+              dayCellClassNames="calendar-day-cell"
+              dayHeaderClassNames="calendar-day-header"
+              slotLaneClassNames="calendar-slot-lane"
             />
           </Box>
         )}
