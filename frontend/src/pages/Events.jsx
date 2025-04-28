@@ -72,12 +72,9 @@ const Events = () => {
   
   // Abrir diálogo para crear evento
   const handleOpenCreate = () => {
-    setIsEditing(false);
-    setCurrentEventId(null);
-    
-    // Establecer fecha de inicio y fin por defecto (ahora y una hora después)
     const now = new Date();
-    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const oneHourLater = new Date(now);
+    oneHourLater.setHours(now.getHours() + 1);
     
     setEventForm({
       title: '',
@@ -88,7 +85,9 @@ const Events = () => {
       color: '#4CAF50',
       course: ''
     });
+    
     setOpen(true);
+    setIsEditing(false);
   };
   
   // Abrir diálogo para editar evento
@@ -125,10 +124,11 @@ const Events = () => {
   
   // Manejar cambios en el formulario
   const handleChange = (e) => {
-    setEventForm({
-      ...eventForm,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setEventForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
   
   // Manejar cambio de fecha de inicio
@@ -170,19 +170,7 @@ const Events = () => {
         return;
       }
       
-      if (isEditing) {
-        // Actualizar evento existente
-        const res = await api.put(`/events/${currentEventId}`, eventForm);
-        
-        // Actualizar el evento en la lista
-        setEvents(events.map(event => event._id === currentEventId ? res.data : event));
-      } else {
-        // Crear nuevo evento
-        const res = await api.post('/events', eventForm);
-        
-        // Agregar el nuevo evento a la lista
-        setEvents([...events, res.data]);
-      }
+      await handleSubmit();
       
       // Cerrar diálogo
       handleClose();
@@ -238,6 +226,33 @@ const Events = () => {
   
   // Ordenar eventos por fecha
   const sortedEvents = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  
+  const handleSubmit = async () => {
+    try {
+      const eventData = {
+        ...eventForm,
+        // Si course es una cadena vacía, envíala tal cual
+        // El backend la manejará como null
+      };
+      
+      if (isEditing) {
+        // Lógica para editar evento existente
+        const res = await api.put(`/events/${currentEventId}`, eventData);
+        
+        // Actualizar el evento en la lista
+        setEvents(events.map(event => event._id === currentEventId ? res.data : event));
+      } else {
+        // Lógica para crear nuevo evento
+        const res = await api.post('/events', eventData);
+        
+        // Agregar el nuevo evento a la lista
+        setEvents([...events, res.data]);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError(`Error al ${isEditing ? 'actualizar' : 'crear'} el evento. Por favor, intenta nuevamente.`);
+    }
+  };
   
   if (loading) {
     return (
@@ -420,9 +435,10 @@ const Events = () => {
                 labelId="course-label"
                 id="course"
                 name="course"
-                value={eventForm.course}
+                value={eventForm.course || ""}
                 label="Curso relacionado"
                 onChange={handleChange}
+                displayEmpty
               >
                 <MenuItem value="">Ninguno</MenuItem>
                 {courses.map(course => (
