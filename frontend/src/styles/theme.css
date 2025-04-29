@@ -22,7 +22,7 @@ body {
 
 /* Cuando estamos en modo claro, cambiamos la imagen de fondo */
 html[data-theme='light'] body {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/frontend/public/fondo.png');
+  background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('/fondo.png');
   background-position: center;
   background-attachment: fixed;
 }
