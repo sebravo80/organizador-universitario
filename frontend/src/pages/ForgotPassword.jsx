@@ -11,16 +11,23 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!email) {
+      setError('Por favor, ingresa tu correo electrónico');
+      return;
+    }
+    
     try {
       setLoading(true);
       setError('');
       setSuccess('');
 
       const res = await forgotPassword(email);
-      setSuccess(res.msg);
+      setSuccess(res.msg || 'Se ha enviado un enlace a tu correo si existe en nuestra base de datos');
       setEmail('');
     } catch (err) {
-      setError(err.msg || 'Error al solicitar restablecimiento');
+      console.error('Error en recuperación:', err);
+      setError(err.response?.data?.msg || err.msg || 'Error al solicitar restablecimiento');
     } finally {
       setLoading(false);
     }
