@@ -17,6 +17,7 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import PersonIcon from '@mui/icons-material/Person';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 const styles = {
   navbar: {
@@ -132,7 +133,8 @@ function Navbar() {
           </Typography>          
 
           {isAuth && (
-            <div style={{ marginLeft: 'auto' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+              <ThemeToggle />
               <IconButton
                 onClick={handleProfileMenuOpen}
                 color="inherit"
@@ -171,7 +173,7 @@ function Navbar() {
                   <ListItemText primary="Cerrar Sesión" />
                 </MenuItem>
               </Menu>
-            </div>
+            </Box>
           )}
         </Toolbar>
       </AppBar>

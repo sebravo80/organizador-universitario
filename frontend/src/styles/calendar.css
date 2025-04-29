@@ -99,3 +99,24 @@
 .fc-theme-standard .fc-scrollgrid {
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
+
+/* Añadir versiones para tema claro */
+html[data-theme='light'] .fc-timegrid-slot, 
+html[data-theme='light'] .fc-daygrid-day {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+html[data-theme='light'] .fc-col-header-cell, 
+html[data-theme='light'] .fc-timegrid-axis {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme='light'] .fc-timegrid-slot-lane {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme='light'] .fc-theme-standard td, 
+html[data-theme='light'] .fc-theme-standard th,
+html[data-theme='light'] .fc-theme-standard .fc-scrollgrid {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}

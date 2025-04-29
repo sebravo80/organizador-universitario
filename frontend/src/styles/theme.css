@@ -16,7 +16,15 @@
 
 body {
   color: var(--text-primary);
+  background-color: var(--bg-primary);
   transition: all 0.3s ease;
+}
+
+/* Cuando estamos en modo claro, cambiamos la imagen de fondo */
+html[data-theme='light'] body {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/frontend/public/fondo.png');
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .MuiPaper-root {
@@ -27,9 +35,15 @@ body {
 
 /* Modificación para el fondo de las tarjetas */
 .MuiPaper-root.MuiCard-root {
-  background-color: rgba(39, 39, 39, 0.9) !important;
+  background-color: var(--card-bg) !important;
   backdrop-filter: blur(5px) !important;
-  border: 1px solid rgba(114, 0, 42, 0.2);
+  border: 1px solid var(--border-color-secondary);
+}
+
+/* Ajustes específicos para el tema claro */
+html[data-theme='light'] .MuiPaper-root.MuiCard-root {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(163, 0, 68, 0.1);
 }
 
 /* Añadir estilos específicos para el texto dentro de las tarjetas */
@@ -39,7 +53,7 @@ body {
 
 .MuiAppBar-root {
   background-color: var(--navbar-bg) !important;
-  color: var(--text-primary) !important;
+  color: var(--text-quaternary) !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
@@ -71,8 +85,12 @@ body {
 }
 
 .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(114, 0, 42, 0.5) !important;
+  border-color: rgba(var(--border-color-secondary), 0.5) !important;
   transition: border-color 0.3s ease !important;
+}
+
+html[data-theme='light'] .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(163, 0, 68, 0.3) !important;
 }
 
 .MuiListItemText-root {

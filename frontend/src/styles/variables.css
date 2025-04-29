@@ -4,11 +4,10 @@
   --secondary-color: #3498db;     
   --accent-color: #e74c3c;        
   
-  /* Colores neutros */
+  /* Colores neutros para tema claro */
   --background-light: #f8f9fa;
-  --background-dark: #121212;  /* Oscuro más moderno */
-  --text-primary: #ffffff;     /* Texto principal blanco */
-  --text-secondary: #b0b0b0;   /* Texto secundario gris claro */
+  --text-primary-light: #333333;
+  --text-secondary-light: #555555;
   
   /* Colores de estado - se mantienen para preservar los colores de las prioridades */
   --success: #28a745;
@@ -22,4 +21,40 @@
   --dark-bg-tertiary: #72002a;   /* Burdeos para acentos */
   --dark-surface: #272727;       /* Superficies como tarjetas */
   --dark-border: #333333;        /* Bordes sutiles */
+  
+  /* Colores para tema claro */
+  --light-bg-primary: #ffffff;
+  --light-bg-secondary: #f5f5f5;
+  --light-bg-tertiary: #a30044;  /* Mantiene el color principal pero más brillante */
+  --light-surface: #ffffff;
+  --light-border: #dddddd;
+}
+
+/* Variables temáticas aplicadas según el atributo data-theme */
+html[data-theme='dark'] {
+  --bg-primary: var(--dark-bg-primary);
+  --bg-secondary: var(--dark-bg-secondary);
+  --bg-terciary: var(--dark-bg-tertiary);
+  --text-primary: #ffffff;
+  --text-secondary: #efefef;
+  --text-terciary: #b0b0b0;
+  --text-quaternary: #ffffff;
+  --border-color: var(--dark-border);
+  --border-color-secondary: var(--dark-bg-tertiary);
+  --card-bg: rgba(39, 39, 39, 0.9);
+  --navbar-bg: var(--dark-bg-tertiary);
+}
+
+html[data-theme='light'] {
+  --bg-primary: var(--light-bg-primary);
+  --bg-secondary: var(--light-bg-secondary);
+  --bg-terciary: var(--light-bg-tertiary);
+  --text-primary: #333333;
+  --text-secondary: #555555;
+  --text-terciary: #777777;
+  --text-quaternary: #ffffff; /* Mantiene texto blanco en botones */
+  --border-color: var(--light-border);
+  --border-color-secondary: var(--light-bg-tertiary);
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --navbar-bg: var(--light-bg-tertiary);
 }
