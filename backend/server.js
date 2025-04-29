@@ -66,6 +66,12 @@ try {
   logError(err);
 }
 
+// Depuración de rutas de autenticación
+app.use('/api/auth/*', (req, res, next) => {
+  console.log(`[AUTH DEBUG] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Middleware para manejar errores
 app.use((err, req, res, next) => {
   logError(err);

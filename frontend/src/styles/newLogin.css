@@ -106,13 +106,36 @@ body {
     transform: translateY(-50%) rotate(45deg);
 }
 
+/* Mejora del estilo del enlace de contraseña olvidada */
 .forgot-link {
     margin: -15px 0 15px;
+    text-align: right;
 }
 
 .forgot-link a {
     font-size: 14.5px;
-    color: #333;
+    color: #a30044; /* Usa el color principal de tu app */
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.forgot-link a:hover {
+    color: #ff4d97;
+}
+
+/* Añade un estilo para los enlaces en general dentro del formulario */
+.back-link {
+    margin-top: 15px;
+}
+
+.back-link a, 
+.forgot-link a {
+    transition: color 0.3s;
+}
+
+.back-link a:hover,
+.forgot-link a:hover {
+    text-decoration: underline;
 }
 
 .btn {
