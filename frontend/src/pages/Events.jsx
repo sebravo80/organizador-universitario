@@ -318,14 +318,14 @@ const Events = () => {
                     </Typography>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <EventIcon fontSize="small" sx={{ mr: 0.5 }} />
+                      <EventIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
                       <Typography variant="body2">
                         {formatDate(event.startDate)}
                       </Typography>
                     </Box>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} />
+                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
                       <Typography variant="body2">
                         {formatTime(event.startDate)} - {formatTime(event.endDate)}
                       </Typography>
@@ -337,7 +337,7 @@ const Events = () => {
                     
                     {event.location && (
                       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
+                        <RoomIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
                         <Typography variant="body2">
                           {event.location}
                         </Typography>
