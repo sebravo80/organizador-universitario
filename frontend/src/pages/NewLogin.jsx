@@ -84,10 +84,7 @@ const NewLogin = () => {
             <i className='bx bxs-lock-alt'></i>
           </div>
           <div className="forgot-link">
-            <a href="#" onClick={(e) => {
-              e.preventDefault();
-              navigate('/forgot-password');
-            }}>¿Olvidaste tu contraseña?</a>
+            <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
           </div>
           <button type="submit" className="btn" disabled={loading}>
             {loading ? 'Procesando...' : 'Iniciar sesión'}

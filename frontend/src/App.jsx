@@ -59,10 +59,9 @@ function App() {
           <Routes>
             {/* Rutas públicas (solo accesibles si NO está autenticado) */}
             <Route element={<PublicRoute />}>
-              <Route path="/login" element={<NewLogin />} /> {/* Solo usamos NewLogin */}
+              <Route path="/login" element={<NewLogin />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
-              {/* La ruta register ya no es necesaria porque está integrada en el nuevo login */}
             </Route>
             
             {/* Rutas privadas (requieren autenticación) */}
@@ -73,12 +72,13 @@ function App() {
               <Route path="/weekly" element={<WeeklyView />} />
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/grade-calculator" element={<GradeCalculator />} /> {/* Nueva ruta */}
+              <Route path="/grade-calculator" element={<GradeCalculator />} />
             </Route>
             
-            {/* Redirección por defecto */}
-            <Route path="/" element={<Navigate to={isAuth ? "/dashboard" : "/login"} />} />
-            <Route path="*" element={<Navigate to={isAuth ? "/dashboard" : "/login"} />} />
+            {/* Ruta por defecto: redirigir a login o dashboard dependiendo de autenticación */}
+            <Route path="*" element={
+              isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+            } />
           </Routes>
         </Box>
         
