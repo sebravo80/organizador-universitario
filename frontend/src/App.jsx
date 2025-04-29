@@ -32,7 +32,7 @@ const PrivateRoute = () => {
   return isAuth ? <Outlet /> : <Navigate to="/login" />;
 };
 
-// Ruta pública (solo accesible si NO está autenticado)
+// Ruta pública (solo accesibles si el usuario no está autenticado)
 const PublicRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
@@ -52,14 +52,14 @@ function App() {
       
       <Box component="main" sx={{ flexGrow: 1, pt: 8, pb: 4 }}>
         <Routes>
-          {/* Rutas públicas (solo accesibles si NO está autenticado) */}
+          {/* Rutas públicas (solo accesibles si el usuario no está autenticado) */}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<NewLogin />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
           </Route>
           
-          {/* Rutas privadas (requieren autenticación) */}
+          {/* Rutas privadas (se requiere autenticación) */}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<Courses />} />
@@ -70,14 +70,14 @@ function App() {
             <Route path="/grade-calculator" element={<GradeCalculator />} />
           </Route>
           
-          {/* Ruta por defecto: redirigir a login o dashboard dependiendo de autenticación */}
+          {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}
           <Route path="*" element={
             isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
           } />
         </Routes>
       </Box>
       
-      {/* Alertas de tareas (solo mostrar si está autenticado) */}
+      {/* Alertas de tareas (solo visible si está autenticado) */}
       {isAuth && <TaskAlerts />}
     </Box>
   );
