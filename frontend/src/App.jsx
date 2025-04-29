@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
@@ -20,6 +20,7 @@ import Events from './pages/Events';
 import GradeCalculator from './pages/GradeCalculator';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Home from './pages/Home';
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -51,7 +52,7 @@ function App() {
   const { isAuth } = useContext(AuthContext);
   
   return (
-    <Router>
+    <>
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar />
         
@@ -76,6 +77,7 @@ function App() {
             </Route>
             
             {/* Ruta por defecto: redirigir a login o dashboard dependiendo de autenticación */}
+            <Route path="/" element={<Home />} />
             <Route path="*" element={
               isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
             } />
@@ -85,7 +87,7 @@ function App() {
         {/* Alertas de tareas (solo mostrar si está autenticado) */}
         {isAuth && <TaskAlerts />}
       </Box>
-    </Router>
+    </>
   );
 }
 
