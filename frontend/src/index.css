@@ -103,6 +103,62 @@ button:focus-visible {
   }
 }
 
+/* Mejoras adicionales para dispositivos móviles */
+@media (max-width: 600px) {
+  .MuiContainer-root {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  .MuiTypography-h4 {
+    font-size: 1.5rem !important;
+  }
+  
+  .MuiButton-root {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .MuiDialog-paper {
+    margin: 12px !important;
+  }
+  
+  /* Ajustes específicos para calendarios */
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .fc .fc-toolbar-title {
+    font-size: 1.2em !important;
+  }
+}
+
+/* Ajustes responsivos para el Dashboard */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .dashboard-card {
+    margin-bottom: 16px !important;
+  }
+  
+  .task-grid, .course-grid, .event-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Estilos adicionales para MobileMenu */
+  .mobile-menu-drawer .MuiPaper-root {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+  
+  .mobile-menu-drawer .MuiListItem-root:hover {
+    background-color: rgba(114, 0, 42, 0.1);
+  }
+}
+
 .css-i9gxme {
   flex-grow: 0 !important;
 }

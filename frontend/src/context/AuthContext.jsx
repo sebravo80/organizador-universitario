@@ -20,8 +20,16 @@ export const AuthProvider = ({ children }) => {
       
       console.log('Intentando iniciar sesión con:', { email });
       
-      // CAMBIADO: Usa api en lugar de fetch directamente
-      const response = await api.post('/auth', { email, password });
+      const response = await api.post(
+        '/auth',
+        { email, password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true // Añade esta línea
+        }
+      );
       
       console.log('Respuesta del servidor:', response.data);
       
@@ -41,19 +49,8 @@ export const AuthProvider = ({ children }) => {
       
       return true;
     } catch (err) {
-      console.error('Error al iniciar sesión:', err);
-      
-      if (err.response) {
-        console.error('Detalles del error:', {
-          status: err.response.status,
-          data: err.response.data
-        });
-        setError(err.response.data?.msg || 'Error al iniciar sesión');
-      } else {
-        console.error('Error sin respuesta:', err.message);
-        setError('Error de conexión. Intenta nuevamente.');
-      }
-      
+      console.error('Error completo:', err);
+      setError('Error al iniciar sesión: ' + (err.response?.data?.msg || err.message));
       return false;
     } finally {
       setLoading(false);

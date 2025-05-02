@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -33,18 +32,23 @@ try {
   process.exit(1);
 }
 
-// Middleware
-app.use(express.json());
+// Configuración avanzada de CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-auth-token');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Manejo específico para solicitudes OPTIONS (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
-// Configuración de CORS
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://diatomeauniversitaria.netlify.app/'] 
-    : ['https://diatomeauniversitaria.netlify.app', 'http://localhost:5173'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'x-auth-token'],
-  credentials: true
-}));
+// Middleware
+app.use(express.json({ extended: false }));
 
 // Middleware para registrar todas las solicitudes
 app.use((req, res, next) => {

@@ -98,3 +98,77 @@ html[data-theme='light'] .MuiOutlinedInput-notchedOutline {
   transition: color 0.3s ease;
 }
 
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-color-secondary) !important;
+  border-width: 1px !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-color-secondary) !important;
+  border-width: 1px !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--bg-terciary) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 5px rgba(114, 0, 42, 0.3);
+}
+
+/* Mejora la apariencia de los Select para evitar bordes dobles */
+.MuiSelect-select {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Media queries para Cards */
+@media (max-width: 600px) {
+  /* Ajustes responsivos para tarjetas */
+  .MuiCard-root {
+    padding: 12px !important;
+  }
+  
+  .MuiCardHeader-root {
+    padding: 8px !important;
+  }
+  
+  .MuiCardContent-root {
+    padding: 8px !important;
+  }
+  
+  .MuiCardActions-root {
+    padding: 4px 8px !important;
+  }
+  
+  /* Ajustes específicos para iconos y texto en tarjetas */
+  .MuiCardHeader-avatar {
+    margin-right: 8px !important;
+  }
+  
+  .MuiCardHeader-title {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Navbar responsivo */
+  .MuiAppBar-root {
+    padding: 0 8px !important;
+  }
+  
+  .MuiToolbar-root {
+    min-height: 56px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  .navbar-logo {
+    font-size: 1.2rem !important;
+    margin-right: 8px !important;
+  }
+  
+  .MuiDrawer-paper {
+    width: 240px !important;
+  }
+  
+  .MuiListItemIcon-root {
+    min-width: 36px !important;
+  }
+}
+

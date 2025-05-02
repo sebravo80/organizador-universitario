@@ -399,3 +399,49 @@ body {
         font-size: 30px;
     }
 }
+
+@media screen and (max-width: 480px) {
+    .container {
+        height: auto;
+        min-height: 90vh;
+        width: 95%;
+        padding: 10px;
+    }
+    
+    .form-box {
+        width: 100%;
+        height: auto;
+        padding: 15px 10px;
+    }
+    
+    .toggle-container {
+        display: none;
+    }
+    
+    .container.active .sign-in-form {
+        display: none;
+    }
+    
+    .container.active .sign-up-form {
+        display: block;
+    }
+    
+    .sign-up-form {
+        display: none;
+    }
+    
+    .container h1 {
+        font-size: 24px;
+    }
+    
+    .alternative-signup {
+        margin-top: 15px;
+        display: block;
+        text-align: center;
+    }
+    
+    .alternative-signup a {
+        color: #a30044;
+        text-decoration: underline;
+    }
+}

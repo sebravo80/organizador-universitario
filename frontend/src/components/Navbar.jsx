@@ -18,6 +18,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import ThemeToggle from './ThemeToggle';
+import MobileMenu from './MobileMenu';
 
 const styles = {
   navbar: {
@@ -113,18 +114,22 @@ function Navbar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={styles.navbar}>
         <Toolbar>
+          {/* Menú hamburguesa original para pantallas medianas y grandes */}
           {isAuth && (
             <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ mr: 2 }}
+              sx={{ mr: 2, display: { xs: 'none', sm: 'none', md: 'flex' } }}
               onClick={handleDrawerToggle}
             >
               <MenuIcon />
             </IconButton>
           )}
+          
+          {/* Nuevo MobileMenu para pantallas pequeñas */}
+          {isAuth && <MobileMenu />}
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ...styles.logo }}>
             <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>

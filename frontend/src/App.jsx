@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext, Suspense } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
@@ -9,17 +9,19 @@ import './styles/theme.css';
 import Navbar from './components/Navbar';
 import TaskAlerts from './components/TaskAlerts';
 
-// Páginas
+// Páginas (carga inmediata)
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Tasks from './pages/Tasks';
 import WeeklyView from './pages/WeeklyView';
 import NewLogin from './pages/NewLogin'; 
 import Profile from './pages/Profile';
-import Events from './pages/Events';
-import GradeCalculator from './pages/GradeCalculator';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+
+// Páginas con carga diferida (lazy loading)
+const Events = React.lazy(() => import('./pages/Events'));
+const GradeCalculator = React.lazy(() => import('./pages/GradeCalculator'));
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -65,9 +67,17 @@ function App() {
             <Route path="/courses" element={<Courses />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/weekly" element={<WeeklyView />} />
-            <Route path="/events" element={<Events />} />
+            <Route path="/events" element={
+              <Suspense fallback={<div>Cargando...</div>}>
+                <Events />
+              </Suspense>
+            } />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/grade-calculator" element={<GradeCalculator />} />
+            <Route path="/grade-calculator" element={
+              <Suspense fallback={<div>Cargando...</div>}>
+                <GradeCalculator />
+              </Suspense>
+            } />
           </Route>
           
           {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}

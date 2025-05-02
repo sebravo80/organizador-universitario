@@ -305,12 +305,12 @@ const WeeklyView = () => {
             className="custom-calendar-container"
           >
             <FullCalendar
-              plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
               headerToolbar={{
-                left: 'prev,next today',
+                left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
               }}
               locale={esLocale}
               events={calendarEvents}
