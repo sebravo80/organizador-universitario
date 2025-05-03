@@ -3,10 +3,12 @@ import { AuthContext } from '../context/AuthContext';
 import { 
   Container, Typography, Box, TextField, Button, 
   Paper, List, ListItem, ListItemText, ListItemSecondaryAction,
-  IconButton, CircularProgress, Divider, Alert
+  IconButton, CircularProgress, Divider, Alert, Snackbar
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import axios from 'axios';
 
 const TodoList = () => {
@@ -14,7 +16,8 @@ const TodoList = () => {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [loading, setLoading] = useState(true);
-  const [serverError, setServerError] = useState(null);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   // Cargar todos los pendientes al iniciar
   useEffect(() => {
@@ -27,71 +30,51 @@ const TodoList = () => {
 
   const loadItems = async () => {
     try {
-      console.log("Cargando pendientes...");
       setLoading(true);
+      setError(null);
       
+      // URL del backend
+      const API_URL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
+      console.log("Usando API URL:", API_URL);
+      
+      // Obtener token del localStorage
       const token = localStorage.getItem('token');
       if (!token) {
         console.error("No hay token disponible");
+        setError("Debes iniciar sesión primero");
         setLoading(false);
         return;
       }
       
-      // Usar la URL relativa con proxy
-      const response = await axios.get('/api/pendings', {
+      // Hacer petición a la API
+      const response = await axios.get(`${API_URL}/pendings`, {
         headers: {
           'x-auth-token': token,
           'Accept': 'application/json'
         }
       });
+
+      console.log('Respuesta recibida:', response);
       
-      console.log("Respuesta completa de la API:", response);
-      
-      // Verificar si la respuesta es un string
-      if (typeof response.data === 'string') {
-        console.error("La respuesta es un string:", response.data);
-        try {
-          // Intentar parsear el string como JSON
-          const parsedData = JSON.parse(response.data);
-          if (Array.isArray(parsedData)) {
-            console.log("String parseado correctamente a array:", parsedData);
-            setItems(parsedData);
-          } else {
-            console.error("El string parseado no es un array:", parsedData);
-            setItems([]);
-            setServerError("El formato de respuesta parseado no es un array");
-          }
-        } catch (parseError) {
-          console.error("Error al parsear la respuesta como JSON:", parseError);
-          setItems([]);
-          setServerError("No se pudo procesar la respuesta del servidor");
-        }
-      } 
-      // Si la respuesta es un objeto (el caso normal)
-      else if (typeof response.data === 'object') {
+      // Verificar que la respuesta contenga datos válidos
+      if (response && response.data) {
         if (Array.isArray(response.data)) {
-          console.log("Datos recibidos (array):", response.data);
           setItems(response.data);
         } else {
-          console.error("La respuesta no es un array:", response.data);
+          console.warn('La respuesta no es un array:', response.data);
           setItems([]);
-          setServerError("Formato de respuesta inesperado: se recibió un objeto, pero no un array");
         }
       } else {
-        console.error("La respuesta no es un objeto ni un string:", typeof response.data);
+        console.warn('Respuesta vacía o inválida');
         setItems([]);
-        setServerError(`Formato de respuesta inesperado: ${typeof response.data}`);
       }
-    } catch (error) {
-      console.error("Error al cargar los pendientes:", error);
-      setItems([]);
+    } catch (err) {
+      console.error('Error al cargar los pendientes:', err);
       
-      // Mostrar información más detallada sobre el error
-      const errorMessage = error.response 
-        ? `Error ${error.response.status}: ${error.response.data}` 
-        : error.message;
-        
-      setServerError(`No pudimos cargar tus pendientes. ${errorMessage}`);
+      // Mostrar mensaje de error más amigable
+      const errorMsg = err.response?.data?.msg || err.message || 'Error al cargar los pendientes';
+      setError(errorMsg);
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -103,75 +86,118 @@ const TodoList = () => {
     if (!newItem.trim()) return;
     
     try {
+      setError(null);
+      
+      const API_URL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
       const token = localStorage.getItem('token');
       
       if (!token) {
-        alert("No has iniciado sesión");
+        setError("Debes iniciar sesión primero");
         return;
       }
       
-      const response = await axios.post('/api/pendings', 
-        { 
-          title: newItem,
-          description: '' 
-        }, 
+      const response = await axios.post(
+        `${API_URL}/pendings`, 
+        { title: newItem, description: '' },
         { 
           headers: { 
-            'x-auth-token': token, 
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          } 
+            'x-auth-token': token
+          }
         }
       );
-      
-      console.log("Pendiente creado:", response.data);
-      
-      // Manejar caso de respuesta en string
-      if (typeof response.data === 'string') {
-        try {
-          const parsedData = JSON.parse(response.data);
-          setItems(Array.isArray(items) ? [...items, parsedData] : [parsedData]);
-        } catch (parseError) {
-          console.error("Error al parsear la respuesta como JSON:", parseError);
-        }
-      } else {
-        setItems(Array.isArray(items) ? [...items, response.data] : [response.data]);
+
+      if (response && response.data) {
+        // Mostrar mensaje de éxito
+        setSuccess('Pendiente añadido correctamente');
+        
+        // Limpiar el campo de texto
+        setNewItem('');
+        
+        // Recargar los items
+        await loadItems();
       }
-      
-      setNewItem('');
-      setServerError(null);
-      
-      // Recargar la lista completa
-      loadItems();
-    } catch (error) {
-      console.error("Error al añadir pendiente:", error);
-      setServerError(`No pudimos añadir el pendiente. ${error.message}`);
+    } catch (err) {
+      console.error('Error al añadir pendiente:', err);
+      const errorMsg = err.response?.data?.msg || err.message || 'Error al añadir el pendiente';
+      setError(errorMsg);
     }
   };
 
   const handleDeleteItem = async (id) => {
     try {
+      setError(null);
+      
+      const API_URL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
       const token = localStorage.getItem('token');
       
-      await axios.delete(`/api/pendings/${id}`, {
-        headers: { 
-          'x-auth-token': token,
-          'Accept': 'application/json'
-        }
+      if (!token) {
+        setError("Debes iniciar sesión primero");
+        return;
+      }
+      
+      await axios.delete(`${API_URL}/pendings/${id}`, {
+        headers: { 'x-auth-token': token }
       });
       
-      setItems(Array.isArray(items) ? items.filter(item => item._id !== id) : []);
-      setServerError(null);
-    } catch (error) {
-      console.error("Error al eliminar pendiente:", error);
-      setServerError(`No pudimos eliminar el pendiente. ${error.message}`);
+      // Actualizar la lista sin necesidad de recargar todos los elementos
+      setItems(items.filter(item => item._id !== id));
+      setSuccess('Pendiente eliminado correctamente');
+    } catch (err) {
+      console.error('Error al eliminar pendiente:', err);
+      const errorMsg = err.response?.data?.msg || err.message || 'Error al eliminar el pendiente';
+      setError(errorMsg);
+    }
+  };
+  
+  const handleToggleComplete = async (item) => {
+    try {
+      setError(null);
+      
+      const API_URL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError("Debes iniciar sesión primero");
+        return;
+      }
+      
+      const updatedItem = {
+        ...item,
+        completed: !item.completed
+      };
+      
+      const response = await axios.put(
+        `${API_URL}/pendings/${item._id}`, 
+        updatedItem,
+        { headers: { 'x-auth-token': token } }
+      );
+      
+      if (response && response.data) {
+        // Actualizar el item en la lista
+        setItems(items.map(i => i._id === item._id ? response.data : i));
+        setSuccess(`Pendiente marcado como ${response.data.completed ? 'completado' : 'pendiente'}`);
+      }
+    } catch (err) {
+      console.error('Error al actualizar pendiente:', err);
+      const errorMsg = err.response?.data?.msg || err.message || 'Error al actualizar el pendiente';
+      setError(errorMsg);
     }
   };
 
+  const handleCloseError = () => {
+    setError(null);
+  };
+
+  const handleCloseSuccess = () => {
+    setSuccess(null);
+  };
+
+  // Si el usuario no está autenticado
   if (!isAuth) {
     return (
-      <Container>
-        <Box sx={{ py: 4, textAlign: 'center' }}>
+      <Container maxWidth="md">
+        <Box sx={{ mt: 4, textAlign: 'center' }}>
           <Typography variant="h6">
             Debes iniciar sesión para ver tu lista de pendientes
           </Typography>
@@ -181,47 +207,46 @@ const TodoList = () => {
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth="md">
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom align="center">
           Lista de Cosas Pendientes
         </Typography>
         
-        {serverError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {serverError}
-          </Alert>
-        )}
-        
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <form onSubmit={handleAddItem} style={{ display: 'flex', marginBottom: '20px' }}>
+        {/* Formulario para añadir nuevo elemento */}
+        <Paper sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: 3 }}>
+          <form onSubmit={handleAddItem} style={{ display: 'flex' }}>
             <TextField
               fullWidth
-              label="Añadir un nuevo pendiente..."
+              label="Añadir nuevo pendiente..."
               variant="outlined"
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
               sx={{ mr: 1 }}
+              autoComplete="off"
             />
             <Button 
               type="submit" 
               variant="contained"
+              color="primary"
               startIcon={<AddCircleIcon />}
               disabled={!newItem.trim()}
+              sx={{ px: 3 }}
             >
               Añadir
             </Button>
           </form>
         </Paper>
         
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Paper sx={{ p: 0 }}>
-            <List>
-              {!Array.isArray(items) || items.length === 0 ? (
+        {/* Lista de pendientes */}
+        <Paper sx={{ borderRadius: 2, boxShadow: 3, overflow: 'hidden' }}>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <List sx={{ p: 0 }}>
+              {items.length === 0 ? (
                 <ListItem>
                   <ListItemText 
                     primary="No tienes pendientes en tu lista"
@@ -231,11 +256,26 @@ const TodoList = () => {
               ) : (
                 items.map((item) => (
                   <React.Fragment key={item._id}>
-                    <ListItem>
+                    <ListItem 
+                      sx={{ 
+                        backgroundColor: item.completed ? 'rgba(76, 175, 80, 0.08)' : 'transparent',
+                        textDecoration: item.completed ? 'line-through' : 'none',
+                        opacity: item.completed ? 0.7 : 1
+                      }}
+                    >
+                      <IconButton 
+                        edge="start" 
+                        color={item.completed ? "success" : "default"}
+                        onClick={() => handleToggleComplete(item)}
+                      >
+                        {item.completed ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
+                      </IconButton>
+                      
                       <ListItemText 
                         primary={item.title}
                         secondary={item.description}
                       />
+                      
                       <ListItemSecondaryAction>
                         <IconButton 
                           edge="end" 
@@ -251,9 +291,33 @@ const TodoList = () => {
                 ))
               )}
             </List>
-          </Paper>
-        )}
+          )}
+        </Paper>
       </Box>
+      
+      {/* Mensaje de error */}
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+      
+      {/* Mensaje de éxito */}
+      <Snackbar 
+        open={!!success} 
+        autoHideDuration={3000} 
+        onClose={handleCloseSuccess}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+          {success}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
