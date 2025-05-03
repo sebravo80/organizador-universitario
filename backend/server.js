@@ -67,11 +67,12 @@ try {
   app.use('/api/courses', require('./routes/courses'));
   app.use('/api/tasks', require('./routes/tasks'));
   app.use('/api/events', require('./routes/events'));
-  // Añade esta línea para verificar que las rutas estén registradas
   console.log("Registrando rutas de pendientes");
   app.use('/api/pendings', require('./routes/pendings'));
+  app.use('/api/schedule', require('./routes/schedule'));
 } catch (err) {
   logError(err);
+  console.error('Error al registrar rutas:', err);
 }
 
 // Depuración de rutas de autenticación

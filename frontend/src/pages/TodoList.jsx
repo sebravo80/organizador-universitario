@@ -30,10 +30,6 @@ const TodoList = () => {
       console.log("Cargando pendientes...");
       setLoading(true);
       
-      // Obtenemos la URL base de las variables de entorno o usamos un valor por defecto
-      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      console.log("URL base de la API:", baseURL);
-      
       const token = localStorage.getItem('token');
       if (!token) {
         console.error("No hay token disponible");
@@ -41,11 +37,10 @@ const TodoList = () => {
         return;
       }
       
-      // Usar la URL completa para la solicitud
-      const response = await axios.get(`${baseURL}/pendings`, {
+      const response = await axios.get('/api/pendings', {
         headers: {
           'x-auth-token': token,
-          'Accept': 'application/json' // Forzamos que acepte solo JSON
+          'Accept': 'application/json'
         }
       });
       
