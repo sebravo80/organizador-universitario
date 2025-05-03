@@ -37,6 +37,7 @@ const TodoList = () => {
         return;
       }
       
+      // Usar la URL relativa con proxy
       const response = await axios.get('/api/pendings', {
         headers: {
           'x-auth-token': token,
@@ -46,17 +47,38 @@ const TodoList = () => {
       
       console.log("Respuesta completa de la API:", response);
       
-      if (typeof response.data === 'object') {
+      // Verificar si la respuesta es un string
+      if (typeof response.data === 'string') {
+        console.error("La respuesta es un string:", response.data);
+        try {
+          // Intentar parsear el string como JSON
+          const parsedData = JSON.parse(response.data);
+          if (Array.isArray(parsedData)) {
+            console.log("String parseado correctamente a array:", parsedData);
+            setItems(parsedData);
+          } else {
+            console.error("El string parseado no es un array:", parsedData);
+            setItems([]);
+            setServerError("El formato de respuesta parseado no es un array");
+          }
+        } catch (parseError) {
+          console.error("Error al parsear la respuesta como JSON:", parseError);
+          setItems([]);
+          setServerError("No se pudo procesar la respuesta del servidor");
+        }
+      } 
+      // Si la respuesta es un objeto (el caso normal)
+      else if (typeof response.data === 'object') {
         if (Array.isArray(response.data)) {
           console.log("Datos recibidos (array):", response.data);
           setItems(response.data);
         } else {
           console.error("La respuesta no es un array:", response.data);
-          setItems([]); // Establecemos un array vacío
+          setItems([]);
           setServerError("Formato de respuesta inesperado: se recibió un objeto, pero no un array");
         }
       } else {
-        console.error("La respuesta no es un objeto:", response.data);
+        console.error("La respuesta no es un objeto ni un string:", typeof response.data);
         setItems([]);
         setServerError(`Formato de respuesta inesperado: ${typeof response.data}`);
       }
@@ -81,7 +103,6 @@ const TodoList = () => {
     if (!newItem.trim()) return;
     
     try {
-      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -89,7 +110,7 @@ const TodoList = () => {
         return;
       }
       
-      const response = await axios.post(`${baseURL}/pendings`, 
+      const response = await axios.post('/api/pendings', 
         { 
           title: newItem,
           description: '' 
@@ -104,9 +125,24 @@ const TodoList = () => {
       );
       
       console.log("Pendiente creado:", response.data);
-      setItems(Array.isArray(items) ? [...items, response.data] : [response.data]);
+      
+      // Manejar caso de respuesta en string
+      if (typeof response.data === 'string') {
+        try {
+          const parsedData = JSON.parse(response.data);
+          setItems(Array.isArray(items) ? [...items, parsedData] : [parsedData]);
+        } catch (parseError) {
+          console.error("Error al parsear la respuesta como JSON:", parseError);
+        }
+      } else {
+        setItems(Array.isArray(items) ? [...items, response.data] : [response.data]);
+      }
+      
       setNewItem('');
       setServerError(null);
+      
+      // Recargar la lista completa
+      loadItems();
     } catch (error) {
       console.error("Error al añadir pendiente:", error);
       setServerError(`No pudimos añadir el pendiente. ${error.message}`);
@@ -115,10 +151,9 @@ const TodoList = () => {
 
   const handleDeleteItem = async (id) => {
     try {
-      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const token = localStorage.getItem('token');
       
-      await axios.delete(`${baseURL}/pendings/${id}`, {
+      await axios.delete(`/api/pendings/${id}`, {
         headers: { 
           'x-auth-token': token,
           'Accept': 'application/json'
