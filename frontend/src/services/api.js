@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 
 // Determinar la URL base según el entorno

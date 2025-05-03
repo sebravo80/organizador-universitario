@@ -6,7 +6,8 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-
+// Configurar CORS
+app.use(cors());
 // Función para registrar errores en un archivo
 const logError = (error) => {
   const logDir = path.join(__dirname, 'logs');
@@ -66,6 +67,9 @@ try {
   app.use('/api/courses', require('./routes/courses'));
   app.use('/api/tasks', require('./routes/tasks'));
   app.use('/api/events', require('./routes/events'));
+  // Añade esta línea para verificar que las rutas estén registradas
+  console.log("Registrando rutas de pendientes");
+  app.use('/api/pendings', require('./routes/pendings'));
 } catch (err) {
   logError(err);
 }

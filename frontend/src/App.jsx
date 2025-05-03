@@ -18,6 +18,7 @@ import NewLogin from './pages/NewLogin';
 import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Pendings from './pages/Pendings';
 
 // Páginas con carga diferida (lazy loading)
 const Events = React.lazy(() => import('./pages/Events'));
@@ -78,6 +79,7 @@ function App() {
                 <GradeCalculator />
               </Suspense>
             } />
+            <Route path="/pendings" element={<PrivateRoute><Pendings /></PrivateRoute>} />
           </Route>
           
           {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}

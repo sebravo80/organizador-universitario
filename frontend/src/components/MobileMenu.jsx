@@ -12,6 +12,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -65,6 +66,11 @@ const MobileMenu = () => {
           <ListItem button onClick={() => handleNavigate('/courses')}>
             <ListItemIcon><SchoolIcon /></ListItemIcon>
             <ListItemText primary="Cursos" />
+          </ListItem>
+
+          <ListItem button onClick={() => handleNavigate('/pendings')}>
+            <ListItemIcon><NoteAltIcon /></ListItemIcon>
+            <ListItemText primary="Pendientes" />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/grade-calculator')}>
