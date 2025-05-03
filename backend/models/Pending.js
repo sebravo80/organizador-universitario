@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const PendingSchema = new mongoose.Schema({
+const PendingSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'users',
     required: true
   },
   title: {
@@ -17,10 +17,10 @@ const PendingSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  createdAt: {
+  date: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Pending', PendingSchema);
+module.exports = mongoose.model('pending', PendingSchema);

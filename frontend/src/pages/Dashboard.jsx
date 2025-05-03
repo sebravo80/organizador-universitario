@@ -304,7 +304,7 @@ const Dashboard = () => {
                 <Button 
                   variant="contained" 
                   component={Link} 
-                  to="/pendings" 
+                  to="/todolist" 
                   color="primary"
                   startIcon={<NoteAltIcon />}
                 >
