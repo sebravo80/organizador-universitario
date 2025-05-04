@@ -4,8 +4,8 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
-  getPersonalNotes, createPersonalNote, updatePersonalNote, deletePersonalNote
-} from '../services/personalNoteService';
+    getPersonalNotes, createPersonalNote, updatePersonalNote, deletePersonalNote
+  } from '../services/personalNotes';
 
 export default function PersonalNotes() {
   const [notes, setNotes] = useState([]);
