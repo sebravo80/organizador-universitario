@@ -12,6 +12,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -60,6 +61,11 @@ const MobileMenu = () => {
           <ListItem button onClick={() => handleNavigate('/tasks')}>
             <ListItemIcon><AssignmentIcon /></ListItemIcon>
             <ListItemText primary="Tareas" />
+          </ListItem>
+
+          <ListItem button onClick={() => handleNavigate('/todos')}>
+            <ListItemIcon><ChecklistIcon /></ListItemIcon>
+            <ListItemText primary="Lista de Pendientes" />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/courses')}>
