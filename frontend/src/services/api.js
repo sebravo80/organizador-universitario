@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Obtener URL base del archivo .env según el entorno
-const baseURL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
+const baseURL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com';
 console.log("API configurada con URL base:", baseURL);
 
 const api = axios.create({

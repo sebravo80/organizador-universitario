@@ -6,17 +6,7 @@ export const getPendings = async () => {
     const response = await api.get('/pendings');
     return response.data;
   } catch (error) {
-    throw error.response.data;
-  }
-};
-
-// Obtener un pendiente por ID
-export const getPendingById = async (id) => {
-  try {
-    const response = await api.get(`/pendings/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error.response.data;
+    throw error.response?.data || error;
   }
 };
 
@@ -26,7 +16,7 @@ export const createPending = async (pendingData) => {
     const response = await api.post('/pendings', pendingData);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response?.data || error;
   }
 };
 
@@ -36,7 +26,7 @@ export const updatePending = async (id, pendingData) => {
     const response = await api.put(`/pendings/${id}`, pendingData);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response?.data || error;
   }
 };
 
@@ -46,6 +36,6 @@ export const deletePending = async (id) => {
     const response = await api.delete(`/pendings/${id}`);
     return response.data;
   } catch (error) {
-    throw error.response.data;
+    throw error.response?.data || error;
   }
 };

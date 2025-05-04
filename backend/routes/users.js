@@ -1,4 +1,3 @@
-// backend/routes/users.js
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -77,7 +76,7 @@ router.post('/', async (req, res) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: 3600 },
+      { expiresIn: '7d' },
       (err, token) => {
         if (err) {
           console.error('Error al generar token JWT:', err);
