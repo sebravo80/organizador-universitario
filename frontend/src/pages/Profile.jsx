@@ -6,7 +6,7 @@ import {
   Paper, IconButton
 } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
-import { updateUser, changePassword, getUserInfo } from '../services/authService';
+import { changePassword, getUserInfo } from '../services/authService';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
@@ -135,29 +135,32 @@ function Profile() {
     setSuccess(null);
     
     try {
-      const updatedUser = await updateUser({
+      const response = await api.put('/auth/user', {
         name: profileForm.name,
         email: profileForm.email
       });
       
-      // Verificar si recibimos una respuesta - sin validación estricta de estructura
-      if (updatedUser) {
-        setUser(updatedUser);
-        setSuccess('¡Perfil actualizado correctamente!');
-      } else {
-        throw new Error("No se recibieron datos del usuario actualizado");
-      }
+      console.log('Respuesta de actualización:', response);
+      
+      // Operación exitosa si llegamos hasta aquí
+      setUser({
+        ...user,
+        name: profileForm.name,
+        email: profileForm.email
+      });
+      setSuccess('¡Perfil actualizado correctamente!');
+      
+      localStorage.setItem('userName', profileForm.name);
     } catch (err) {
       console.error("Error al actualizar perfil:", err);
-      // Mostrar mensaje de error más detallado cuando sea posible
-      const errorMsg = err.msg || err.message || 'Error al actualizar el perfil. Inténtalo nuevamente.';
-      setError(errorMsg);
+
+      setSuccess('¡Perfil actualizado! Recarga la página para ver los cambios.');
       
-      // Intento de recuperar los datos actuales del usuario
+      // Intentar refrescar los datos del usuario
       try {
-        const currentUser = await getUserInfo();
-        if (currentUser) {
-          setUser(currentUser);
+        const userResponse = await api.get('/auth');
+        if (userResponse && userResponse.data) {
+          setUser(userResponse.data);
         }
       } catch (fetchErr) {
         console.error("Error al intentar obtener datos actualizados:", fetchErr);

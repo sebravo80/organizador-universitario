@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 
 // Determinar la URL base según el entorno
@@ -11,9 +10,13 @@ const api = axios.create({
   }
 });
 
-// Interceptor para mostrar las solicitudes en la consola (solo en desarrollo)
+// Interceptor para añadir token a cada solicitud
 api.interceptors.request.use(
-  config => {
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['x-auth-token'] = token;
+    }
     console.log('Enviando solicitud:', {
       url: config.url,
       method: config.method,
@@ -26,7 +29,7 @@ api.interceptors.request.use(
     });
     return config;
   },
-  error => {
+  (error) => {
     console.error('Error en la solicitud:', error);
     return Promise.reject(error);
   }
