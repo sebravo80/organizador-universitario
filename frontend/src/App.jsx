@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme } from './context/ThemeContext';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import PrivateRoute from './components/PrivateRoute';
 import NewLogin from './pages/NewLogin';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
@@ -41,7 +41,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/login" element={<NewLogin />} />
-          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route path="/" element={<PrivateRoute />}>
             <Route index element={<Dashboard />} />
             <Route path="courses" element={<Courses />} />
             <Route path="tasks" element={<Tasks />} />
@@ -58,9 +58,9 @@ function App() {
             } />
           </Route>
         </Routes>
-        <ProtectedRoute>
+        <PrivateRoute>
           <TaskAlerts />
-        </ProtectedRoute>
+        </PrivateRoute>
       </div>
     </ThemeProvider>
   );
