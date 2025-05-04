@@ -1,28 +1,19 @@
 import axios from 'axios';
 
-// Obtener URL base del archivo .env según el entorno
-const baseURL = import.meta.env.VITE_API_URL || 'https://organizador-universitario-api-49b169773d7f.herokuapp.com';
-console.log("API configurada con URL base:", baseURL);
-
 const api = axios.create({
-  baseURL,
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Interceptor para incluir el token en cada solicitud
-api.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['x-auth-token'] = token;
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
+// Interceptor para añadir token de autenticación a las solicitudes
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['x-auth-token'] = token;
   }
-);
+  return config;
+});
 
 export default api;
