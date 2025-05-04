@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useTheme } from './context/ThemeContext';
+import { ThemeContext } from './context/ThemeContext';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
@@ -18,11 +18,11 @@ const Events = React.lazy(() => import('./pages/Events'));
 const GradeCalculator = React.lazy(() => import('./pages/GradeCalculator'));
 
 function App() {
-  const { theme } = useTheme();
+  const { darkMode } = useContext(ThemeContext);
   
   const currentTheme = createTheme({
     palette: {
-      mode: theme,
+      mode: darkMode ? 'dark' : 'light',
       primary: {
         main: '#72002a',
       },
