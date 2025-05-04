@@ -1,76 +1,101 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
-import { useAppData } from '../context/AppDataContext';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 import { 
-  Container, Typography, Box, Grid, 
+  Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
-  Chip, CircularProgress
+  Chip
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
 
-// Agrega funciones auxiliares por si useAppData fallara
-const formatDate = (dateString) => {
-  try {
-    return new Date(dateString).toLocaleDateString();
-  } catch (err) {
-    return 'Fecha inválida';
-  }
-};
-
-const formatTime = (dateString) => {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } catch (err) {
-    return '';
-  }
-};
-
-const getPriorityColor = (priority) => {
-  switch (priority) {
-    case 'Alta': return 'error';
-    case 'Media': return 'warning';
-    case 'Baja': return 'success';
-    default: return 'default';
-  }
-};
-
 const Dashboard = () => {
-  const { courses = [], tasks = [], events = [], loading, error } = useAppData();
-
-  // Filtrar tareas por fecha (próximos 7 días)
-  const isInNextDays = (dateString, days) => {
-    try {
-      const date = new Date(dateString);
-      const today = new Date();
-      const future = new Date();
-      future.setDate(today.getDate() + days);
-      return date >= today && date <= future;
-    } catch (err) {
-      return false;
+  const { user, isAuth } = useContext(AuthContext);
+  const [courses, setCourses] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Obtener cursos
+        const coursesRes = await api.get('/courses');
+        setCourses(coursesRes.data);
+        
+        // Obtener tareas
+        const tasksRes = await api.get('/tasks');
+        setTasks(tasksRes.data);
+        
+        // Obtener eventos
+        const eventsRes = await api.get('/events');
+        setEvents(eventsRes.data);
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error al cargar datos:', err);
+        setError('Error al cargar los datos. Por favor, intenta nuevamente.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (isAuth) {
+      fetchData();
     }
-  };
-
+  }, [isAuth]);
+  
   // Obtener tareas próximas (ordenadas por fecha de vencimiento)
   const upcomingTasks = tasks
-    .filter(task => task.status !== 'Completada' && isInNextDays(task.dueDate, 7))
+    .filter(task => task.status !== 'Completada')
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5);
   
   // Obtener eventos próximos (ordenados por fecha de inicio)
   const upcomingEvents = events
-    .filter(event => new Date(event.startDate) >= new Date() && isInNextDays(event.startDate, 7))
+    .filter(event => new Date(event.startDate) >= new Date())
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
     .slice(0, 5);
+  
+  // Formatear fecha
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'PPP', { locale: es });
+  };
+  
+  // Formatear hora
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'p', { locale: es });
+  };
+  
+  // Obtener color de prioridad
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'Alta':
+        return 'error';
+      case 'Media':
+        return 'warning';
+      case 'Baja':
+        return 'success';
+      default:
+        return 'default';
+    }
+  };
   
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
+        <Box sx={{ mt: 4 }}>
+          <Typography>Cargando datos...</Typography>
         </Box>
       </Container>
     );
@@ -80,7 +105,7 @@ const Dashboard = () => {
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenido a tu Organizador Universitario
+          Bienvenido, {user?.name}
         </Typography>
         
         {error && (

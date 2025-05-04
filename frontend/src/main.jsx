@@ -6,7 +6,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { AppDataProvider } from './context/AppDataContext';
 import App from './App.jsx';
 import './index.css';
 
@@ -16,9 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <ThemeProvider>
-            <AppDataProvider>
-              <App />
-            </AppDataProvider>
+            <App />
           </ThemeProvider>
         </LocalizationProvider>
       </AuthProvider>

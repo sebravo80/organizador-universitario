@@ -1,33 +1,29 @@
-import React, { useState, useContext } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
-import {
-  AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
-  Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText, Divider
+// src/components/Navbar.jsx
+import { useState, useContext } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { 
+  AppBar, Toolbar, Typography, Button, IconButton, 
+  Box, Drawer, List, ListItem, ListItemIcon, 
+  ListItemText, Divider, Avatar, Menu, MenuItem
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import SchoolIcon from '@mui/icons-material/School';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import BookIcon from '@mui/icons-material/Book';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import TodayIcon from '@mui/icons-material/Today';
-import EventIcon from '@mui/icons-material/Event';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import BookIcon from '@mui/icons-material/Book'; // Añadir esta importación
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import PersonIcon from '@mui/icons-material/Person';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
-import ThemeToggle from './ThemeToggle'; // Añadir esta importación
+import ThemeToggle from './ThemeToggle';
+import MobileMenu from './MobileMenu';
 
 const styles = {
-  appBar: {
-    backgroundColor: '#72002a', // Color burdeo explícito
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+  navbar: {
+    backgroundColor: 'var(--primary-color)',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   logo: {
     fontWeight: 'bold',
@@ -44,7 +40,7 @@ const styles = {
       left: 0,
       width: '100%',
       height: '3px',
-      backgroundColor: '#fff', // Color blanco para el indicador
+      backgroundColor: 'var(--accent-color)',
       borderRadius: '3px',
     }
   }
@@ -116,39 +112,30 @@ function Navbar() {
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="sticky" sx={{ bgcolor: '#72002a' }}>
+      <AppBar position="static" sx={styles.navbar}>
         <Toolbar>
-          {/* Botón de menú para móviles */}
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { xs: 'flex', md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          {/* Logo / Título */}
-          <Typography
-            variant="h6"
-            component={RouterLink}
-            to="/"
-            sx={{
-              mr: 2,
-              display: 'flex',
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              alignItems: 'center'
-            }}
-          >
-            <SchoolIcon sx={{ mr: 1 }} />
-            ORGANIZADOR
-          </Typography>
+          {/* Menú hamburguesa original para pantallas medianas y grandes */}
+          {isAuth && (
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2, display: { xs: 'none', sm: 'none', md: 'flex' } }}
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          
+          {/* Nuevo MobileMenu para pantallas pequeñas */}
+          {isAuth && <MobileMenu />}
+          
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ...styles.logo }}>
+            <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Organizador Universitario
+            </RouterLink>
+          </Typography>          
 
           {isAuth && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>

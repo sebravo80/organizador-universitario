@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-// Importa todos los iconos necesarios
+// Importa tus iconos aquí
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -12,7 +12,6 @@ import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import BookIcon from '@mui/icons-material/Book'; // Añadir esta importación si la necesitas
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
