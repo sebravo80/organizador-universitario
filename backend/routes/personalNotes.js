@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const PersonalNote = require('../models/PersonalNotes');
+const PersonalNote = require('../models/PersonalNote');
 
 // Obtener todas las notas del usuario
 router.get('/', auth, async (req, res) => {
