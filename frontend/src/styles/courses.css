@@ -1,0 +1,37 @@
+/* Estilos para las listas de horario */
+.schedule-list {
+  background-color: var(--light-bg-secondary);
+  border: 1px solid var(--light-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+html[data-theme='dark'] .schedule-list {
+  background-color: var(--dark-bg-secondary);
+  border-color: var(--dark-border);
+}
+
+.schedule-item {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.schedule-item:not(:last-child) {
+  border-bottom: 1px solid var(--light-border);
+}
+
+html[data-theme='dark'] .schedule-item:not(:last-child) {
+  border-bottom-color: var(--dark-border);
+}
+
+.schedule-text {
+  margin-left: 8px;
+  color: var(--light-text-primary);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+html[data-theme='dark'] .schedule-text {
+  color: var(--dark-text-primary);
+}

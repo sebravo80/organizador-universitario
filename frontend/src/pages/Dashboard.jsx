@@ -122,11 +122,11 @@ const Dashboard = () => {
         )}
         
         <Grid container spacing={3}>
-          {/* Cursos */}
+          {/* Ramos */}
           <Grid item xs={12} md={4}>
             <Card>
               <CardHeader 
-                title="Mis Cursos" 
+                title="Mis Ramos" 
                 action={
                   <Button component={Link} to="/courses" size="small">
                     Ver todos
@@ -135,7 +135,7 @@ const Dashboard = () => {
               />
               <CardContent>
                 {courses.length === 0 ? (
-                  <Typography>No tienes cursos registrados.</Typography>
+                  <Typography>No tienes ramos registrados.</Typography>
                 ) : (
                   <List>
                     {courses.slice(0, 5).map(course => (
@@ -235,7 +235,7 @@ const Dashboard = () => {
                                 </Box>
                                 {task.course && (
                                   <Box component="span" display="block">
-                                    Curso: {task.course.name}
+                                    Ramo: {task.course.name}
                                   </Box>
                                 )}
                               </>
