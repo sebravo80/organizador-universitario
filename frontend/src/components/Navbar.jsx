@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+// Añadir BookIcon a las importaciones:
 import {
   AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
   Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText, Divider
@@ -15,6 +16,9 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import TodayIcon from '@mui/icons-material/Today';
 import EventIcon from '@mui/icons-material/Event';
 import CalculateIcon from '@mui/icons-material/Calculate';
+import BookIcon from '@mui/icons-material/Book'; // Añadir esta importación
+import PersonIcon from '@mui/icons-material/Person'; // Asegúrate de tener esto también
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'; // Verificar esta importación
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -114,30 +118,39 @@ function Navbar() {
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={styles.navbar}>
+      <AppBar position="sticky" sx={{ bgcolor: '#72002a' }}>
         <Toolbar>
-          {/* Menú hamburguesa original para pantallas medianas y grandes */}
-          {isAuth && (
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2, display: { xs: 'none', sm: 'none', md: 'flex' } }}
-              onClick={handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-          
-          {/* Nuevo MobileMenu para pantallas pequeñas */}
-          {isAuth && <MobileMenu />}
-          
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ...styles.logo }}>
-            <RouterLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              Organizador Universitario
-            </RouterLink>
-          </Typography>          
+          {/* Botón de menú para móviles */}
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { xs: 'flex', md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          {/* Logo / Título */}
+          <Typography
+            variant="h6"
+            component={RouterLink}
+            to="/"
+            sx={{
+              mr: 2,
+              display: 'flex',
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.1rem',
+              color: 'inherit',
+              textDecoration: 'none',
+              alignItems: 'center'
+            }}
+          >
+            <SchoolIcon sx={{ mr: 1 }} />
+            ORGANIZADOR
+          </Typography>
 
           {isAuth && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
