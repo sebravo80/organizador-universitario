@@ -1,95 +1,32 @@
 // src/pages/Dashboard.jsx
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import api from '../services/api';
+import React from 'react';
+import { useAppData } from '../context/AppDataContext';
 import { 
-  Container, Typography, Box, Grid, Paper, 
+  Container, Typography, Box, Grid, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
   Chip
 } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
+import { formatDate, formatTime, getPriorityColor } from '../utils/formatUtils';
+import { isInNextDays } from '../utils/dateUtils';
 
 const Dashboard = () => {
-  const { user, isAuth } = useContext(AuthContext);
-  const [courses, setCourses] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        // Obtener cursos
-        const coursesRes = await api.get('/courses');
-        setCourses(coursesRes.data);
-        
-        // Obtener tareas
-        const tasksRes = await api.get('/tasks');
-        setTasks(tasksRes.data);
-        
-        // Obtener eventos
-        const eventsRes = await api.get('/events');
-        setEvents(eventsRes.data);
-        
-        setError(null);
-      } catch (err) {
-        console.error('Error al cargar datos:', err);
-        setError('Error al cargar los datos. Por favor, intenta nuevamente.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    if (isAuth) {
-      fetchData();
-    }
-  }, [isAuth]);
-  
+  const { courses, tasks, events, loading, error } = useAppData();
+
   // Obtener tareas próximas (ordenadas por fecha de vencimiento)
   const upcomingTasks = tasks
-    .filter(task => task.status !== 'Completada')
+    .filter(task => task.status !== 'Completada' && isInNextDays(task.dueDate, 7))
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5);
   
   // Obtener eventos próximos (ordenados por fecha de inicio)
   const upcomingEvents = events
-    .filter(event => new Date(event.startDate) >= new Date())
+    .filter(event => new Date(event.startDate) >= new Date() && isInNextDays(event.startDate, 7))
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
     .slice(0, 5);
-  
-  // Formatear fecha
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, 'PPP', { locale: es });
-  };
-  
-  // Formatear hora
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, 'p', { locale: es });
-  };
-  
-  // Obtener color de prioridad
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'Alta':
-        return 'error';
-      case 'Media':
-        return 'warning';
-      case 'Baja':
-        return 'success';
-      default:
-        return 'default';
-    }
-  };
   
   if (loading) {
     return (
@@ -105,7 +42,7 @@ const Dashboard = () => {
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenido, {user?.name}
+          Bienvenido a tu Organizador Universitario
         </Typography>
         
         {error && (

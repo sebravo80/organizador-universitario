@@ -1,95 +1,71 @@
-import React, { useContext, Suspense } from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { Box } from '@mui/material';
-import { AuthContext } from './context/AuthContext';
-import './App.css';
-import './styles/theme.css';
-
-// Componentes
-import Navbar from './components/Navbar';
-import TaskAlerts from './components/TaskAlerts';
-
-// Páginas (carga inmediata)
+import React, { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { useTheme } from './context/ThemeContext';
+import { AppDataProvider } from './context/AppDataContext';
+import CssBaseline from '@mui/material/CssBaseline';
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import NewLogin from './pages/NewLogin';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Tasks from './pages/Tasks';
 import WeeklyView from './pages/WeeklyView';
-import NewLogin from './pages/NewLogin'; 
-import Profile from './pages/Profile';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+import TaskAlerts from './components/TaskAlerts';
+import './App.css';
 
-// Páginas con carga diferida (lazy loading)
+// Cargar componentes pesados con lazy loading
 const Events = React.lazy(() => import('./pages/Events'));
 const GradeCalculator = React.lazy(() => import('./pages/GradeCalculator'));
 
-// Ruta privada (requiere autenticación)
-const PrivateRoute = () => {
-  const { isAuth, loading } = useContext(AuthContext);
-  
-  if (loading) {
-    return null;
-  }
-  
-  return isAuth ? <Outlet /> : <Navigate to="/login" />;
-};
-
-// Ruta pública (solo accesibles si el usuario no está autenticado)
-const PublicRoute = () => {
-  const { isAuth, loading } = useContext(AuthContext);
-  
-  if (loading) {
-    return null;
-  }
-  
-  return isAuth ? <Navigate to="/dashboard" /> : <Outlet />;
-};
-
 function App() {
-  const { isAuth } = useContext(AuthContext);
+  const { theme } = useTheme();
+  
+  const currentTheme = createTheme({
+    palette: {
+      mode: theme,
+      primary: {
+        main: '#72002a',
+      },
+      secondary: {
+        main: '#11cb5f',
+      },
+    },
+    typography: {
+      fontFamily: "'Segoe UI', 'Roboto', 'Oxygen', sans-serif",
+    },
+  });
   
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
-      
-      <Box component="main" sx={{ flexGrow: 1, pt: 8, pb: 4 }}>
-        <Routes>
-          {/* Rutas públicas (solo accesibles si el usuario no está autenticado) */}
-          <Route element={<PublicRoute />}>
+    <ThemeProvider theme={currentTheme}>
+      <CssBaseline />
+      <AppDataProvider>
+        <div className="App">
+          <Routes>
             <Route path="/login" element={<NewLogin />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-          </Route>
-          
-          {/* Rutas privadas (se requiere autenticación) */}
-          <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/weekly" element={<WeeklyView />} />
-            <Route path="/events" element={
-              <Suspense fallback={<div>Cargando...</div>}>
-                <Events />
-              </Suspense>
-            } />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/grade-calculator" element={
-              <Suspense fallback={<div>Cargando...</div>}>
-                <GradeCalculator />
-              </Suspense>
-            } />
-          </Route>
-          
-          {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}
-          <Route path="*" element={
-            isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-          } />
-        </Routes>
-      </Box>
-      
-      {/* Alertas de tareas (solo visible si está autenticado) */}
-      {isAuth && <TaskAlerts />}
-    </Box>
+            <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+              <Route index element={<Dashboard />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="tasks" element={<Tasks />} />
+              <Route path="weekly" element={<WeeklyView />} />
+              <Route path="events" element={
+                <Suspense fallback={<div>Cargando...</div>}>
+                  <Events />
+                </Suspense>
+              } />
+              <Route path="calculator" element={
+                <Suspense fallback={<div>Cargando...</div>}>
+                  <GradeCalculator />
+                </Suspense>
+              } />
+            </Route>
+          </Routes>
+          <ProtectedRoute>
+            <TaskAlerts />
+          </ProtectedRoute>
+        </div>
+      </AppDataProvider>
+    </ThemeProvider>
   );
 }
 
