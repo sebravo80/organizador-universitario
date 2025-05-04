@@ -2,6 +2,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+
 import { 
   Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
@@ -13,6 +14,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
+
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -296,5 +298,29 @@ const Dashboard = () => {
     </Container>
   );
 };
+import PersonalNotes from '../components/PersonalNotes';
+// ...existing code...
+
+<Grid container spacing={3}>
+  {/* Cursos */}
+  <Grid item xs={12} md={4}>
+    {/* ...código de cursos... */}
+  </Grid>
+
+  {/* Tareas próximas */}
+  <Grid item xs={12} md={4}>
+    {/* ...código de tareas... */}
+  </Grid>
+
+  {/* Eventos próximos */}
+  <Grid item xs={12} md={4}>
+    {/* ...código de eventos... */}
+  </Grid>
+
+  {/* Notas personales */}
+  <Grid item xs={12} md={4}>
+    <PersonalNotes />
+  </Grid>
+</Grid>
 
 export default Dashboard;
