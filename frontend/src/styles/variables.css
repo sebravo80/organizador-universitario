@@ -1,33 +1,43 @@
 :root {
-  /* Colores primarios */
-  --primary-color: #2c3e50;      
-  --secondary-color: #3498db;     
-  --accent-color: #e74c3c;        
+  /* Paleta principal */
+  --primary-color: #72002a;      /* Burdeos principal */
+  --primary-light: #a30044;      /* Burdeos más claro */
+  --primary-dark: #4c001d;       /* Burdeos más oscuro */
+  --accent-color: #ff4d97;       /* Rosa para acentos */
   
-  /* Colores neutros para tema claro */
-  --background-light: #f8f9fa;
-  --text-primary-light: #333333;
-  --text-secondary-light: #555555;
-  
-  /* Colores de estado - se mantienen para preservar los colores de las prioridades */
-  --success: #28a745;
-  --warning: #ffc107;
-  --danger: #dc3545;
-  --info: #17a2b8;
-  
-  /* Colores para tema oscuro */
-  --dark-bg-primary: #121212;    /* Fondo principal */
-  --dark-bg-secondary: #1e1e1e;  /* Fondo secundario */
-  --dark-bg-tertiary: #72002a;   /* Burdeos para acentos */
-  --dark-surface: #272727;       /* Superficies como tarjetas */
+  /* Paleta de grises para tema oscuro */
+  --dark-bg-primary: #121212;    /* Negro suavizado para fondos */
+  --dark-bg-secondary: #1e1e1e;  /* Gris muy oscuro para tarjetas */
+  --dark-bg-tertiary: #272727;   /* Gris oscuro para elementos UI */
+  --dark-text-primary: #ffffff;  /* Texto principal */
+  --dark-text-secondary: #e0e0e0;/* Texto secundario */
+  --dark-text-tertiary: #b0b0b0; /* Texto terciario */
   --dark-border: #333333;        /* Bordes sutiles */
   
-  /* Colores para tema claro */
-  --light-bg-primary: #ffffff;
-  --light-bg-secondary: #f5f5f5;
-  --light-bg-tertiary: #a30044;  /* Mantiene el color principal pero más brillante */
-  --light-surface: #ffffff;
-  --light-border: #dddddd;
+  /* Paleta de grises para tema claro */
+  --light-bg-primary: #f8f9fa;   /* Gris muy claro para fondos */
+  --light-bg-secondary: #ffffff; /* Blanco para tarjetas */
+  --light-bg-tertiary: #f0f0f0;  /* Gris claro para elementos UI */
+  --light-text-primary: #333333; /* Texto principal */
+  --light-text-secondary: #555555;/* Texto secundario */
+  --light-text-tertiary: #777777;/* Texto terciario */
+  --light-border: #dddddd;       /* Bordes sutiles */
+  
+  /* Estados */
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --danger: #F44336;
+  --info: #2196F3;
+  
+  /* Sombras */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
 /* Variables temáticas aplicadas según el atributo data-theme */
@@ -35,26 +45,26 @@ html[data-theme='dark'] {
   --bg-primary: var(--dark-bg-primary);
   --bg-secondary: var(--dark-bg-secondary);
   --bg-terciary: var(--dark-bg-tertiary);
-  --text-primary: #ffffff;
-  --text-secondary: #efefef;
-  --text-terciary: #b0b0b0;
-  --text-quaternary: #ffffff;
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --text-terciary: var(--dark-text-tertiary);
+  --text-quaternary: var(--dark-text-primary);
   --border-color: var(--dark-border);
   --border-color-secondary: var(--dark-bg-tertiary);
   --card-bg: rgba(39, 39, 39, 0.9);
-  --navbar-bg: var(--dark-bg-tertiary);
+  --navbar-bg: var(--primary-color);
 }
 
 html[data-theme='light'] {
   --bg-primary: var(--light-bg-primary);
   --bg-secondary: var(--light-bg-secondary);
   --bg-terciary: var(--light-bg-tertiary);
-  --text-primary: #333333;
-  --text-secondary: #555555;
-  --text-terciary: #777777;
-  --text-quaternary: #ffffff; /* Mantiene texto blanco en botones */
+  --text-primary: var(--light-text-primary);
+  --text-secondary: var(--light-text-secondary);
+  --text-terciary: var(--light-text-tertiary);
+  --text-quaternary: var(--light-text-primary); /* Mantiene texto blanco en botones */
   --border-color: var(--light-border);
   --border-color-secondary: var(--light-bg-tertiary);
   --card-bg: rgba(255, 255, 255, 0.9);
-  --navbar-bg: var(--light-bg-tertiary);
+  --navbar-bg: var(--primary-light);
 }

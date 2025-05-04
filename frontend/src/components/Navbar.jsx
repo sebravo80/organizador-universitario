@@ -1,5 +1,5 @@
 // src/components/Navbar.jsx
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { 
   AppBar, Toolbar, Typography, Button, IconButton, 
@@ -53,6 +53,20 @@ function Navbar() {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const navbar = document.querySelector('.app-navbar');
+      if (window.scrollY > 10) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -114,7 +128,7 @@ function Navbar() {
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={styles.navbar}>
+      <AppBar position="sticky" className="app-navbar">
         <Toolbar>
           {/* Menú hamburguesa original para pantallas medianas y grandes */}
           {isAuth && (

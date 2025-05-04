@@ -1,0 +1,63 @@
+/* Estilos para la barra de navegación */
+.app-navbar {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+.app-navbar.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--navbar-bg) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Logo animado */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+.navbar-logo:hover::after {
+  width: 100%;
+}
+
+/* Menú desplegable con animación */
+.navbar-menu {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.navbar-menu.entering, 
+.navbar-menu.exiting {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.navbar-menu.entered {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Ícono de menú con animación */
+.menu-icon {
+  transition: transform 0.3s ease;
+}
+
+.menu-icon.open {
+  transform: rotate(180deg);
+}

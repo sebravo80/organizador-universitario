@@ -8,6 +8,14 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import App from './App.jsx';
 import './index.css';
+import './styles/variables.css';
+import './styles/theme.css';
+import './styles/animations.css';
+import './styles/calendar.css';
+import './styles/forms.css';
+//import './styles/navbar.css';
+//import './styles/todo.css';
+//import './styles/dashboard.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

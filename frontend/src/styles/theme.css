@@ -38,17 +38,55 @@ html[data-theme='light'] body {
   background-color: var(--card-bg) !important;
   backdrop-filter: blur(5px) !important;
   border: 1px solid var(--border-color-secondary);
+  border-radius: 12px !important;
+  overflow: hidden;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  position: relative;
+}
+
+/* Efecto de elevación al pasar el ratón */
+.MuiPaper-root.MuiCard-root:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Efecto de borde con color primario */
+.MuiPaper-root.MuiCard-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  opacity: 0.8;
 }
 
 /* Ajustes específicos para el tema claro */
 html[data-theme='light'] .MuiPaper-root.MuiCard-root {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
   border: 1px solid rgba(163, 0, 68, 0.1);
+}
+
+/* Mejores sombras según el tema */
+html[data-theme='dark'] .MuiPaper-root.MuiCard-root {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* Añadir estilos específicos para el texto dentro de las tarjetas */
 .MuiPaper-root.MuiCard-root .MuiTypography-root {
   color: var(--text-primary) !important;
+}
+
+/* Cabeceras de tarjeta más atractivas */
+.MuiCardHeader-root {
+  background: linear-gradient(to right, rgba(114, 0, 42, 0.05), transparent);
+  border-bottom: 1px solid rgba(114, 0, 42, 0.1);
+}
+
+html[data-theme='dark'] .MuiCardHeader-root {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .MuiAppBar-root {
@@ -117,6 +155,67 @@ html[data-theme='light'] .MuiOutlinedInput-notchedOutline {
 /* Mejora la apariencia de los Select para evitar bordes dobles */
 .MuiSelect-select {
   background-color: var(--bg-secondary) !important;
+}
+
+/* Botones mejorados */
+.MuiButton-root {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  padding: 8px 16px !important;
+  transition: all var(--transition-normal) !important;
+  position: relative;
+  overflow: hidden !important;
+}
+
+/* Efecto de onda al hacer clic */
+.MuiButton-root::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.MuiButton-root:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* Botones primarios */
+.MuiButton-containedPrimary {
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+  box-shadow: 0 4px 10px rgba(114, 0, 42, 0.3) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+  box-shadow: 0 6px 15px rgba(114, 0, 42, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+/* Botones secundarios */
+.MuiButton-outlined {
+  border: 2px solid var(--primary-color) !important;
+  background: transparent !important;
+  color: var(--primary-color) !important;
+}
+
+html[data-theme='dark'] .MuiButton-outlined {
+  color: white !important;
+}
+
+.MuiButton-outlined:hover {
+  background: rgba(114, 0, 42, 0.1) !important;
 }
 
 /* Media queries para Cards */

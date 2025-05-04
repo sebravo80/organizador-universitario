@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import '../styles/todo.css';
 import { 
   Container, Box, Typography, TextField, Button, List, ListItem, 
   ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, 
@@ -166,14 +167,16 @@ const TodoList = () => {
               </ListItem>
             ) : (
               todos.map((todo, index) => (
-                <React.Fragment key={todo._id}>
+                <React.Fragment key={todo._id} className="staggered-item">
                   <ListItem 
+                    className="todo-item"
                     sx={{
                       backgroundColor: todo.completed ? 'rgba(0, 0, 0, 0.04)' : 'inherit'
                     }}
                   >
                     <ListItemIcon>
                       <Checkbox
+                        className="todo-checkbox"
                         edge="start"
                         checked={todo.completed}
                         onChange={() => handleToggleComplete(todo._id, todo.completed)}
@@ -192,6 +195,7 @@ const TodoList = () => {
                       <ListItemText
                         primary={
                           <Typography
+                            className={todo.completed ? 'todo-text-completed' : ''}
                             sx={{ 
                               textDecoration: todo.completed ? 'line-through' : 'none',
                               color: todo.completed ? 'text.secondary' : 'text.primary' 

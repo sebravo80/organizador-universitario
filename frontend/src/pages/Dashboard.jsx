@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
+import '../styles/animations.css';
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -108,7 +109,7 @@ const Dashboard = () => {
   }
   
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className="page-transition dashboard-container">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Bienvenido, {user?.name}

@@ -269,8 +269,8 @@ const Courses = () => {
           <Typography>No tienes cursos registrados.</Typography>
         ) : (
           <Grid container spacing={3}>
-            {courses.map(course => (
-              <Grid item xs={12} sm={6} md={4} key={course._id}>
+            {courses.map((course, index) => (
+              <Grid item xs={12} sm={6} md={4} key={course._id} className="staggered-item">
                 <Card sx={{ 
                   borderTop: `4px solid ${course.color}`,
                   height: '100%',

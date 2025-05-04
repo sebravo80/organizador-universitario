@@ -21,6 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import UndoIcon from '@mui/icons-material/Undo';
 import TaskCountdown from '../components/TaskCountdown';
+import '../styles/animations.css';
 
 const Tasks = () => {
   const { isAuth } = useContext(AuthContext);
@@ -298,7 +299,7 @@ const Tasks = () => {
   }
   
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className="page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Mis Tareas
@@ -388,7 +389,7 @@ const Tasks = () => {
         ) : (
           <Grid container spacing={3}>
             {sortedTasks.map(task => (
-              <Grid item xs={12} sm={6} md={4} key={task._id}>
+              <Grid item xs={12} sm={6} md={4} key={task._id} className="staggered-item">
                 <Card sx={{ 
                   height: '100%',
                   display: 'flex',

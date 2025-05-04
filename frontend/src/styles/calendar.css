@@ -89,8 +89,16 @@
 
 /* Asegurar que los eventos se vean bien sobre el fondo oscuro */
 .fc-event {
-  border-radius: 3px !important;
-  font-size: 0.85em !important;
+  border-radius: 6px !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fc-event:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10 !important;
 }
 
 /* Hacer que las líneas divisorias sean más visibles */
@@ -119,4 +127,40 @@ html[data-theme='light'] .fc-theme-standard td,
 html[data-theme='light'] .fc-theme-standard th,
 html[data-theme='light'] .fc-theme-standard .fc-scrollgrid {
   border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Estilos mejorados para el calendario */
+.fc {
+  --fc-border-color: rgba(114, 0, 42, 0.2);
+  --fc-today-bg-color: rgba(114, 0, 42, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.fc-header-toolbar {
+  padding: 16px !important;
+  margin-bottom: 0 !important;
+  background: linear-gradient(45deg, rgba(114, 0, 42, 0.7), rgba(114, 0, 42, 0.5));
+}
+
+html[data-theme='dark'] .fc-header-toolbar {
+  background: linear-gradient(45deg, rgba(74, 0, 27, 0.7), rgba(114, 0, 42, 0.5));
+}
+
+.fc-toolbar-title {
+  font-weight: 600 !important;
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fc-button-primary {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.fc-button-primary:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
 }
