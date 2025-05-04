@@ -22,6 +22,47 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import UndoIcon from '@mui/icons-material/Undo';
 import TaskCountdown from '../components/TaskCountdown';
 import '../styles/animations.css';
+import '../styles/tasks.css';
+
+// Función para calcular si debe usarse texto blanco o negro según el color de fondo
+const calculateContrastColor = (bgColor) => {
+  // Eliminar el # si existe
+  const color = bgColor.charAt(0) === '#' ? bgColor.substring(1, 7) : bgColor;
+  
+  // Si no es un formato hexadecimal válido, devolver blanco por defecto
+  if (color.length !== 6) return '#ffffff';
+  
+  // Convertir a valores RGB
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  
+  // Calcular la luminosidad (percepción del brillo)
+  // Fórmula: (0.299*R + 0.587*G + 0.114*B)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  
+  // Usar texto negro para colores claros y texto blanco para oscuros
+  return luminance > 0.6 ? '#000000' : '#ffffff';
+};
+
+// Función para oscurecer un color (para bordes)
+const darkenColor = (color, factor) => {
+  // Eliminar el # si existe
+  let hex = color.charAt(0) === '#' ? color.substring(1, 7) : color;
+  
+  // Convertir a valores RGB
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+  
+  // Oscurecer cada componente
+  r = Math.max(0, Math.floor(r * (1 - factor)));
+  g = Math.max(0, Math.floor(g * (1 - factor)));
+  b = Math.max(0, Math.floor(b * (1 - factor)));
+  
+  // Convertir de nuevo a hexadecimal
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
 
 const Tasks = () => {
   const { isAuth } = useContext(AuthContext);
@@ -273,6 +314,19 @@ const Tasks = () => {
         return 'default';
     }
   };
+
+  const getPriorityColorHex = (priority) => {
+    switch (priority) {
+      case 'Alta':
+        return '#f44336'; // Rojo
+      case 'Media':
+        return '#ff9800'; // Naranja
+      case 'Baja':
+        return '#4caf50'; // Verde
+      default:
+        return '#757575'; // Gris
+    }
+  };
   
   // Obtener color de estado
   const getStatusColor = (status) => {
@@ -286,6 +340,23 @@ const Tasks = () => {
       default:
         return 'default';
     }
+  };
+
+  // Función para determinar el color del texto basado en el color de fondo
+  const calculateContrastColor = (backgroundColor) => {
+    const r = parseInt(backgroundColor.slice(1, 3), 16);
+    const g = parseInt(backgroundColor.slice(3, 5), 16);
+    const b = parseInt(backgroundColor.slice(5, 7), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 125 ? '#000' : '#fff';
+  };
+
+  // Función para oscurecer un color
+  const darkenColor = (color, amount) => {
+    const r = Math.max(0, parseInt(color.slice(1, 3), 16) - amount * 255);
+    const g = Math.max(0, parseInt(color.slice(3, 5), 16) - amount * 255);
+    const b = Math.max(0, parseInt(color.slice(5, 7), 16) - amount * 255);
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   };
   
   if (loading) {
@@ -390,12 +461,21 @@ const Tasks = () => {
           <Grid container spacing={3}>
             {sortedTasks.map(task => (
               <Grid item xs={12} sm={6} md={4} key={task._id} className="staggered-item">
-                <Card sx={{ 
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  opacity: task.status === 'Completada' ? 0.7 : 1
-                }}>
+                <Card 
+                  className={`task-card ${task.status === 'Completada' ? 'task-completed' : ''}`}
+                  sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    opacity: task.status === 'Completada' ? 0.7 : 1,
+                    borderLeft: `4px solid ${task.course ? task.course.color : getPriorityColorHex(task.priority)}`,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)'
+                    }
+                  }}
+                >
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                       <Typography variant="h5" component="h2" sx={{ 
@@ -408,6 +488,10 @@ const Tasks = () => {
                         label={task.status} 
                         color={getStatusColor(task.status)}
                         size="small"
+                        sx={{
+                          fontWeight: 500,
+                          textShadow: '0 0 1px rgba(0,0,0,0.2)'
+                        }}
                       />
                     </Box>
                     
@@ -416,7 +500,11 @@ const Tasks = () => {
                         label={task.priority} 
                         color={getPriorityColor(task.priority)}
                         size="small"
-                        sx={{ mr: 1 }}
+                        sx={{ 
+                          mr: 1,
+                          fontWeight: 500,
+                          textShadow: '0 0 1px rgba(0,0,0,0.2)'
+                        }}
                       />
                       
                       {task.course && (
@@ -425,14 +513,28 @@ const Tasks = () => {
                           size="small"
                           sx={{ 
                             backgroundColor: task.course.color,
-                            color: '#fff'
+                            color: calculateContrastColor(task.course.color),
+                            fontWeight: 500,
+                            border: `1px solid ${darkenColor(task.course.color, 0.2)}`,
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                           }}
                         />
                       )}
                     </Box>
                     
                     {task.description && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      <Typography 
+                        variant="body2" 
+                        color="text.secondary" 
+                        sx={{ 
+                          mb: 2,
+                          display: '-webkit-box',
+                          overflow: 'hidden',
+                          WebkitBoxOrient: 'vertical',
+                          WebkitLineClamp: 3, // Limita a 3 líneas
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
                         {task.description}
                       </Typography>
                     )}
