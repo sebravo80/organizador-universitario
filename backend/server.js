@@ -6,16 +6,23 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-// Configurar CORS
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://diatomeauniversitaria.netlify.app'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'x-auth-token']
-}));
+
+// Función para registrar errores en un archivo
+const logError = (error) => {
+  const logDir = path.join(__dirname, 'logs');
+  
+  // Crear directorio de logs si no existe
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+  
+  const logFile = path.join(logDir, 'error.log');
+  const timestamp = new Date().toISOString();
+  const errorMessage = `[${timestamp}] ${error.stack || error}\n`;
+  
+  fs.appendFileSync(logFile, errorMessage);
+  console.error(errorMessage);
+};
 
 // Conectar a la base de datos
 try {
@@ -59,12 +66,8 @@ try {
   app.use('/api/courses', require('./routes/courses'));
   app.use('/api/tasks', require('./routes/tasks'));
   app.use('/api/events', require('./routes/events'));
-  console.log("Registrando rutas de pendientes");
-  app.use('/api/pendings', require('./routes/pendings'));
-  app.use('/api/schedule', require('./routes/schedule'));
 } catch (err) {
   logError(err);
-  console.error('Error al registrar rutas:', err);
 }
 
 // Depuración de rutas de autenticación

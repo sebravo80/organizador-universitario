@@ -13,7 +13,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -289,27 +288,6 @@ const Dashboard = () => {
                     ))}
                   </List>
                 )}
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Cosas Pendientes */}
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardHeader title="Cosas Pendientes" />
-              <CardContent>
-                <Typography variant="body1" paragraph>
-                  Aquí puedes anotar ideas, tareas o pendientes que aún no tienen fecha definida.
-                </Typography>
-                <Button 
-                  variant="contained" 
-                  component={Link} 
-                  to="/todolist" 
-                  color="primary"
-                  startIcon={<NoteAltIcon />}
-                >
-                  Ver pendientes
-                </Button>
               </CardContent>
             </Card>
           </Grid>

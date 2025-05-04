@@ -18,7 +18,6 @@ import NewLogin from './pages/NewLogin';
 import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import TodoList from './pages/TodoList';
 
 // Páginas con carga diferida (lazy loading)
 const Events = React.lazy(() => import('./pages/Events'));
@@ -79,8 +78,6 @@ function App() {
                 <GradeCalculator />
               </Suspense>
             } />
-            <Route path="/todolist" element={<TodoList />} />
-            <Route path="/pendings" element={<TodoList />} />
           </Route>
           
           {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}

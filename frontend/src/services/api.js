@@ -1,19 +1,35 @@
+// src/services/api.js
 import axios from 'axios';
 
+// Determinar la URL base según el entorno
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  baseURL,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Interceptor para añadir token de autenticación a las solicitudes
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['x-auth-token'] = token;
+// Interceptor para mostrar las solicitudes en la consola (solo en desarrollo)
+api.interceptors.request.use(
+  config => {
+    console.log('Enviando solicitud:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      data: config.data ? (
+        config.url.includes('/auth') || config.url.includes('/users') 
+          ? { ...config.data, password: config.data.password ? '***' : undefined }
+          : config.data
+      ) : undefined
+    });
+    return config;
+  },
+  error => {
+    console.error('Error en la solicitud:', error);
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default api;
