@@ -225,8 +225,11 @@ router.put('/user', auth, async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: userFields },
-      { new: true }
+      { new: true }  // Esto devuelve el documento actualizado
     ).select('-password');
+    
+    // Agregar registro para depuración
+    console.log('Usuario actualizado:', user);
     
     res.json(user);
   } catch (err) {

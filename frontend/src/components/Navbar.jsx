@@ -93,7 +93,7 @@ function Navbar() {
   
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Cursos', icon: <BookIcon />, path: '/courses' },
+    { text: 'Ramos', icon: <BookIcon />, path: '/courses' },
     { text: 'Tareas', icon: <AssignmentIcon />, path: '/tasks' },
     { text: 'Horario', icon: <CalendarMonthIcon />, path: '/weekly' },
     { text: 'Calculadora de Notas', path: '/grade-calculator', icon: <CalculateIcon /> },

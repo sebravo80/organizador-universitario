@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
@@ -98,6 +97,19 @@ router.delete('/:id', auth, async (req, res) => {
     res.json({ msg: 'Pendiente eliminado' });
   } catch (err) {
     console.error('Error al eliminar pendiente:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
+// @route   GET api/todos/count
+// @desc    Get count of user's todos
+// @access  Private
+router.get('/count', auth, async (req, res) => {
+  try {
+    const count = await Todo.countDocuments({ user: req.user.id });
+    res.json({ count });
+  } catch (err) {
+    console.error('Error al contar pendientes:', err.message);
     res.status(500).json({ msg: 'Error del servidor' });
   }
 });

@@ -234,4 +234,19 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// @route   GET api/tasks/count
+// @desc    Get count of user's tasks
+// @access  Private
+router.get('/count', auth, async (req, res) => {
+  try {
+    console.log('Usuario solicitando conteo de tareas:', req.user.id);
+    const count = await Task.countDocuments({ user: req.user.id });
+    console.log('Conteo de tareas:', count);
+    res.json({ count });
+  } catch (err) {
+    console.error('Error al contar tareas:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
 module.exports = router;

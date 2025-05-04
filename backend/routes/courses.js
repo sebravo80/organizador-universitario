@@ -160,4 +160,19 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// @route   GET api/courses/count
+// @desc    Get count of user's courses
+// @access  Private
+router.get('/count', auth, async (req, res) => {
+  try {
+    console.log('Usuario solicitando conteo de cursos:', req.user.id);
+    const count = await Course.countDocuments({ user: req.user.id });
+    console.log('Conteo de cursos:', count);
+    res.json({ count });
+  } catch (err) {
+    console.error('Error al contar cursos:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
 module.exports = router;

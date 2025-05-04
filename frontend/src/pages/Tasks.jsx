@@ -434,13 +434,13 @@ const Tasks = () => {
             
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth>
-                <InputLabel id="course-filter-label">Curso</InputLabel>
+                <InputLabel id="course-filter-label">Ramo</InputLabel>
                 <Select
                   labelId="course-filter-label"
                   id="course-filter"
                   name="course"
                   value={filter.course}
-                  label="Curso"
+                  label="Ramo"
                   onChange={handleFilterChange}
                 >
                   <MenuItem value="all">Todos</MenuItem>
@@ -621,13 +621,13 @@ const Tasks = () => {
             />
             
             <FormControl fullWidth margin="normal">
-              <InputLabel id="course-label">Curso</InputLabel>
+              <InputLabel id="course-label">Ramo</InputLabel>
               <Select
                 labelId="course-label"
                 id="course"
                 name="course"
                 value={taskForm.course}
-                label="Curso"
+                label="Ramo"
                 onChange={handleChange}
               >
                 <MenuItem value="">Ninguno</MenuItem>

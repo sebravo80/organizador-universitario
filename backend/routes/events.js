@@ -166,4 +166,17 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// @route   GET api/events/count
+// @desc    Get count of user's events
+// @access  Private
+router.get('/count', auth, async (req, res) => {
+  try {
+    const count = await Event.countDocuments({ user: req.user.id });
+    res.json({ count });
+  } catch (err) {
+    console.error('Error al contar eventos:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
 module.exports = router;

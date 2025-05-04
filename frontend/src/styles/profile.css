@@ -1,0 +1,199 @@
+/* Estilos para la página de perfil */
+
+/* Efecto de tarjeta flotante */
+.profile-card {
+  position: relative;
+  overflow: visible !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px !important;
+  margin-top: 60px !important;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Efectos para tarjetas de estadísticas */
+.stat-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 60%);
+  z-index: 1;
+}
+
+/* Efectos para cabecera de perfil */
+.profile-header-card {
+  transition: all 0.3s ease;
+  overflow: visible !important;
+}
+
+.profile-header-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Avatar de perfil con animación */
+.profile-avatar {
+  width: 120px !important;
+  height: 120px !important;
+  font-size: 3rem !important;
+  margin: -60px auto 20px auto !important;
+  border: 5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+  transition: all 0.3s ease;
+  animation: avatarPulse 2s infinite alternate;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(114, 0, 42, 0.4) !important;
+}
+
+@keyframes avatarPulse {
+  0% {
+    box-shadow: 0 6px 15px rgba(114, 0, 42, 0.2);
+  }
+  100% {
+    box-shadow: 0 8px 20px rgba(114, 0, 42, 0.4);
+  }
+}
+
+/* Pestañas personalizadas */
+.profile-tabs .MuiTab-root {
+  font-weight: 600 !important;
+  min-width: 120px !important;
+  transition: all 0.3s ease;
+  border-radius: 0;
+  opacity: 0.7;
+  text-transform: none;
+}
+
+.profile-tabs .MuiTab-root:hover {
+  background-color: rgba(114, 0, 42, 0.05);
+  opacity: 1;
+}
+
+.profile-tabs .Mui-selected {
+  color: var(--primary-color) !important;
+  background-color: rgba(114, 0, 42, 0.1);
+  opacity: 1;
+}
+
+/* Animación para el indicador de las pestañas */
+.profile-tabs .MuiTabs-indicator {
+  background-color: var(--primary-color) !important;
+  height: 3px !important;
+  border-radius: 3px !important;
+  transition: all 0.3s cubic-bezier(0.64, 0.09, 0.08, 1) !important;
+}
+
+/* Inputs de formulario */
+.profile-form-input {
+  margin-bottom: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.profile-form-input:focus-within {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.profile-form-input .MuiInputAdornment-root .MuiSvgIcon-root {
+  color: var(--primary-color);
+}
+
+/* Botón de guardado */
+.profile-save-button {
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+  box-shadow: 0 4px 10px rgba(114, 0, 42, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.profile-save-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 15px rgba(114, 0, 42, 0.4) !important;
+}
+
+/* Información adicional */
+.profile-info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.profile-info-item .MuiSvgIcon-root {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+/* Mensajes de alerta */
+.profile-alert {
+  border-radius: 10px !important;
+  margin-bottom: 20px !important;
+  animation: slideInFromTop 0.5s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación para cambio de pestañas */
+.profile-tab-panel {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sección separadora */
+.profile-divider {
+  margin: 30px 0 !important;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent) !important;
+  height: 2px !important;
+  opacity: 0.3 !important;
+}
+
+/* Modo responsivo */
+@media (max-width: 600px) {
+  .profile-avatar {
+    width: 100px !important;
+    height: 100px !important;
+    font-size: 2.2rem !important;
+    margin: -50px auto 15px auto !important;
+  }
+  
+  .profile-tabs .MuiTab-root {
+    min-width: auto !important;
+    padding: 8px !important;
+  }
+}
