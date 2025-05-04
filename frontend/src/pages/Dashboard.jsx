@@ -2,11 +2,12 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+import { getTodos, updateTodo } from '../services/todoService';
 import { 
   Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
-  Chip
+  Chip, Checkbox, ListItemIcon
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [courses, setCourses] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
+  const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -38,6 +40,10 @@ const Dashboard = () => {
         // Obtener eventos
         const eventsRes = await api.get('/events');
         setEvents(eventsRes.data);
+
+        // Obtener pendientes
+        const todosRes = await getTodos();
+        setTodos(todosRes);
         
         setError(null);
       } catch (err) {
@@ -280,6 +286,62 @@ const Dashboard = () => {
                                   </Box>
                                 )}
                               </>
+                            }
+                          />
+                        </ListItem>
+                        <Divider />
+                      </div>
+                    ))}
+                  </List>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Pendientes rápidos */}
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardHeader 
+                title="Pendientes Rápidos" 
+                action={
+                  <Button component={Link} to="/todos" size="small">
+                    Ver todos
+                  </Button>
+                }
+              />
+              <CardContent>
+                {todos.length === 0 ? (
+                  <Typography>No tienes pendientes añadidos.</Typography>
+                ) : (
+                  <List>
+                    {todos.slice(0, 5).map(todo => (
+                      <div key={todo._id}>
+                        <ListItem>
+                          <ListItemIcon>
+                            <Checkbox
+                              edge="start"
+                              checked={todo.completed}
+                              onChange={async () => {
+                                try {
+                                  const updatedTodo = await updateTodo(todo._id, { completed: !todo.completed });
+                                  setTodos(todos.map(t => t._id === todo._id ? updatedTodo : t));
+                                } catch (error) {
+                                  console.error('Error al actualizar pendiente:', error);
+                                }
+                              }}
+                              sx={{ color: todo.completed ? 'success.main' : 'inherit' }}
+                            />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              <Typography
+                                sx={{ 
+                                  textDecoration: todo.completed ? 'line-through' : 'none',
+                                  color: todo.completed ? 'text.secondary' : 'text.primary' 
+                                }}
+                              >
+                                {todo.text}
+                              </Typography>
                             }
                           />
                         </ListItem>

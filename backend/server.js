@@ -34,7 +34,14 @@ try {
 
 // Configuración avanzada de CORS
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  // Permite tanto el localhost como tu dominio de producción
+  const allowedOrigins = ['http://localhost:5173', 'https://diatomeauniversitaria.netlify.app'];
+  const origin = req.headers.origin;
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-auth-token');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -66,6 +73,8 @@ try {
   app.use('/api/courses', require('./routes/courses'));
   app.use('/api/tasks', require('./routes/tasks'));
   app.use('/api/events', require('./routes/events'));
+  const todos = require('./routes/todos');
+  app.use('/api/todos', todos);
 } catch (err) {
   logError(err);
 }

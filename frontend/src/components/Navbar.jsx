@@ -15,6 +15,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import PersonIcon from '@mui/icons-material/Person';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import ThemeToggle from './ThemeToggle';
@@ -82,6 +83,7 @@ function Navbar() {
     { text: 'Tareas', icon: <AssignmentIcon />, path: '/tasks' },
     { text: 'Horario', icon: <CalendarMonthIcon />, path: '/weekly' },
     { text: 'Calculadora de Notas', path: '/grade-calculator', icon: <CalculateIcon /> },
+    { text: 'Pendientes', icon: <ChecklistIcon />, path: '/todos' },
   ];
   
   const drawer = (
