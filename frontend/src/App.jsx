@@ -16,6 +16,7 @@ import './App.css';
 // Cargar componentes pesados con lazy loading
 const Events = React.lazy(() => import('./pages/Events'));
 const GradeCalculator = React.lazy(() => import('./pages/GradeCalculator'));
+const Profile = React.lazy(() => import('./pages/Profile'));
 
 function App() {
   const { darkMode } = useContext(ThemeContext);
@@ -41,21 +42,29 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/login" element={<NewLogin />} />
-          <Route path="/" element={<PrivateRoute />}>
-            <Route index element={<Dashboard />} />
-            <Route path="courses" element={<Courses />} />
-            <Route path="tasks" element={<Tasks />} />
-            <Route path="weekly" element={<WeeklyView />} />
-            <Route path="events" element={
-              <Suspense fallback={<div>Cargando...</div>}>
-                <Events />
-              </Suspense>
-            } />
-            <Route path="calculator" element={
-              <Suspense fallback={<div>Cargando...</div>}>
-                <GradeCalculator />
-              </Suspense>
-            } />
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="tasks" element={<Tasks />} />
+              <Route path="weekly" element={<WeeklyView />} />
+              <Route path="events" element={
+                <Suspense fallback={<div>Cargando...</div>}>
+                  <Events />
+                </Suspense>
+              } />
+              <Route path="grade-calculator" element={
+                <Suspense fallback={<div>Cargando...</div>}>
+                  <GradeCalculator />
+                </Suspense>
+              } />
+              <Route path="profile" element={
+                <Suspense fallback={<div>Cargando...</div>}>
+                  <Profile />
+                </Suspense>
+              } />
+            </Route>
           </Route>
         </Routes>
         <PrivateRoute>

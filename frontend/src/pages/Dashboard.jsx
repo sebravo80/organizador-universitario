@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
-import React, { useContext } from 'react';
-import { AppDataContext } from '../context/AppDataContext';
+import React from 'react';
+import { useAppData } from '../context/AppDataContext';
 import { 
   Container, Typography, Box, Grid, 
   List, ListItem, ListItemText, Divider, 
@@ -11,37 +11,35 @@ import { Link } from 'react-router-dom';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
 
+// Agrega funciones auxiliares por si useAppData fallara
+const formatDate = (dateString) => {
+  try {
+    return new Date(dateString).toLocaleDateString();
+  } catch (err) {
+    return 'Fecha inválida';
+  }
+};
+
+const formatTime = (dateString) => {
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (err) {
+    return '';
+  }
+};
+
+const getPriorityColor = (priority) => {
+  switch (priority) {
+    case 'Alta': return 'error';
+    case 'Media': return 'warning';
+    case 'Baja': return 'success';
+    default: return 'default';
+  }
+};
+
 const Dashboard = () => {
-  const { courses = [], tasks = [], events = [], loading, error } = useContext(AppDataContext);
-
-  // Función de utilidad para formatear fechas
-  const formatDate = (dateString) => {
-    try {
-      return new Date(dateString).toLocaleDateString();
-    } catch (err) {
-      return 'Fecha inválida';
-    }
-  };
-
-  // Función para formatear hora
-  const formatTime = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } catch (err) {
-      return '';
-    }
-  };
-
-  // Obtener prioridad
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'Alta': return 'error';
-      case 'Media': return 'warning';
-      case 'Baja': return 'success';
-      default: return 'default';
-    }
-  };
+  const { courses = [], tasks = [], events = [], loading, error } = useAppData();
 
   // Filtrar tareas por fecha (próximos 7 días)
   const isInNextDays = (dateString, days) => {
