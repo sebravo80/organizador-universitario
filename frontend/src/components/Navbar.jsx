@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
-// Añadir BookIcon a las importaciones:
 import {
   AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
   Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText, Divider
@@ -17,14 +16,13 @@ import TodayIcon from '@mui/icons-material/Today';
 import EventIcon from '@mui/icons-material/Event';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import BookIcon from '@mui/icons-material/Book'; // Añadir esta importación
-import PersonIcon from '@mui/icons-material/Person'; // Asegúrate de tener esto también
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'; // Verificar esta importación
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle'; // Añadir esta importación
 
 const styles = {
   appBar: {

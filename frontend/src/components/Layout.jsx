@@ -7,13 +7,7 @@ const Layout = () => {
   return (
     <>
       <Navbar />
-      <Box component="main" sx={{ 
-        flexGrow: 1, 
-        width: '100%', 
-        pt: 2,
-        backgroundColor: 'var(--bg-primary)',
-        color: 'var(--text-primary)'
-      }}>
+      <Box component="main" sx={{ flexGrow: 1, width: '100%', pt: 2 }}>
         <Outlet />
       </Box>
     </>
