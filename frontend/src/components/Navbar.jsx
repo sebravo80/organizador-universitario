@@ -1,29 +1,31 @@
-// src/components/Navbar.jsx
-import { useState, useContext } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { 
-  AppBar, Toolbar, Typography, Button, IconButton, 
-  Box, Drawer, List, ListItem, ListItemIcon, 
-  ListItemText, Divider, Avatar, Menu, MenuItem
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import {
+  AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
+  Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText, Divider
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import SchoolIcon from '@mui/icons-material/School';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import BookIcon from '@mui/icons-material/Book';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import TodayIcon from '@mui/icons-material/Today';
+import EventIcon from '@mui/icons-material/Event';
+import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import PersonIcon from '@mui/icons-material/Person';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
-import ThemeToggle from './ThemeToggle';
-import MobileMenu from './MobileMenu';
 
 const styles = {
-  navbar: {
-    backgroundColor: 'var(--primary-color)',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  appBar: {
+    backgroundColor: '#72002a', // Color burdeo explícito
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
   },
   logo: {
     fontWeight: 'bold',
@@ -40,7 +42,7 @@ const styles = {
       left: 0,
       width: '100%',
       height: '3px',
-      backgroundColor: 'var(--accent-color)',
+      backgroundColor: '#fff', // Color blanco para el indicador
       borderRadius: '3px',
     }
   }

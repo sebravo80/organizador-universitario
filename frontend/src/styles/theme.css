@@ -57,6 +57,25 @@ html[data-theme='light'] .MuiPaper-root.MuiCard-root {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
+/* Estilo específico para la navbar - con mayor especificidad para asegurar que se aplique */
+.MuiAppBar-root.MuiAppBar-colorPrimary {
+  background-color: #72002a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Para el tema claro, mantenemos el mismo color de navbar */
+html[data-theme='light'] .MuiAppBar-root.MuiAppBar-colorPrimary {
+  background-color: #72002a !important;
+  color: #ffffff !important;
+}
+
+/* Estilo para los botones y elementos del navbar */
+.MuiAppBar-root .MuiButton-root,
+.MuiAppBar-root .MuiIconButton-root {
+  color: #ffffff !important;
+}
+
 .MuiButtonBase-root {
   background-color: var(--bg-terciary) !important;
   color: var(--text-quaternary) !important;

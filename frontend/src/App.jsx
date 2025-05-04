@@ -1,3 +1,4 @@
+import './global.css'; // Importa los estilos globales primero
 import React, { Suspense, useContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
