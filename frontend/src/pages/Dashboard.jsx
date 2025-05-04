@@ -2,9 +2,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
-
 import { 
-  Container, Typography, Box, Grid, 
+  Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
   Chip
@@ -15,9 +14,6 @@ import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
 
-// Importa el componente de notas personales
-import PersonalNotes from '../components/PersonalNotes';
-
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
@@ -25,23 +21,24 @@ const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
         // Obtener cursos
         const coursesRes = await api.get('/courses');
         setCourses(coursesRes.data);
-
+        
         // Obtener tareas
         const tasksRes = await api.get('/tasks');
         setTasks(tasksRes.data);
-
+        
         // Obtener eventos
         const eventsRes = await api.get('/events');
         setEvents(eventsRes.data);
-
+        
         setError(null);
       } catch (err) {
         console.error('Error al cargar datos:', err);
@@ -50,36 +47,36 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
+    
     if (isAuth) {
       fetchData();
     }
   }, [isAuth]);
-
-  // Tareas próximas (ordenadas por fecha de vencimiento)
+  
+  // Obtener tareas próximas (ordenadas por fecha de vencimiento)
   const upcomingTasks = tasks
     .filter(task => task.status !== 'Completada')
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5);
-
-  // Eventos próximos (ordenados por fecha de inicio)
+  
+  // Obtener eventos próximos (ordenados por fecha de inicio)
   const upcomingEvents = events
     .filter(event => new Date(event.startDate) >= new Date())
     .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
     .slice(0, 5);
-
+  
   // Formatear fecha
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'PPP', { locale: es });
   };
-
+  
   // Formatear hora
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'p', { locale: es });
   };
-
+  
   // Obtener color de prioridad
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -93,7 +90,7 @@ const Dashboard = () => {
         return 'default';
     }
   };
-
+  
   if (loading) {
     return (
       <Container maxWidth="lg">
@@ -103,23 +100,23 @@ const Dashboard = () => {
       </Container>
     );
   }
-
+  
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Bienvenido, {user?.name}
         </Typography>
-
+        
         {error && (
           <Typography color="error" sx={{ mb: 2 }}>
             {error}
           </Typography>
         )}
-
+        
         <Grid container spacing={3}>
           {/* Cursos */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <Card>
               <CardHeader 
                 title="Mis Cursos" 
@@ -192,9 +189,9 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-
+          
           {/* Tareas próximas */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <Card>
               <CardHeader 
                 title="Tareas Próximas" 
@@ -246,9 +243,9 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-
+          
           {/* Eventos próximos */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <Card>
               <CardHeader 
                 title="Eventos Próximos" 
@@ -293,11 +290,6 @@ const Dashboard = () => {
                 )}
               </CardContent>
             </Card>
-          </Grid>
-
-          {/* Notas rápidas personales */}
-          <Grid item xs={12} md={3}>
-            <PersonalNotes />
           </Grid>
         </Grid>
       </Box>
