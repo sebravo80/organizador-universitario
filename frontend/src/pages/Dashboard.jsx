@@ -1,20 +1,60 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
-import { useAppData } from '../context/AppDataContext';
+import React, { useContext } from 'react';
+import { AppDataContext } from '../context/AppDataContext';
 import { 
   Container, Typography, Box, Grid, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
-  Chip
+  Chip, CircularProgress
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
-import { formatDate, formatTime, getPriorityColor } from '../utils/formatUtils';
-import { isInNextDays } from '../utils/dateUtils';
 
 const Dashboard = () => {
-  const { courses, tasks, events, loading, error } = useAppData();
+  const { courses = [], tasks = [], events = [], loading, error } = useContext(AppDataContext);
+
+  // Función de utilidad para formatear fechas
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch (err) {
+      return 'Fecha inválida';
+    }
+  };
+
+  // Función para formatear hora
+  const formatTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (err) {
+      return '';
+    }
+  };
+
+  // Obtener prioridad
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'Alta': return 'error';
+      case 'Media': return 'warning';
+      case 'Baja': return 'success';
+      default: return 'default';
+    }
+  };
+
+  // Filtrar tareas por fecha (próximos 7 días)
+  const isInNextDays = (dateString, days) => {
+    try {
+      const date = new Date(dateString);
+      const today = new Date();
+      const future = new Date();
+      future.setDate(today.getDate() + days);
+      return date >= today && date <= future;
+    } catch (err) {
+      return false;
+    }
+  };
 
   // Obtener tareas próximas (ordenadas por fecha de vencimiento)
   const upcomingTasks = tasks
@@ -31,8 +71,8 @@ const Dashboard = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ mt: 4 }}>
-          <Typography>Cargando datos...</Typography>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress />
         </Box>
       </Container>
     );

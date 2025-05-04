@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme } from './context/ThemeContext';
-import { AppDataProvider } from './context/AppDataContext';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -39,32 +38,30 @@ function App() {
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <AppDataProvider>
-        <div className="App">
-          <Routes>
-            <Route path="/login" element={<NewLogin />} />
-            <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-              <Route index element={<Dashboard />} />
-              <Route path="courses" element={<Courses />} />
-              <Route path="tasks" element={<Tasks />} />
-              <Route path="weekly" element={<WeeklyView />} />
-              <Route path="events" element={
-                <Suspense fallback={<div>Cargando...</div>}>
-                  <Events />
-                </Suspense>
-              } />
-              <Route path="calculator" element={
-                <Suspense fallback={<div>Cargando...</div>}>
-                  <GradeCalculator />
-                </Suspense>
-              } />
-            </Route>
-          </Routes>
-          <ProtectedRoute>
-            <TaskAlerts />
-          </ProtectedRoute>
-        </div>
-      </AppDataProvider>
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<NewLogin />} />
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<Dashboard />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="weekly" element={<WeeklyView />} />
+            <Route path="events" element={
+              <Suspense fallback={<div>Cargando...</div>}>
+                <Events />
+              </Suspense>
+            } />
+            <Route path="calculator" element={
+              <Suspense fallback={<div>Cargando...</div>}>
+                <GradeCalculator />
+              </Suspense>
+            } />
+          </Route>
+        </Routes>
+        <ProtectedRoute>
+          <TaskAlerts />
+        </ProtectedRoute>
+      </div>
     </ThemeProvider>
   );
 }
