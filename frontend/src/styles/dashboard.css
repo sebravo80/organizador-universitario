@@ -100,9 +100,26 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
   margin-top: 4px;
 }
 
-.css-1b6zdp2-MuiAvatar-root {
-    background-color: #a0003b !important;
-
+.css-1kn0uly {
+  position: relative;
+  display: flex
+;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  user-select: none;
+  color: rgb(255, 255, 255);
+  width: 56px;
+  height: 56px;
+  background-color: #a0003b !important;
+  box-shadow: rgba(114, 0, 42, 0.3) 0px 4px 12px;
 }
 
 @media (max-width: 600px) {
