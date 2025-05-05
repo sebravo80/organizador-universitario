@@ -1,5 +1,5 @@
 // src/pages/WeeklyView.jsx
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { 
@@ -99,42 +99,45 @@ const WeeklyView = () => {
     }
   }, [loading]);
   
-  // Convertir eventos para FullCalendar
-  const calendarEvents = [
-    // Eventos
-    ...events.map(event => ({
-      id: event._id,
-      title: event.title,
-      start: event.startDate,
-      end: event.endDate,
-      backgroundColor: event.color || '#4CAF50',
-      borderColor: event.color || '#4CAF50',
-      extendedProps: {
-        description: event.description,
-        location: event.location,
-        type: 'event',
-        course: event.course
-      }
-    })),
-    
-    // Tareas (como eventos de día completo en la fecha de vencimiento)
-    ...tasks.map(task => ({
-      id: `task-${task._id}`,
-      title: `📝 ${task.title}`,
-      start: task.dueDate,
-      allDay: true,
-      backgroundColor: task.status === 'Completada' ? '#9E9E9E' : getPriorityColor(task.priority),
-      borderColor: task.status === 'Completada' ? '#9E9E9E' : getPriorityColor(task.priority),
-      textColor: '#fff',
-      extendedProps: {
-        description: task.description,
-        type: 'task',
-        status: task.status,
-        priority: task.priority,
-        course: task.course
-      }
-    }))
-  ];
+  // Memoizar eventos para el calendario
+  const calendarEvents = useMemo(() => {
+    return [
+      // Eventos regulares
+      ...events.map(event => ({
+        id: event._id,
+        title: event.title,
+        start: event.startDate,
+        end: event.endDate,
+        backgroundColor: event.color || (event.course ? event.course.color : '#4CAF50'),
+        borderColor: event.color || (event.course ? event.course.color : '#4CAF50'),
+        textColor: '#fff',
+        extendedProps: {
+          description: event.description,
+          location: event.location,
+          type: 'event',
+          course: event.course
+        }
+      })),
+      
+      // Tareas (como eventos de día completo en la fecha de vencimiento)
+      ...tasks.map(task => ({
+        id: `task-${task._id}`,
+        title: `📝 ${task.title}`,
+        start: task.dueDate,
+        allDay: true,
+        backgroundColor: task.status === 'Completada' ? '#9E9E9E' : getPriorityColor(task.priority),
+        borderColor: task.status === 'Completada' ? '#9E9E9E' : getPriorityColor(task.priority),
+        textColor: '#fff',
+        extendedProps: {
+          description: task.description,
+          type: 'task',
+          status: task.status,
+          priority: task.priority,
+          course: task.course
+        }
+      }))
+    ];
+  }, [events, tasks]); // Solo se recalcula cuando cambian events o tasks
   
   // Obtener color de prioridad
   function getPriorityColor(priority) {
@@ -150,24 +153,24 @@ const WeeklyView = () => {
     }
   }
   
-  // Manejar clic en fecha para crear evento rápido
-  const handleDateClick = (info) => {
+  // Convertir funciones de manejo de eventos a useCallback
+  const handleDateClick = useCallback((info) => {
     // Calcular hora de fin (1 hora después)
-    const startDate = new Date(info.dateStr);
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+    const startDate = info.date;
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + 1);
     
     setQuickEvent({
       title: '',
-      startDate,
-      endDate,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
       color: '#4CAF50'
     });
     
     setOpen(true);
-  };
+  }, []);
   
-  // Manejar clic en evento
-  const handleEventClick = (info) => {
+  const handleEventClick = useCallback((info) => {
     const { event } = info;
     const eventType = event.extendedProps.type;
     
@@ -179,7 +182,7 @@ const WeeklyView = () => {
       const eventId = event.id;
       window.location.href = `/events?id=${eventId}`;
     }
-  };
+  }, [events, tasks]);
   
   // Manejar cambios en el formulario de evento rápido
   const handleQuickEventChange = (e) => {
@@ -401,4 +404,4 @@ const WeeklyView = () => {
   );
 };
 
-export default WeeklyView;
+export default React.memo(WeeklyView);

@@ -56,12 +56,12 @@
 }
 
 /* Mejora la apariencia de las celdas alternando colores ligeramente */
-.fc .fc-timegrid-col:nth-child(even) .fc-timegrid-col-frame {
-  background-color: rgba(0, 0, 0, 0.12);
+.fc-timegrid-col:nth-child(even) .fc-timegrid-col-frame {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.fc .fc-timegrid-col:nth-child(odd) .fc-timegrid-col-frame {
-  background-color: rgba(0, 0, 0, 0.08);
+.fc-timegrid-col:nth-child(odd) .fc-timegrid-col-frame {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* Estilos para el fondo de las celdas del calendario con mayor especificidad */
@@ -81,6 +81,15 @@
   background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
+/* Usar clases más específicas pero evitando selectores excesivamente largos */
+.fc-timegrid-bg,
+.fc-daygrid-bg,
+.fc-scrollgrid-sync-inner,
+.fc-timegrid-slots table,
+.fc-timegrid-cols table {
+  /* Estilos comunes */
+}
+
 /* Estilos para los encabezados del día con mayor especificidad */
 .fc .fc-col-header-cell,
 .fc .fc-timegrid-axis {
@@ -93,12 +102,17 @@
   border: none !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, opacity;
 }
 
 .fc-event:hover {
   transform: translateY(-1px) scale(1.01);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 10 !important;
+}
+
+.fc-event-main {
+  will-change: transform, opacity;
 }
 
 /* Hacer que las líneas divisorias sean más visibles */
@@ -163,4 +177,19 @@ html[data-theme='dark'] .fc-header-toolbar {
 .fc-button-primary:hover {
   background-color: rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-2px);
+}
+
+/* Añadir optimización para dispositivos móviles */
+@media (max-width: 768px) {
+  .fc-toolbar {
+    flex-direction: column;
+  }
+  
+  .fc .fc-toolbar-title {
+    font-size: 1.2em;
+  }
+  
+  .fc-event {
+    font-size: 0.85em;
+  }
 }

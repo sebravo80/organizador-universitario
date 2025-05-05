@@ -11,6 +11,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 import { getTodos, createTodo, updateTodo, deleteTodo } from '../services/todoService';
 
@@ -22,6 +24,8 @@ const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
   const [editMode, setEditMode] = useState(null); // ID del todo en edición
   const [editText, setEditText] = useState('');
+  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Cargar pendientes al iniciar
   useEffect(() => {
@@ -112,6 +116,18 @@ const TodoList = () => {
       setError('Error al eliminar el pendiente. Por favor, intenta nuevamente.');
     }
   };
+
+  // Calcular pendientes paginados
+  const paginatedTodos = todos.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  
+  // Manejar cambio de página
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  // Calcular número total de páginas
+  const totalPages = Math.ceil(todos.length / itemsPerPage);
   
   if (loading) {
     return (
@@ -166,80 +182,95 @@ const TodoList = () => {
                 <ListItemText primary="No tienes pendientes. ¡Añade uno!" />
               </ListItem>
             ) : (
-              todos.map((todo, index) => (
-                <React.Fragment key={todo._id} className="staggered-item">
-                  <ListItem 
-                    className="todo-item"
-                    sx={{
-                      backgroundColor: todo.completed ? 'rgba(0, 0, 0, 0.04)' : 'inherit'
-                    }}
-                  >
-                    <ListItemIcon>
-                      <Checkbox
-                        className="todo-checkbox"
-                        edge="start"
-                        checked={todo.completed}
-                        onChange={() => handleToggleComplete(todo._id, todo.completed)}
-                        sx={{ color: todo.completed ? 'success.main' : 'inherit' }}
-                      />
-                    </ListItemIcon>
-                    
-                    {editMode === todo._id ? (
-                      <TextField
-                        fullWidth
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        autoFocus
-                      />
-                    ) : (
-                      <ListItemText
-                        primary={
-                          <Typography
-                            className={todo.completed ? 'todo-text-completed' : ''}
-                            sx={{ 
-                              textDecoration: todo.completed ? 'line-through' : 'none',
-                              color: todo.completed ? 'text.secondary' : 'text.primary' 
-                            }}
-                          >
-                            {todo.text}
-                          </Typography>
-                        }
-                      />
-                    )}
-                    
-                    <ListItemSecondaryAction>
+              <>
+                {paginatedTodos.map((todo, index) => (
+                  <React.Fragment key={todo._id} className="staggered-item">
+                    <ListItem 
+                      className="todo-item"
+                      sx={{
+                        backgroundColor: todo.completed ? 'rgba(0, 0, 0, 0.04)' : 'inherit'
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          className="todo-checkbox"
+                          edge="start"
+                          checked={todo.completed}
+                          onChange={() => handleToggleComplete(todo._id, todo.completed)}
+                          sx={{ color: todo.completed ? 'success.main' : 'inherit' }}
+                        />
+                      </ListItemIcon>
+                      
                       {editMode === todo._id ? (
-                        <>
-                          <IconButton 
-                            edge="end" 
-                            onClick={() => handleSaveEdit(todo._id)}
-                            disabled={!editText.trim()}
-                          >
-                            <SaveIcon />
-                          </IconButton>
-                          <IconButton edge="end" onClick={handleCancelEdit} sx={{ ml: 1 }}>
-                            <CloseIcon />
-                          </IconButton>
-                        </>
+                        <TextField
+                          fullWidth
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          autoFocus
+                        />
                       ) : (
-                        <>
-                          <IconButton 
-                            edge="end" 
-                            onClick={() => handleStartEdit(todo)}
-                            disabled={todo.completed}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton edge="end" onClick={() => handleDeleteTodo(todo._id)} sx={{ ml: 1 }}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </>
+                        <ListItemText
+                          primary={
+                            <Typography
+                              className={todo.completed ? 'todo-text-completed' : ''}
+                              sx={{ 
+                                textDecoration: todo.completed ? 'line-through' : 'none',
+                                color: todo.completed ? 'text.secondary' : 'text.primary' 
+                              }}
+                            >
+                              {todo.text}
+                            </Typography>
+                          }
+                        />
                       )}
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  {index < todos.length - 1 && <Divider />}
-                </React.Fragment>
-              ))
+                      
+                      <ListItemSecondaryAction>
+                        {editMode === todo._id ? (
+                          <>
+                            <IconButton 
+                              edge="end" 
+                              onClick={() => handleSaveEdit(todo._id)}
+                              disabled={!editText.trim()}
+                            >
+                              <SaveIcon />
+                            </IconButton>
+                            <IconButton edge="end" onClick={handleCancelEdit} sx={{ ml: 1 }}>
+                              <CloseIcon />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <>
+                            <IconButton 
+                              edge="end" 
+                              onClick={() => handleStartEdit(todo)}
+                              disabled={todo.completed}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton edge="end" onClick={() => handleDeleteTodo(todo._id)} sx={{ ml: 1 }}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    {index < paginatedTodos.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+                
+                {/* Componente de paginación */}
+                {totalPages > 1 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                    <Pagination 
+                      count={totalPages} 
+                      page={page} 
+                      onChange={handlePageChange} 
+                      color="primary"
+                      size={window.innerWidth < 600 ? "small" : "medium"}
+                    />
+                  </Box>
+                )}
+              </>
             )}
           </List>
         </Paper>

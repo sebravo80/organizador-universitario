@@ -1,13 +1,13 @@
 // src/pages/Events.jsx
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { 
   Container, Typography, Box, TextField, Button, 
   FormControl, InputLabel, Select, MenuItem,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Grid, Card, CardContent, CardActions, IconButton,
-  List, ListItem, ListItemText, Divider
+  Grid, CardActions, IconButton,
+  Stack, Pagination
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -17,9 +17,7 @@ import { format, differenceInMinutes } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import RoomIcon from '@mui/icons-material/Room';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import EventIcon from '@mui/icons-material/Event';
+import EventCard from '../components/EventCard';
 
 const Events = () => {
   const { isAuth } = useContext(AuthContext);
@@ -28,7 +26,6 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estado para el formulario de evento
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEventId, setCurrentEventId] = useState(null);
@@ -41,8 +38,10 @@ const Events = () => {
     color: '#4CAF50',
     course: ''
   });
+
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(9);
   
-  // Función para resetear el formulario
   const resetForm = () => {
     setEventForm({
       title: '',
@@ -51,21 +50,18 @@ const Events = () => {
       endDate: new Date(),
       location: '',
       color: '#3788d8',
-      course: '', // Asegúrate de que sea cadena vacía y no null
+      course: '',
     });
   };
 
-  // Cargar eventos y cursos
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Obtener eventos
         const eventsRes = await api.get('/events');
         setEvents(eventsRes.data);
         
-        // Obtener cursos
         const coursesRes = await api.get('/courses');
         setCourses(coursesRes.data);
         
@@ -83,7 +79,6 @@ const Events = () => {
     }
   }, [isAuth]);
   
-  // Abrir diálogo para crear evento
   const handleOpenCreate = () => {
     const now = new Date();
     const oneHourLater = new Date(now);
@@ -103,8 +98,6 @@ const Events = () => {
     setIsEditing(false);
   };
 
-  
-  // Abrir diálogo para editar evento
   const handleOpenEdit = (event) => {
     setIsEditing(true);
     setCurrentEventId(event._id);
@@ -120,7 +113,6 @@ const Events = () => {
     setOpen(true);
   };
   
-  // Cerrar diálogo
   const handleClose = () => {
     setOpen(false);
     setIsEditing(false);
@@ -136,7 +128,6 @@ const Events = () => {
     });
   };
   
-  // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEventForm(prev => ({
@@ -145,12 +136,9 @@ const Events = () => {
     }));
   };
   
-  // Manejar cambio de fecha de inicio
   const handleStartDateChange = (date) => {
-    // Si la fecha de fin es anterior a la nueva fecha de inicio, ajustarla
     let newEndDate = eventForm.endDate;
     if (eventForm.endDate && date && date > eventForm.endDate) {
-      // Establecer la fecha de fin una hora después de la fecha de inicio
       newEndDate = new Date(date.getTime() + 60 * 60 * 1000);
     }
     
@@ -161,7 +149,6 @@ const Events = () => {
     });
   };
   
-  // Manejar cambio de fecha de fin
   const handleEndDateChange = (date) => {
     setEventForm({
       ...eventForm,
@@ -169,16 +156,13 @@ const Events = () => {
     });
   };
   
-  // Crear o actualizar evento
   const saveEvent = async () => {
     try {
-      // Validar que se haya ingresado un título y fechas
       if (!eventForm.title.trim() || !eventForm.startDate || !eventForm.endDate) {
         setError('Por favor, ingresa un título y fechas válidas.');
         return;
       }
       
-      // Validar que la fecha de fin sea posterior a la fecha de inicio
       if (eventForm.endDate <= eventForm.startDate) {
         setError('La fecha de fin debe ser posterior a la fecha de inicio.');
         return;
@@ -186,7 +170,6 @@ const Events = () => {
       
       await handleSubmit();
       
-      // Cerrar diálogo
       handleClose();
       
       setError(null);
@@ -196,12 +179,10 @@ const Events = () => {
     }
   };
   
-  // Eliminar evento
   const deleteEvent = async (id) => {
     try {
       await api.delete(`/events/${id}`);
       
-      // Eliminar el evento de la lista
       setEvents(events.filter(event => event._id !== id));
       
       setError(null);
@@ -211,19 +192,16 @@ const Events = () => {
     }
   };
   
-  // Formatear fecha
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'PPP', { locale: es });
   };
   
-  // Formatear hora
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'p', { locale: es });
   };
   
-  // Calcular duración del evento en horas y minutos
   const getEventDuration = (startDate, endDate) => {
     const minutes = differenceInMinutes(new Date(endDate), new Date(startDate));
     const hours = Math.floor(minutes / 60);
@@ -238,28 +216,31 @@ const Events = () => {
     }
   };
   
-  // Ordenar eventos por fecha
   const sortedEvents = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  
+  const paginatedEvents = sortedEvents.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  const totalPages = Math.ceil(sortedEvents.length / rowsPerPage);
   
   const handleSubmit = async () => {
     try {
       const eventData = {
         ...eventForm,
-        // Convertir explícitamente una cadena vacía a null
         course: eventForm.course === "" ? null : eventForm.course
       };
       
       if (isEditing) {
-        // Lógica para editar evento existente
         const res = await api.put(`/events/${currentEventId}`, eventData);
         
-        // Actualizar el evento en la lista
         setEvents(events.map(event => event._id === currentEventId ? res.data : event));
       } else {
-        // Lógica para crear nuevo evento
         const res = await api.post('/events', eventData);
         
-        // Agregar el nuevo evento a la lista
         setEvents([...events, res.data]);
       }
     } catch (error) {
@@ -303,84 +284,37 @@ const Events = () => {
         {sortedEvents.length === 0 ? (
           <Typography>No tienes eventos registrados.</Typography>
         ) : (
-          <Grid container spacing={3}>
-            {sortedEvents.map(event => (
-              <Grid item xs={12} sm={6} md={4} key={event._id}>
-                <Card sx={{ 
-                  borderLeft: `4px solid ${event.color || '#4CAF50'}`,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h5" component="h2" gutterBottom>
-                      {event.title}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <EventIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
-                      <Typography variant="body2">
-                        {formatDate(event.startDate)}
-                      </Typography>
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
-                      <Typography variant="body2">
-                        {formatTime(event.startDate)} - {formatTime(event.endDate)}
-                      </Typography>
-                    </Box>
-                    
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Duración: {getEventDuration(event.startDate, event.endDate)}
-                    </Typography>
-                    
-                    {event.location && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <RoomIcon fontSize="small" sx={{ mr: 0.5, color: event.color || '#4CAF50' }} />
-                        <Typography variant="body2">
-                          {event.location}
-                        </Typography>
-                      </Box>
-                    )}
-                    
-                    {event.course && (
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        Curso: {event.course.name}
-                      </Typography>
-                    )}
-                    
-                    {event.description && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                        {event.description}
-                      </Typography>
-                    )}
-                  </CardContent>
-                  
-                  <CardActions>
-                    <IconButton 
-                      aria-label="editar"
-                      onClick={() => handleOpenEdit(event)}
-                      title="Editar evento"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton 
-                      aria-label="eliminar"
-                      onClick={() => deleteEvent(event._id)}
-                      title="Eliminar evento"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          <>
+            <Grid container spacing={3}>
+              {paginatedEvents.map(event => (
+                <Grid item xs={12} sm={6} md={4} key={event._id} className="staggered-item">
+                  <EventCard 
+                    event={event} 
+                    onEdit={handleOpenEdit}
+                    onDelete={deleteEvent}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            
+            {totalPages > 1 && (
+              <Stack spacing={2} sx={{ mt: 4, display: 'flex', alignItems: 'center' }}>
+                <Pagination 
+                  count={totalPages} 
+                  page={page} 
+                  onChange={handlePageChange} 
+                  color="primary" 
+                  showFirstButton 
+                  showLastButton
+                  siblingCount={1}
+                  size={window.innerWidth < 600 ? "small" : "medium"}
+                />
+              </Stack>
+            )}
+          </>
         )}
       </Box>
       
-      {/* Diálogo para crear/editar evento */}
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>{isEditing ? 'Editar Evento' : 'Nuevo Evento'}</DialogTitle>
         <DialogContent>

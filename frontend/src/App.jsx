@@ -1,35 +1,38 @@
-import React, { useContext, Suspense } from 'react';
+import React, { useContext, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
 import './App.css';
 import './styles/theme.css';
 
-// Componentes
+// Componentes esenciales (no lazy)
 import Navbar from './components/Navbar';
 import TaskAlerts from './components/TaskAlerts';
+import Loading from './components/Loading';
 
-// Páginas (carga inmediata)
-import Dashboard from './pages/Dashboard';
-import Courses from './pages/Courses';
-import Tasks from './pages/Tasks';
-import WeeklyView from './pages/WeeklyView';
-import NewLogin from './pages/NewLogin'; 
-import Profile from './pages/Profile';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import TodoList from './pages/TodoList';
-
-// Páginas con carga diferida (lazy loading)
-const Events = React.lazy(() => import('./pages/Events'));
-const GradeCalculator = React.lazy(() => import('./pages/GradeCalculator'));
+// Páginas con lazy loading
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Courses = lazy(() => import('./pages/Courses'));
+const Tasks = lazy(() => import('./pages/Tasks'));
+const WeeklyView = lazy(() => import('./pages/WeeklyView'));
+const Events = lazy(() => import('./pages/Events'));
+const Profile = lazy(() => import('./pages/Profile'));
+const GradeCalculator = lazy(() => import('./pages/GradeCalculator'));
+const TodoList = lazy(() => import('./pages/TodoList'));
+const NewLogin = lazy(() => import('./pages/NewLogin'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
   if (loading) {
-    return null;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
   
   return isAuth ? <Outlet /> : <Navigate to="/login" />;
@@ -40,7 +43,11 @@ const PublicRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
   if (loading) {
-    return null;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
   
   return isAuth ? <Navigate to="/dashboard" /> : <Outlet />;
@@ -57,29 +64,65 @@ function App() {
         <Routes>
           {/* Rutas públicas (solo accesibles si el usuario no está autenticado) */}
           <Route element={<PublicRoute />}>
-            <Route path="/login" element={<NewLogin />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/login" element={
+              <Suspense fallback={<Loading message="Preparando inicio de sesión..." />}>
+                <NewLogin />
+              </Suspense>
+            } />
+            <Route path="/forgot-password" element={
+              <Suspense fallback={<Loading message="Cargando..." />}>
+                <ForgotPassword />
+              </Suspense>
+            } />
+            <Route path="/reset-password/:token" element={
+              <Suspense fallback={<Loading message="Preparando restablecimiento de contraseña..." />}>
+                <ResetPassword />
+              </Suspense>
+            } />
           </Route>
           
           {/* Rutas privadas (se requiere autenticación) */}
           <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/weekly" element={<WeeklyView />} />
+            <Route path="/dashboard" element={
+              <Suspense fallback={<Loading message="Cargando dashboard..." />}>
+                <Dashboard />
+              </Suspense>
+            } />
+            <Route path="/courses" element={
+              <Suspense fallback={<Loading message="Cargando cursos..." />}>
+                <Courses />
+              </Suspense>
+            } />
+            <Route path="/tasks" element={
+              <Suspense fallback={<Loading message="Cargando tareas..." />}>
+                <Tasks />
+              </Suspense>
+            } />
+            <Route path="/weekly" element={
+              <Suspense fallback={<Loading message="Cargando calendario..." />}>
+                <WeeklyView />
+              </Suspense>
+            } />
             <Route path="/events" element={
-              <Suspense fallback={<div>Cargando...</div>}>
+              <Suspense fallback={<Loading message="Cargando eventos..." />}>
                 <Events />
               </Suspense>
             } />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={
+              <Suspense fallback={<Loading message="Cargando perfil..." />}>
+                <Profile />
+              </Suspense>
+            } />
             <Route path="/grade-calculator" element={
-              <Suspense fallback={<div>Cargando...</div>}>
+              <Suspense fallback={<Loading message="Cargando calculadora..." />}>
                 <GradeCalculator />
               </Suspense>
             } />
-            <Route path="/todos" element={<TodoList />} />
+            <Route path="/todos" element={
+              <Suspense fallback={<Loading message="Cargando pendientes..." />}>
+                <TodoList />
+              </Suspense>
+            } />
           </Route>
           
           {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}

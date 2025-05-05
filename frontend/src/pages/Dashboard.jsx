@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import { getTodos, updateTodo } from '../services/todoService';
@@ -60,18 +60,28 @@ const Dashboard = () => {
     }
   }, [isAuth]);
   
-  // Obtener tareas próximas (ordenadas por fecha de vencimiento)
-  const upcomingTasks = tasks
-    .filter(task => task.status !== 'Completada')
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-    .slice(0, 5);
+  // Obtener tareas próximas (ordenadas por fecha de vencimiento) usando useMemo
+  const upcomingTasks = useMemo(() => {
+    return tasks
+      .filter(task => task.status !== 'Completada')
+      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+      .slice(0, 5);
+  }, [tasks]);
   
-  // Obtener eventos próximos (ordenados por fecha de inicio)
-  const upcomingEvents = events
-    .filter(event => new Date(event.startDate) >= new Date())
-    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-    .slice(0, 5);
+  // Obtener eventos próximos (ordenados por fecha de inicio) usando useMemo
+  const upcomingEvents = useMemo(() => {
+    const now = new Date();
+    return events
+      .filter(event => new Date(event.startDate) >= now)
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+      .slice(0, 5);
+  }, [events]);
   
+  // Memoizar la lista de cursos para mostrar
+  const coursesList = useMemo(() => {
+    return courses.slice(0, 5);
+  }, [courses]);
+
   // Formatear fecha
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -138,7 +148,7 @@ const Dashboard = () => {
                   <Typography>No tienes ramos registrados.</Typography>
                 ) : (
                   <List>
-                    {courses.slice(0, 5).map(course => (
+                    {coursesList.map(course => (
                       <div key={course._id}>
                         <ListItem>
                           <ListItemText

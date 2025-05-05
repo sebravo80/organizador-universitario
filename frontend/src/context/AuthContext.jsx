@@ -1,5 +1,5 @@
 // src/context/AuthContext.jsx
-import { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 
 // Crear el contexto
@@ -140,18 +140,18 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
+  // Memo para el valor del contexto
+  const contextValue = useMemo(() => ({
+    isAuth,
+    user,
+    loading,
+    login,
+    logout,
+    register
+  }), [isAuth, user, loading]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuth,
-        loading,
-        error,
-        login,
-        register,
-        logout
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

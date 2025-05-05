@@ -1,85 +1,55 @@
 // src/components/TaskCountdown.jsx
-import { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
-import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
+import React, { useState, useEffect, useMemo, memo } from 'react';
+import { Chip } from '@mui/material';
+import AlarmIcon from '@mui/icons-material/Alarm';
 
-const TaskCountdown = ({ dueDate }) => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0
-  });
+const TaskCountdown = memo(({ dueDate }) => {
+  const [timeRemaining, setTimeRemaining] = useState('');
   
-  const [isExpired, setIsExpired] = useState(false);
-  
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const due = new Date(dueDate);
-      
-      // Se verifica si la fecha de vencimiento ya pasó
-      if (due <= now) {
-        setIsExpired(true);
-        return;
-      }
-      
-      // Se calcula el tiempo restante
-      const days = differenceInDays(due, now);
-      const hours = differenceInHours(due, now) % 24;
-      const minutes = differenceInMinutes(due, now) % 60;
-      
-      setTimeLeft({ days, hours, minutes });
-    };
+  // Calcular días restantes con useMemo
+  const daysRemaining = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
     
-    // Se calcula el tiempo restante inicialmente
-    calculateTimeLeft();
+    const diffTime = due - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    // Se actualiza cada minuto
-    const interval = setInterval(calculateTimeLeft, 60000);
-    
-    // Se limpia intervalo al desmontar
-    return () => clearInterval(interval);
+    return diffDays;
   }, [dueDate]);
   
-  // Se determina el color según el tiempo restante
-  const getColor = () => {
-    if (isExpired) {
-      return 'error.main';
-    }
-    
-    if (timeLeft.days === 0) {
-      if (timeLeft.hours < 6) {
-        return 'error.main';
-      } else {
-        return 'warning.main';
-      }
-    } else if (timeLeft.days <= 2) {
-      return 'warning.main';
+  // Determinar color y mensaje según días restantes con useMemo
+  const { color, message } = useMemo(() => {
+    if (daysRemaining < 0) {
+      return { color: 'error', message: 'Atrasada' };
+    } else if (daysRemaining === 0) {
+      return { color: 'error', message: '¡Hoy es la entrega!' };
+    } else if (daysRemaining === 1) {
+      return { color: 'warning', message: '¡Vence mañana!' };
+    } else if (daysRemaining <= 3) {
+      return { color: 'warning', message: `Vence en ${daysRemaining} días` };
     } else {
-      return 'success.main';
+      return { color: 'success', message: `Vence en ${daysRemaining} días` };
     }
-  };
+  }, [daysRemaining]);
+  
+  useEffect(() => {
+    setTimeRemaining(message);
+  }, [message]);
   
   return (
-    <Box sx={{ 
-      p: 1, 
-      borderRadius: 1,
-      backgroundColor: `${getColor()}20`,
-      display: 'inline-block'
-    }}>
-      {isExpired ? (
-        <Typography variant="body2" color="error.main" fontWeight="bold">
-          ¡Vencida!
-        </Typography>
-      ) : (
-        <Typography variant="body2" color={getColor()} fontWeight="bold">
-          {timeLeft.days > 0 && `${timeLeft.days} día${timeLeft.days !== 1 ? 's' : ''} `}
-          {timeLeft.hours > 0 && `${timeLeft.hours} hora${timeLeft.hours !== 1 ? 's' : ''} `}
-          {timeLeft.days === 0 && `${timeLeft.minutes} minuto${timeLeft.minutes !== 1 ? 's' : ''}`}
-        </Typography>
-      )}
-    </Box>
+    <Chip 
+      label={timeRemaining} 
+      color={color}
+      size="small"
+      variant="outlined"
+      icon={<AlarmIcon />}
+    />
   );
-};
+});
+
+// Asignar displayName para herramientas de desarrollo
+TaskCountdown.displayName = 'TaskCountdown';
 
 export default TaskCountdown;
