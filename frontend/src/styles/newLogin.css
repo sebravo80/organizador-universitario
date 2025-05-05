@@ -270,17 +270,29 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Mejorar la apariencia del mensaje de error */
 .error {
     color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.1);
-    padding: 10px;
+    background-color: rgba(231, 76, 60, 0.15); /* Aumentado la opacidad para mayor contraste */
+    padding: 12px;
     border-radius: 8px;
-    margin: 10px 0;
+    margin: 15px 0;
     font-size: 14px;
-    border-left: 3px solid #e74c3c;
+    border-left: 4px solid #e74c3c;
     animation: fadeIn 0.5s ease-in;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.25); /* Sombra más pronunciada */
 }
 
+.error::before {
+    content: '⚠️';
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Mejorar la animación de aparición */
 @keyframes fadeIn {
     from {
         opacity: 0;
