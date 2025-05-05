@@ -1,0 +1,156 @@
+/* Estilos mejorados para el Dashboard */
+.dashboard-container {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Tarjetas del dashboard con mejor espaciado */
+.dashboard-card {
+  height: 100%;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px !important;
+  animation: slideInUp 0.5s ease forwards;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Cabeceras de tarjetas más llamativas */
+.dashboard-card .MuiCardHeader-root {
+  background: linear-gradient(to right, rgba(114, 0, 42, 0.08), transparent);
+  border-bottom: 1px solid rgba(114, 0, 42, 0.1);
+  padding: 16px;
+}
+
+html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Contenido de tarjetas con mejor estructuración */
+.dashboard-card .MuiCardContent-root {
+  padding: 16px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 300px;
+  scrollbar-width: thin;
+}
+
+/* Personalizar la barra de desplazamiento */
+.dashboard-card .MuiCardContent-root::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard-card .MuiCardContent-root::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-card .MuiCardContent-root::-webkit-scrollbar-thumb {
+  background: rgba(114, 0, 42, 0.3);
+  border-radius: 3px;
+}
+
+.dashboard-card .MuiCardContent-root::-webkit-scrollbar-thumb:hover {
+  background: rgba(114, 0, 42, 0.5);
+}
+
+/* Estilo mejorado para elementos de lista */
+.dashboard-card .MuiListItem-root {
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-card .MuiListItem-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Separadores más sutiles */
+.dashboard-card .MuiDivider-root {
+  margin: 0;
+  opacity: 0.6;
+}
+
+/* Estilos específicos para diferentes secciones */
+.course-section .MuiListItemText-primary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.task-section .MuiChip-root {
+  margin: 2px;
+}
+
+.event-section .MuiListItemText-secondary {
+  margin-top: 4px;
+}
+
+.css-1b6zdp2-MuiAvatar-root {
+    background-color: #a0003b !important;
+
+}
+
+@media (max-width: 600px) {
+  .dashboard-card .MuiCardContent-root {
+    padding: 12px;
+    max-height: 250px;
+  }
+  
+  .dashboard-card .MuiCardHeader-root {
+    padding: 12px;
+  }
+}
+
+/* Animaciones para los elementos que se cargan */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-card {
+    margin-bottom: 16px;
+  }
+  
+  .dashboard-card .MuiTypography-h5 {
+    font-size: 1.2rem;
+  }
+  
+  .dashboard-card .MuiChip-root {
+    font-size: 0.75rem;
+    height: 24px;
+  }
+  
+  .dashboard-card .MuiSvgIcon-root {
+    font-size: 1rem;
+  }
+  
+  .dashboard-card .MuiListItemText-primary {
+    font-size: 0.9rem;
+  }
+  
+  .dashboard-card .MuiListItemText-secondary {
+    font-size: 0.8rem;
+  }
+}

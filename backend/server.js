@@ -35,7 +35,7 @@ try {
 // Configuración avanzada de CORS
 app.use((req, res, next) => {
   // Permite tanto el localhost como tu dominio de producción
-  const allowedOrigins = ['http://localhost:5173', 'https://diatomeauniversitaria.netlify.app'];
+  const allowedOrigins = ['http://localhost:5173', 'https://diatomeauniversitaria.netlify.app', 'https://www.diatomeauniversitaria.studio'];
   const origin = req.headers.origin;
   
   if (allowedOrigins.includes(origin)) {

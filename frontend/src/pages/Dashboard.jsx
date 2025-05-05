@@ -7,14 +7,17 @@ import {
   Container, Typography, Box, Grid, Paper, 
   List, ListItem, ListItemText, Divider, 
   Card, CardContent, CardHeader, Button,
-  Chip, Checkbox, ListItemIcon
+  Chip, Checkbox, ListItemIcon, Avatar
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SchoolIcon from '@mui/icons-material/School';
 import '../styles/animations.css';
+import '../styles/dashboard.css';
 
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -121,9 +124,43 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg" className="page-transition dashboard-container">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Bienvenido, {user?.name}
-        </Typography>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: 3, 
+            mb: 4, 
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, rgba(114, 0, 42, 0.08), rgba(255, 77, 151, 0.05))',
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+            <Avatar 
+              sx={{ 
+                width: 56, 
+                height: 56, 
+                bgcolor: 'primary.main',
+                boxShadow: '0 4px 12px rgba(114, 0, 42, 0.3)'
+              }}
+            >
+              {user?.name?.charAt(0) || 'U'}
+            </Avatar>
+            <Box>
+              <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 0.5 }}>
+                Hola hola, {user?.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {new Date().toLocaleDateString('es-ES', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
         
         {error && (
           <Typography color="error" sx={{ mb: 2 }}>
@@ -134,11 +171,11 @@ const Dashboard = () => {
         <Grid container spacing={3}>
           {/* Ramos */}
           <Grid item xs={12} md={4}>
-            <Card>
+            <Card className="dashboard-card course-section">
               <CardHeader 
                 title="Mis Ramos" 
                 action={
-                  <Button component={Link} to="/courses" size="small">
+                  <Button component={Link} to="/courses" size="small" variant="outlined">
                     Ver todos
                   </Button>
                 }
@@ -209,11 +246,11 @@ const Dashboard = () => {
           
           {/* Tareas próximas */}
           <Grid item xs={12} md={4}>
-            <Card>
+            <Card className="dashboard-card task-section">
               <CardHeader 
                 title="Tareas Próximas" 
                 action={
-                  <Button component={Link} to="/tasks" size="small">
+                  <Button component={Link} to="/tasks" size="small" variant="outlined">
                     Ver todas
                   </Button>
                 }
@@ -228,27 +265,48 @@ const Dashboard = () => {
                         <ListItem>
                           <ListItemText
                             primary={
-                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                {task.title}
+                              <Box sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                flexWrap: 'wrap',
+                                gap: 1
+                              }}>
+                                <Typography 
+                                  component="span" 
+                                  variant="body1" 
+                                  sx={{ fontWeight: 500 }}
+                                >
+                                  {task.title}
+                                </Typography>
                                 <Chip 
                                   size="small" 
                                   label={task.priority} 
                                   color={getPriorityColor(task.priority)}
-                                  sx={{ ml: 1 }}
                                 />
                               </Box>
                             }
                             secondary={
-                              <>
-                                <Box component="span" display="block">
+                              <Box sx={{ mt: 0.5 }}>
+                                <Typography variant="body2" component="span" display="block" sx={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center',
+                                  color: 'text.secondary'
+                                }}>
+                                  <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
                                   Vence: {formatDate(task.dueDate)}
-                                </Box>
+                                </Typography>
                                 {task.course && (
-                                  <Box component="span" display="block">
-                                    Ramo: {task.course.name}
-                                  </Box>
+                                  <Typography variant="body2" component="span" display="block" sx={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center',
+                                    color: 'text.secondary',
+                                    mt: 0.5
+                                  }}>
+                                    <SchoolIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
+                                    {task.course.name}
+                                  </Typography>
                                 )}
-                              </>
+                              </Box>
                             }
                           />
                         </ListItem>
@@ -263,11 +321,11 @@ const Dashboard = () => {
           
           {/* Eventos próximos */}
           <Grid item xs={12} md={4}>
-            <Card>
+            <Card className="dashboard-card event-section">
               <CardHeader 
                 title="Eventos Próximos" 
                 action={
-                  <Button component={Link} to="/weekly" size="small">
+                  <Button component={Link} to="/weekly" size="small" variant="outlined">
                     Ver calendario
                   </Button>
                 }
@@ -311,11 +369,11 @@ const Dashboard = () => {
 
           {/* Pendientes rápidos */}
           <Grid item xs={12} md={4}>
-            <Card>
+            <Card className="dashboard-card todo-section">
               <CardHeader 
                 title="Pendientes Rápidos" 
                 action={
-                  <Button component={Link} to="/todos" size="small">
+                  <Button component={Link} to="/todos" size="small" variant="outlined">
                     Ver todos
                   </Button>
                 }
