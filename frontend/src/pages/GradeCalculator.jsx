@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Container, Typography, Box, Button, TextField, IconButton, 
   Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
-  TableRow, Alert, Card, CardContent, Divider
+  TableRow, Alert, Card, CardContent, Divider, useTheme,
+  useMediaQuery, Chip, Tooltip, Fade
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SaveIcon from '@mui/icons-material/Save';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import TargetIcon from '@mui/icons-material/GpsFixed';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import ClassIcon from '@mui/icons-material/Class';
 
 const GradeCalculator = () => {
   const [grades, setGrades] = useState([
@@ -23,10 +29,23 @@ const GradeCalculator = () => {
   const [savedConfigs, setSavedConfigs] = useState({});
   const [configName, setConfigName] = useState("");
 
-  // Calcular la suma de porcentajes para validar que sea 100%
-  const totalPercentage = grades.reduce((sum, grade) => sum + Number(grade.percentage), 0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDarkMode = theme.palette.mode === 'dark';
 
-  // Agregar nueva nota
+  const totalPercentage = useMemo(() => {
+    return grades.reduce((sum, grade) => sum + Number(grade.percentage), 0);
+  }, [grades]);
+
+  const percentageValid = useMemo(() => totalPercentage === 100, [totalPercentage]);
+
+  const percentageColor = useMemo(() => {
+    if (totalPercentage < 100) return "warning.main";
+    if (totalPercentage > 100) return "error.main";
+    return "success.main";
+  }, [totalPercentage]);
+
   const addGrade = () => {
     const newGrade = {
       id: nextId,
@@ -38,28 +57,21 @@ const GradeCalculator = () => {
     setNextId(nextId + 1);
   };
 
-  // Eliminar una nota
   const removeGrade = (id) => {
     if (grades.length > 1) {
       setGrades(grades.filter(grade => grade.id !== id));
     }
   };
 
-  // Actualizar valores de las notas
   const updateGrade = (id, field, value) => {
     setGrades(
       grades.map(grade => {
         if (grade.id === id) {
           if (field === 'grade') {
-            // Si está vacío permitirlo
             if (value === "") {
               return { ...grade, [field]: value };
             }
-            
-            // Eliminar todos los no numéricos excepto punto o coma
             const cleanedValue = value.replace(/[^\d.,]/g, '');
-            
-            // Caso especial: si se ingresa un número de 2 cifras sin punto ni coma
             if (/^\d{2}$/.test(cleanedValue) && !cleanedValue.includes('.') && !cleanedValue.includes(',')) {
               const firstDigit = cleanedValue.charAt(0);
               const secondDigit = cleanedValue.charAt(1);
@@ -67,33 +79,23 @@ const GradeCalculator = () => {
             } else {
               value = cleanedValue;
             }
-            
-            // Asegurar que solo haya un separador decimal
             if ((value.includes('.') && value.includes(',')) || 
                 (value.split('.').length > 2) || 
                 (value.split(',').length > 2)) {
-              // Usar solo el primer separador encontrado
               const dotIndex = value.indexOf('.');
               const commaIndex = value.indexOf(',');
-              
               if (dotIndex >= 0 && (commaIndex < 0 || dotIndex < commaIndex)) {
                 value = value.substring(0, dotIndex + 1) + value.substring(dotIndex + 1).replace(/[.,]/g, '');
               } else if (commaIndex >= 0) {
                 value = value.substring(0, commaIndex + 1) + value.substring(commaIndex + 1).replace(/[.,]/g, '');
               }
             }
-            
-            // Convertir coma a punto para cálculos
             const calcValue = value.replace(',', '.');
-            
-            // Validar rango
             const numValue = parseFloat(calcValue);
             if (!isNaN(numValue)) {
               if (numValue > 7) value = "7.0";
               if (numValue < 1) value = "1.0";
             }
-            
-            // Limitar a 1 decimal como máximo
             if (value.includes('.') || value.includes(',')) {
               const parts = value.replace(',', '.').split('.');
               if (parts[1] && parts[1].length > 1) {
@@ -101,102 +103,69 @@ const GradeCalculator = () => {
                 value = parts.join('.');
               }
             }
-            
-            // Formatear para mostrar (usar coma visual)
             return { ...grade, [field]: value.replace('.', ',') };
           }
-            
           if (field === 'percentage') {
-            // Asegurar que el porcentaje sea un número entero positivo
             value = parseInt(value) || 0;
             if (value < 0) value = 0;
             if (value > 100) value = 100;
-            
             return { ...grade, [field]: value };
           }
-            
           return { ...grade, [field]: value };
         }
         return grade;
       })
     );
-    
-    // Restablecer resultados cuando cambie cualquier valor
     setResult(null);
     setMissingGrade(null);
   };
 
-  // Calcular el promedio ponderado
   const calculateAverage = () => {
     setError("");
-    
-    // Validar que la suma de porcentajes sea 100%
     if (totalPercentage !== 100) {
       setError(`La suma de porcentajes debe ser 100%. Actualmente es ${totalPercentage}%`);
       return;
     }
-
-    // Validar que todas las notas tengan valores válidos
     const invalidGrades = grades.filter(grade => {
-      // Si la nota está vacía
       if (!grade.grade.toString().trim()) {
         return true;
       }
-      
       const numGrade = parseFloat(grade.grade.toString().replace(',', '.'));
       return isNaN(numGrade) || numGrade < 1 || numGrade > 7;
     });
-
     if (invalidGrades.length > 0) {
       setError("Todas las notas deben tener valores entre 1.0 y 7.0");
       return;
     }
-
-    // Calcular promedio ponderado
     let weightedSum = 0;
     grades.forEach(grade => {
       const numGrade = parseFloat(grade.grade.toString().replace(',', '.'));
       weightedSum += numGrade * (grade.percentage / 100);
     });
-
-    // Redondear a 1 decimal
     const roundedAverage = Math.round(weightedSum * 10) / 10;
     setResult(roundedAverage.toFixed(1));
   };
 
-  // Calcular la nota faltante
   const calculateMissingGrade = () => {
     setError("");
-    
-    // Validar que el target sea un número válido
     const target = parseFloat(targetAverage.replace(',', '.'));
     if (isNaN(target) || target < 1 || target > 7) {
       setError("La nota objetivo debe estar entre 1.0 y 7.0");
       return;
     }
-    
-    // Encontrar evaluaciones con nota y sin nota
     const withGrades = grades.filter(g => g.grade.toString().trim() !== "");
     const withoutGrades = grades.filter(g => g.grade.toString().trim() === "");
-    
     if (withoutGrades.length !== 1) {
       setError("Para este cálculo, debes tener exactamente una evaluación sin nota");
       return;
     }
-    
     const pendingEval = withoutGrades[0];
-    
-    // Calcular suma ponderada actual
     let currentWeightedSum = 0;
     withGrades.forEach(grade => {
       const numGrade = parseFloat(grade.grade.toString().replace(',', '.'));
       currentWeightedSum += numGrade * (grade.percentage / 100);
     });
-    
-    // Calcular nota necesaria: (objetivo - suma_actual) / porcentaje_pendiente * 100
     const neededGrade = (target - currentWeightedSum) / (pendingEval.percentage / 100);
-    
-    // Validar que el resultado sea alcanzable
     if (neededGrade < 1 || neededGrade > 7) {
       if (neededGrade < 1) {
         setMissingGrade({
@@ -212,7 +181,6 @@ const GradeCalculator = () => {
         });
       }
     } else {
-      // Redondear a 1 decimal
       const roundedGrade = Math.round(neededGrade * 10) / 10;
       setMissingGrade({
         evalName: pendingEval.name,
@@ -222,13 +190,11 @@ const GradeCalculator = () => {
     }
   };
 
-  // Guardar configuración actual
   const saveCurrentConfig = () => {
     if (!configName.trim()) {
       setError("Ingresa un nombre para guardar esta configuración");
       return;
     }
-    
     const newConfigs = {
       ...savedConfigs,
       [configName]: {
@@ -237,13 +203,11 @@ const GradeCalculator = () => {
         date: new Date().toLocaleDateString()
       }
     };
-    
     setSavedConfigs(newConfigs);
     localStorage.setItem('gradeCalculatorConfigs', JSON.stringify(newConfigs));
     setConfigName("");
   };
 
-  // Cargar configuración guardada
   const loadConfig = (name) => {
     if (savedConfigs[name]) {
       setGrades(savedConfigs[name].grades);
@@ -254,14 +218,12 @@ const GradeCalculator = () => {
     }
   };
 
-  // Eliminar configuración guardada
   const deleteConfig = (name) => {
     const { [name]: _, ...restConfigs } = savedConfigs;
     setSavedConfigs(restConfigs);
     localStorage.setItem('gradeCalculatorConfigs', JSON.stringify(restConfigs));
   };
 
-  // Reiniciar el formulario
   const resetCalculator = () => {
     setGrades([
       { id: 1, name: "Evaluación 1", grade: "", percentage: 30 },
@@ -275,36 +237,118 @@ const GradeCalculator = () => {
     setMissingGrade(null);
   };
 
-  // Cargar configuraciones guardadas al montar el componente
-  useEffect(() => {
+  const loadSavedConfigs = useCallback(() => {
     const savedData = localStorage.getItem('gradeCalculatorConfigs');
     if (savedData) {
       setSavedConfigs(JSON.parse(savedData));
     }
   }, []);
 
+  useEffect(() => {
+    loadSavedConfigs();
+  }, [loadSavedConfigs]);
+
   return (
     <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+      <Box sx={{ 
+        mt: 4, 
+        mb: 4,
+        animation: 'fadeIn 0.5s ease-in-out',
+        '@keyframes fadeIn': {
+          '0%': { opacity: 0, transform: 'translateY(10px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' }
+        }
+      }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            color: 'primary.main',
+            mb: 3,
+            '&::after': {
+              content: '""',
+              display: 'block',
+              height: '3px',
+              background: theme => `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+              flexGrow: 1,
+              ml: 2
+            }
+          }}
+        >
+          <ClassIcon sx={{ mr: 1, fontSize: '2rem' }} />
           Calculadora de Notas
         </Typography>
         
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 2, 
+              animation: 'shake 0.5s',
+              '@keyframes shake': {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+                '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' }
+              }
+            }}
+            variant="filled"
+          >
             {error}
           </Alert>
         )}
 
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="body1" gutterBottom>
+        <Card 
+          sx={{ 
+            mb: 4, 
+            borderRadius: '12px', 
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              boxShadow: '0 8px 30px rgba(0,0,0,0.12)'
+            }
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography 
+              variant="body1" 
+              gutterBottom
+              sx={{ 
+                borderLeft: '4px solid', 
+                borderColor: 'primary.main',
+                pl: 2,
+                py: 1,
+                bgcolor: theme => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                borderRadius: '0 8px 8px 0'
+              }}
+            >
               Ingresa tus notas y sus porcentajes para calcular tu promedio ponderado.
               Puedes agregar o quitar evaluaciones según necesites.
             </Typography>
             
-            <Alert severity="info" sx={{ mt: 2 }}>
-              La suma de todos los porcentajes debe ser exactamente 100%
+            <Alert 
+              severity="info" 
+              sx={{ 
+                mt: 2,
+                mb: 3,
+                'MuiAlert-icon': { 
+                  alignItems: 'center'
+                }
+              }}
+              icon={<FormatListNumberedIcon />}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography component="span">La suma de todos los porcentajes debe ser exactamente</Typography>
+                <Chip 
+                  label="100%" 
+                  color={percentageValid ? "success" : "warning"}
+                  size="small" 
+                  sx={{ ml: 1, fontWeight: 700 }}
+                />
+              </Box>
             </Alert>
 
             <TableContainer 
@@ -314,39 +358,71 @@ const GradeCalculator = () => {
                 overflowX: 'auto',
                 '& .MuiTableCell-root': {
                   p: { xs: '8px 4px', sm: '16px' }
-                }
+                },
+                borderRadius: '8px',
+                boxShadow: percentageValid ? '0 0 0 2px rgba(76, 175, 80, 0.2)' : '0 0 0 2px rgba(255, 152, 0, 0.2)',
+                transition: 'all 0.3s ease',
+                bgcolor: 'transparent'
               }}
             >
-              <Table size={window.innerWidth < 600 ? "small" : "medium"}>
+              <Table size={isMobile ? "small" : "medium"}>
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell align="center">Nota (1.0 - 7.0)</TableCell>
-                    <TableCell align="center">Porcentaje (%)</TableCell>
-                    <TableCell align="center">Acciones</TableCell>
+                  <TableRow sx={{ 
+                    bgcolor: theme => theme.palette.mode === 'dark' 
+                      ? 'rgba(66, 66, 66, 0.8)' 
+                      : 'rgba(0, 0, 0, 0.03)'
+                  }}>
+                    <TableCell sx={{ fontWeight: 700 }}>Nombre</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 700 }}>Nota (1.0 - 7.0)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 700 }}>Porcentaje (%)</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: 700 }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {grades.map((grade) => (
-                    <TableRow key={grade.id}>
+                  {grades.map((grade, index) => (
+                    <TableRow 
+                      key={grade.id}
+                      sx={{ 
+                        '&:nth-of-type(odd)': { 
+                          bgcolor: theme => theme.palette.mode === 'dark' 
+                            ? 'rgba(255, 255, 255, 0.03)' 
+                            : 'rgba(0, 0, 0, 0.02)' 
+                        },
+                        transition: 'background-color 0.2s',
+                        '&:hover': { 
+                          bgcolor: theme => theme.palette.mode === 'dark' 
+                            ? 'rgba(255, 255, 255, 0.05)' 
+                            : 'rgba(0, 0, 0, 0.04)' 
+                        }
+                      }}
+                    >
                       <TableCell>
                         <TextField
                           fullWidth
-                          variant="standard"
+                          variant="filled"
+                          size="small"
                           value={grade.name}
                           onChange={(e) => updateGrade(grade.id, 'name', e.target.value)}
+                          sx={{
+                            '& .MuiFilledInput-root': {
+                              borderRadius: '8px',
+                              bgcolor: 'transparent',
+                              '&::before, &::after': { display: 'none' }
+                            }
+                          }}
                         />
                       </TableCell>
                       <TableCell align="center">
                         <TextField
-                          variant="standard"
+                          variant="filled"
+                          size="small"
                           type="text"
                           placeholder="1.0-7.0"
                           inputProps={{ 
                             inputMode: 'decimal', 
                             style: { textAlign: 'center' },
-                            maxLength: 3,  // Limitamos a 3 caracteres (ej. "7.0")
-                            pattern: "[0-9.,]*" // Solo permitimos números, punto y coma
+                            maxLength: 3,
+                            pattern: "[0-9.,]*" 
                           }}
                           value={grade.grade}
                           onChange={(e) => updateGrade(grade.id, 'grade', e.target.value)}
@@ -359,31 +435,73 @@ const GradeCalculator = () => {
                           error={parseFloat(grade.grade.replace(',', '.')) > 7 || 
                                 parseFloat(grade.grade.replace(',', '.')) < 1 && 
                                 grade.grade !== ""}
-                          sx={{ width: '80px' }}
+                          sx={{ 
+                            width: { xs: '70px', sm: '90px' },
+                            '& .MuiFilledInput-root': {
+                              borderRadius: '8px',
+                              bgcolor: theme => theme.palette.mode === 'dark' 
+                                ? 'rgba(255, 255, 255, 0.05)' 
+                                : 'rgba(0, 0, 0, 0.04)',
+                              '&::before, &::after': { display: 'none' }
+                            }
+                          }}
                         />
                       </TableCell>
                       <TableCell align="center">
                         <TextField
-                          variant="standard"
+                          variant="filled"
+                          size="small"
                           type="number"
-                          inputProps={{ min: 0, max: 100, style: { textAlign: 'center' } }}
+                          inputProps={{ 
+                            min: 0, 
+                            max: 100, 
+                            style: { textAlign: 'center' } 
+                          }}
                           value={grade.percentage}
                           onChange={(e) => updateGrade(grade.id, 'percentage', parseInt(e.target.value) || 0)}
-                          sx={{ width: '70px' }}
+                          sx={{ 
+                            width: { xs: '65px', sm: '80px' },
+                            '& .MuiFilledInput-root': {
+                              borderRadius: '8px',
+                              bgcolor: theme => theme.palette.mode === 'dark' 
+                                ? 'rgba(255, 255, 255, 0.05)' 
+                                : 'rgba(0, 0, 0, 0.04)',
+                              '&::before, &::after': { display: 'none' }
+                            }
+                          }}
                         />
                       </TableCell>
                       <TableCell align="center">
-                        <IconButton
-                          color="error"
-                          onClick={() => removeGrade(grade.id)}
-                          disabled={grades.length <= 1}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        <Tooltip title="Eliminar evaluación">
+                          <span>
+                            <IconButton
+                              color="error"
+                              onClick={() => removeGrade(grade.id)}
+                              disabled={grades.length <= 1}
+                              size="small"
+                              sx={{ 
+                                bgcolor: 'rgba(244, 67, 54, 0.1)',
+                                '&:hover': {
+                                  bgcolor: 'rgba(244, 67, 54, 0.2)'
+                                },
+                                transition: 'transform 0.2s',
+                                '&:hover:enabled': {
+                                  transform: 'scale(1.1)'
+                                }
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow>
+                  <TableRow sx={{ 
+                    bgcolor: theme => theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.05)' 
+                      : 'rgba(0, 0, 0, 0.04)'
+                  }}>
                     <TableCell colSpan={2} align="right">
                       <Typography variant="body2" fontWeight="bold">
                         Suma de porcentajes:
@@ -393,7 +511,16 @@ const GradeCalculator = () => {
                       <Typography 
                         variant="body1" 
                         fontWeight="bold" 
-                        color={totalPercentage === 100 ? "success.main" : "error.main"}
+                        color={percentageColor}
+                        sx={{ 
+                          transition: 'all 0.3s ease',
+                          animation: totalPercentage === 100 ? 'pulse 1s' : 'none',
+                          '@keyframes pulse': {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)' }
+                          }
+                        }}
                       >
                         {totalPercentage}%
                       </Typography>
@@ -405,18 +532,29 @@ const GradeCalculator = () => {
             </TableContainer>
 
             <Box sx={{ 
-              mt: 2, 
+              mt: 3, 
               display: 'flex', 
               flexDirection: { xs: 'column', sm: 'row' }, 
               gap: 2,
               '& .MuiButton-root': {
-                width: { xs: '100%', sm: 'auto' }
+                width: { xs: '100%', sm: 'auto' },
+                borderRadius: '8px',
+                py: 1
               }
             }}>
               <Button 
                 variant="outlined" 
                 startIcon={<AddIcon />}
                 onClick={addGrade}
+                sx={{ 
+                  bgcolor: 'rgba(25, 118, 210, 0.08)',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    bgcolor: 'rgba(25, 118, 210, 0.12)',
+                    boxShadow: '0 4px 8px rgba(25, 118, 210, 0.15)'
+                  }
+                }}
               >
                 Agregar evaluación
               </Button>
@@ -425,6 +563,14 @@ const GradeCalculator = () => {
                 startIcon={<CalculateIcon />}
                 onClick={calculateAverage}
                 color="primary"
+                disableElevation
+                sx={{ 
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)'
+                  }
+                }}
               >
                 Calcular promedio
               </Button>
@@ -433,6 +579,13 @@ const GradeCalculator = () => {
                 startIcon={<RestartAltIcon />}
                 onClick={resetCalculator}
                 color="secondary"
+                sx={{ 
+                  ml: 'auto',
+                  bgcolor: 'rgba(156, 39, 176, 0.08)',
+                  '&:hover': {
+                    bgcolor: 'rgba(156, 39, 176, 0.12)'
+                  }
+                }}
               >
                 Reiniciar
               </Button>
@@ -441,24 +594,103 @@ const GradeCalculator = () => {
         </Card>
 
         {result !== null && (
-          <Card sx={{ mt: 3, mb: 3, backgroundColor: 'primary.dark' }}>
+          <Card 
+            sx={{ 
+              mt: 3, 
+              mb: 3, 
+              bgcolor: 'primary.main', 
+              borderRadius: '12px',
+              overflow: 'hidden',
+              position: 'relative',
+              animation: 'slideIn 0.5s ease',
+              '@keyframes slideIn': {
+                '0%': { opacity: 0, transform: 'translateY(20px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' }
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-50%',
+                left: '-50%',
+                width: '200%',
+                height: '200%',
+                backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%)',
+                opacity: 0.5
+              }
+            }}
+          >
             <CardContent>
               <Typography variant="h5" component="div" align="center" color="white">
                 Tu promedio ponderado es:
               </Typography>
-              <Typography variant="h2" component="div" align="center" color="white" sx={{ mt: 2 }}>
+              <Typography 
+                variant="h1" 
+                component="div" 
+                align="center" 
+                color="white" 
+                sx={{ 
+                  mt: 2,
+                  fontSize: { xs: '3rem', sm: '4rem' },
+                  fontWeight: 700,
+                  textShadow: '0 2px 10px rgba(0,0,0,0.2)'
+                }}
+              >
                 {result.replace('.', ',')}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                color="rgba(255,255,255,0.8)" 
+                align="center"
+                sx={{ mt: 1 }}
+              >
+                {parseFloat(result) >= 4.0 ? 
+                  "¡Felicitaciones! Has aprobado la asignatura." : 
+                  "Necesitas al menos 4.0 para aprobar la asignatura."}
               </Typography>
             </CardContent>
           </Card>
         )}
 
-        <Card sx={{ mt: 3, mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
+        <Card 
+          sx={{ 
+            mt: 3, 
+            mb: 4, 
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              boxShadow: '0 8px 30px rgba(0,0,0,0.12)'
+            }
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography 
+              variant="h6" 
+              gutterBottom
+              sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: 600,
+                mb: 2
+              }}
+            >
+              <TargetIcon sx={{ mr: 1, color: 'secondary.main' }} />
               Calcular nota necesaria
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              sx={{ 
+                mb: 2,
+                bgcolor: theme => theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.05)' 
+                  : 'rgba(0, 0, 0, 0.04)',
+                p: 1.5,
+                borderRadius: '8px', 
+                border: '1px dashed', 
+                borderColor: 'divider'
+              }}
+            >
               Deja en blanco exactamente una nota y calcula cuánto necesitas para alcanzar el promedio deseado.
             </Typography>
             
@@ -475,117 +707,103 @@ const GradeCalculator = () => {
                 onChange={(e) => setTargetAverage(e.target.value)}
                 variant="outlined"
                 placeholder="4.0"
+                InputProps={{ 
+                  startAdornment: <TargetIcon color="action" sx={{ mr: 1 }} />
+                }}
                 inputProps={{ 
                   inputMode: 'decimal', 
                   style: { textAlign: 'center' }
                 }}
-                sx={{ width: { xs: '100%', sm: '150px' } }}
+                sx={{ 
+                  width: { xs: '100%', sm: '180px' },
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px'
+                  }
+                }}
+                focused
               />
-              
               <Button 
                 variant="contained" 
                 onClick={calculateMissingGrade}
                 color="secondary"
+                size="large"
+                disableElevation
+                sx={{
+                  borderRadius: '8px',
+                  py: 1.5,
+                  px: 3,
+                  width: { xs: '100%', sm: 'auto' },
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(156, 39, 176, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 6px 16px rgba(156, 39, 176, 0.4)',
+                    transform: 'translateY(-2px)'
+                  },
+                  transition: 'all 0.2s ease'
+                }}
               >
                 Calcular nota necesaria
               </Button>
             </Box>
             
             {missingGrade && (
-              <Alert 
-                severity={missingGrade.grade === "Imposible" ? "error" : "success"}
-                sx={{ mt: 2 }}
-              >
-                <Typography variant="subtitle1">
-                  {missingGrade.evalName}: <strong>{missingGrade.grade}</strong>
-                </Typography>
-                <Typography variant="body2">
-                  {missingGrade.message}
-                </Typography>
-              </Alert>
+              <Fade in={!!missingGrade}>
+                <Alert 
+                  severity={missingGrade.grade === "Imposible" ? "error" : "success"}
+                  sx={{ 
+                    mt: 2,
+                    borderRadius: '8px',
+                    animation: 'fadeInUp 0.5s',
+                    '@keyframes fadeInUp': {
+                      '0%': { opacity: 0, transform: 'translateY(10px)' },
+                      '100%': { opacity: 1, transform: 'translateY(0)' }
+                    }
+                  }}
+                  variant={missingGrade.grade === "Imposible" ? "filled" : "outlined"}
+                  icon={missingGrade.grade === "Imposible" ? undefined : <CalculateIcon />}
+                >
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    {missingGrade.evalName}: <strong>{missingGrade.grade}</strong>
+                  </Typography>
+                  <Typography variant="body2">
+                    {missingGrade.message}
+                  </Typography>
+                </Alert>
+              </Fade>
             )}
           </CardContent>
         </Card>
 
-        <Card sx={{ mt: 3, mb: 3 }}>
-          <CardContent>
-            <Typography variant="h5" component="div" align="center">
+        <Card 
+          sx={{ 
+            mt: 3, 
+            mb: 3, 
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            bgcolor: 'transparent', 
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography 
+              variant="h5" 
+              component="div" 
+              sx={{ 
+                mb: 3, 
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                color: 'primary.main'
+              }}
+            >
+              <SaveIcon sx={{ mr: 1 }} />
               Guardar y cargar configuraciones
             </Typography>
-            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField
-                label="Nombre de configuración"
-                variant="outlined"
-                value={configName}
-                onChange={(e) => setConfigName(e.target.value)}
-                inputProps={{ style: { textAlign: 'center' } }}
-              />
-              <Button 
-                variant="contained" 
-                onClick={saveCurrentConfig}
-                color="primary"
-              >
-                Guardar configuración
-              </Button>
-            </Box>
-            {Object.keys(savedConfigs).length > 0 && (
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h6" component="div" align="center">
-                  Configuraciones guardadas
-                </Typography>
-                <TableContainer component={Paper} sx={{ mt: 2 }}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Nombre</TableCell>
-                        <TableCell align="center">Fecha</TableCell>
-                        <TableCell align="center">Acciones</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {Object.entries(savedConfigs).map(([name, config]) => (
-                        <TableRow key={name}>
-                          <TableCell>{name}</TableCell>
-                          <TableCell align="center">{config.date}</TableCell>
-                          <TableCell align="center">
-                            <Button 
-                              variant="outlined" 
-                              onClick={() => loadConfig(name)}
-                              color="primary"
-                              sx={{ mr: 1 }}
-                            >
-                              Cargar
-                            </Button>
-                            <Button 
-                              variant="outlined" 
-                              onClick={() => deleteConfig(name)}
-                              color="error"
-                            >
-                              Eliminar
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card sx={{ mt: 3, mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Guardar/cargar configuraciones
-            </Typography>
-            
             <Box sx={{ 
+              mt: 2, 
               display: 'flex', 
-              flexDirection: { xs: 'column', sm: 'row' },
-              alignItems: 'center',
-              gap: 2, 
-              mb: 3 
+              flexDirection: { xs: 'column', sm: 'row' }, 
+              gap: 2,
+              alignItems: 'flex-start'
             }}>
               <TextField
                 label="Nombre de la asignatura"
@@ -594,13 +812,35 @@ const GradeCalculator = () => {
                 variant="outlined"
                 placeholder="Ej: Cálculo II"
                 fullWidth
-                size="small"
+                InputProps={{ 
+                  startAdornment: <FolderOpenIcon color="action" sx={{ mr: 1 }} />
+                }}
+                sx={{ 
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px'
+                  }
+                }}
               />
               
               <Button 
                 variant="contained"
                 onClick={saveCurrentConfig}
-                sx={{ whiteSpace: 'nowrap', width: { xs: '100%', sm: 'auto' } }}
+                sx={{ 
+                  whiteSpace: 'nowrap', 
+                  width: { xs: '100%', sm: 'auto' },
+                  borderRadius: '8px',
+                  py: 1.5,
+                  px: 3,
+                  bgcolor: 'success.main',
+                  '&:hover': {
+                    bgcolor: 'success.dark',
+                    boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)',
+                    transform: 'translateY(-2px)'
+                  },
+                  transition: 'all 0.2s ease'
+                }}
+                startIcon={<SaveIcon />}
+                disableElevation
               >
                 Guardar configuración
               </Button>
@@ -608,30 +848,60 @@ const GradeCalculator = () => {
             
             {Object.keys(savedConfigs).length > 0 && (
               <>
-                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                <Divider sx={{ my: 3 }} />
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    mb: 2,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <ClassIcon sx={{ mr: 1, color: 'primary.light' }} />
                   Configuraciones guardadas:
                 </Typography>
                 
                 <Box sx={{ 
                   display: 'flex', 
                   flexDirection: 'column',
-                  gap: 1
+                  gap: 1.5
                 }}>
                   {Object.entries(savedConfigs).map(([name, config]) => (
                     <Paper 
                       key={name} 
-                      elevation={1}
+                      elevation={0}
                       sx={{ 
                         p: 2, 
                         display: 'flex', 
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         flexWrap: 'wrap',
-                        gap: 1
+                        gap: 1,
+                        borderRadius: '8px',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'all 0.2s ease',
+                        bgcolor: theme => theme.palette.mode === 'dark' 
+                          ? 'rgba(66, 66, 66, 0.6)' 
+                          : 'background.paper',
+                        '&:hover': {
+                          boxShadow: '0 4px 8px rgba(0,0,0,0.08)',
+                          borderColor: 'primary.light',
+                          transform: 'translateX(4px)'
+                        }
                       }}
                     >
                       <Box>
-                        <Typography variant="subtitle2">
+                        <Typography 
+                          variant="subtitle2"
+                          sx={{ 
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <ClassIcon fontSize="small" sx={{ mr: 0.5, color: 'primary.light', opacity: 0.7 }} />
                           {name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -644,6 +914,21 @@ const GradeCalculator = () => {
                           size="small" 
                           variant="outlined" 
                           onClick={() => loadConfig(name)}
+                          startIcon={<FolderOpenIcon />}
+                          sx={{ 
+                            borderRadius: '6px',
+                            transition: 'all 0.2s',
+                            bgcolor: theme => theme.palette.mode === 'dark' 
+                              ? 'rgba(25, 118, 210, 0.15)' 
+                              : 'transparent',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                              bgcolor: theme => theme.palette.mode === 'dark' 
+                                ? 'rgba(25, 118, 210, 0.25)' 
+                                : 'rgba(25, 118, 210, 0.08)'
+                            }
+                          }}
                         >
                           Cargar
                         </Button>
@@ -651,6 +936,18 @@ const GradeCalculator = () => {
                           size="small" 
                           color="error" 
                           onClick={() => deleteConfig(name)}
+                          startIcon={<DeleteIcon />}
+                          sx={{ 
+                            borderRadius: '6px',
+                            bgcolor: theme => theme.palette.mode === 'dark' 
+                              ? 'rgba(244, 67, 54, 0.15)' 
+                              : 'rgba(244, 67, 54, 0.08)',
+                            '&:hover': {
+                              bgcolor: theme => theme.palette.mode === 'dark' 
+                                ? 'rgba(244, 67, 54, 0.25)' 
+                                : 'rgba(244, 67, 54, 0.16)'
+                            }
+                          }}
                         >
                           Eliminar
                         </Button>
