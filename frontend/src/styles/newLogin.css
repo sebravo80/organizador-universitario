@@ -22,11 +22,17 @@ body {
     position: relative;
     width: 850px;
     height: 550px;
-    background: #fff;
+    background: #e6e6e6;
     margin: 20px auto;
     border-radius: 30px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.container:hover {
+    box-shadow: 0 15px 40px rgba(163, 0, 68, 0.4);
+    transform: translateY(-5px);
 }
 
 .container h1 {
@@ -48,7 +54,7 @@ body {
     right: 0;
     width: 50%;
     height: 100%;
-    background: #fff;
+    background: #e6e6e6;
     display: flex;
     align-items: center;
     color: #333;
@@ -77,18 +83,25 @@ body {
 
 .input-box input {
     width: 100%;
-    padding: 13px 50px 13px 20px;
-    background: #eee;
-    border-radius: 10px;
-    border: none;
+    padding: 15px 50px 15px 20px;
+    background: #f8f8f8;
+    border-radius: 12px;
+    border: 2px solid transparent;
     outline: none;
     font-size: 16px;
     color: #333;
     font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-box input:focus {
+    border-color: #a30044;
+    box-shadow: 0 0 0 3px rgba(163, 0, 68, 0.2);
 }
 
 .input-box input::placeholder {
-    color: #888;
+    color: #999;
     font-weight: 400;
 }
 
@@ -98,28 +111,50 @@ body {
     top: 50%;
     transform: translateY(-50%);
     font-size: 20px;
-    border-radius: 9px;
-    transition: transform 0.3s ease;
+    color: #a30044;
+    transition: all 0.3s ease;
 }
 
-.input-box i:hover {
-    transform: translateY(-50%) rotate(45deg);
+.input-box input:focus + i {
+    color: #ff4d97;
+    transform: translateY(-50%) scale(1.2);
 }
 
 /* Mejora del estilo del enlace de contraseña olvidada */
 .forgot-link {
-    margin: -15px 0 15px;
+    margin: -10px 0 20px;
     text-align: right;
 }
 
-.forgot-link a {
-    font-size: 14.5px;
-    color: #a30044; /* Usa el color principal de tu app */
+.forgot-link a, 
+.back-link a {
+    color: #a30044;
     font-weight: 500;
-    text-decoration: underline;
+    position: relative;
+    display: inline-block;
+    padding: 3px;
+    transition: all 0.3s ease;
 }
 
-.forgot-link a:hover {
+.forgot-link a::after,
+.back-link a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #a30044;
+    transition: all 0.3s ease;
+}
+
+.forgot-link a:hover::after,
+.back-link a:hover::after {
+    width: 100%;
+}
+
+.forgot-link a:hover,
+.back-link a:hover {
     color: #ff4d97;
 }
 
@@ -128,35 +163,30 @@ body {
     margin-top: 15px;
 }
 
-.back-link a, 
-.forgot-link a {
-    transition: color 0.3s;
-}
-
-.back-link a:hover,
-.forgot-link a:hover {
-    text-decoration: underline;
-}
-
 .btn {
     width: 100%;
-    height: 48px;
-    background: #a30044;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    height: 50px;
+    background: linear-gradient(45deg, #a30044, #ff4d97);
     border: none;
     cursor: pointer;
     border-radius: 15px;
-    font-size: 16px;
+    font-size: 17px;
     color: #fff;
     font-weight: 600;
-    transition: background-color 0.3s, transform 0.3s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(163, 0, 68, 0.3);
 }
 
 .btn:hover {
-    color: black;
-    background-color: #ff4d97;
-    font-family: 'Courier New', Courier, monospace;
-    transform: scale(1.1); 
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(163, 0, 68, 0.4);
+    background: linear-gradient(45deg, #8a0039, #e6437f);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .toggle-box {
@@ -171,10 +201,11 @@ body {
     left: -250%;
     width: 300%;
     height: 100%;
-    background: #a30044;
+    background: linear-gradient(135deg, #a30044, #880039);
     border-radius: 150px;
     z-index: 2;
     transition: 1.8s ease-in-out;
+    box-shadow: 0 0 40px rgba(163, 0, 68, 0.5);
 }
 
 .container.active .toggle-box::before {
@@ -191,7 +222,8 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 2;
-    transition: .6s ease-in-out;
+    transition: 0.6s ease-in-out;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-panel.toggle-left {
@@ -218,124 +250,49 @@ body {
     margin-bottom: 20px;
 }
 
+.toggle-panel h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
 .toggle-panel .btn {
-    width: 160px;
-    height: 46px;
     background: transparent;
     border: 2px solid #fff;
     box-shadow: none;
+    backdrop-filter: blur(3px);
+}
+
+.toggle-panel .btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .error {
-    color: #ff0000;
-    margin-top: 10px;
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
     font-size: 14px;
+    border-left: 3px solid #e74c3c;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Mejoras responsivas para el contenedor de login/registro */
-@media screen and (max-width: 900px) {
-    .container {
-        width: 95%;
-        max-width: 750px;
-    }
-}
-
-@media screen and (max-width: 650px) {
-    .container {
-        height: 85vh;
-        width: 90%;
-        margin: 30px auto;
-    }
-
-    .form-box {
-        bottom: 0;
-        width: 100%;
-        height: 70%;
-        padding: 25px;
-    }
-
-    .container.active .form-box {
-        right: 0;
-        bottom: 30%;
-    }
-
-    .toggle-box::before {
-        left: 0;
-        top: -270%;
-        width: 100%;
-        height: 300%;
-        border-radius: 20vw;
-    }
-
-    .container.active .toggle-box::before {
-        left: 0;
-        top: 70%;
-    }
-
-    .container.active .toggle-panel.toggle-left {
-        left: 0;
-        top: -30%;
-    }
-
-    .toggle-panel {
-        width: 100%;
-        height: 30%;
-    }
-
-    .toggle-panel.toggle-left {
-        top: 0;
-    }
-
-    .toggle-panel.toggle-right {
-        right: 0;
-        bottom: -30%;
-    }
-
-    .container.active .toggle-panel.toggle-right {
-        bottom: 0;
-    }
-}
-
-@media screen and (max-width: 400px) {
-    .container {
-        width: 92%;
-        height: auto;
-        min-height: 500px;
-        margin: 15px auto;
-    }
-    
-    .form-box {
-        padding: 15px;
-    }
-
-    .container h1 {
-        font-size: 28px;
-        margin: 5px 0;
-    }
-    
-    .input-box {
-        margin: 20px 0;
-    }
-    
-    .input-box input {
-        padding: 10px 45px 10px 15px;
-        font-size: 14px;
-    }
-    
-    .toggle-panel h1 {
-        font-size: 24px;
-    }
-    
-    .toggle-panel p {
-        font-size: 13px;
-        margin-bottom: 15px;
-    }
-    
-    .btn {
-        height: 40px;
-        font-size: 14px;
-    }
-}
 
 @media screen and (max-width: 650px) {
     .container {
@@ -389,23 +346,29 @@ body {
         bottom: 0;
     }
 }
+@media screen and (max-width: 550px) {
+    .container {
+        width: 100%;
+        height: auto;
+        min-height: 80vh;
+    }
 
-@media screen and (max-width: 400px) {
     .form-box {
-        padding: 20px;
+        width: 100%;
+        height: auto;
     }
 
     .toggle-panel h1 {
-        font-size: 30px;
+        font-size: 32px;
+    }
+
+    .toggle-panel p {
+        font-size: 14px;
     }
 }
-
 @media screen and (max-width: 480px) {
     .container {
         height: auto;
-        min-height: 90vh;
-        width: 95%;
-        padding: 10px;
     }
     
     .form-box {

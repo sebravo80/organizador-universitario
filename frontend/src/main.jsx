@@ -13,8 +13,8 @@ import './styles/theme.css';
 import './styles/animations.css';
 import './styles/calendar.css';
 import './styles/forms.css';
-//import './styles/navbar.css';
-//import './styles/todo.css';
+import './styles/navbar.css';
+import './styles/todo.css';
 import './styles/dashboard.css';
 import './styles/profile.css';
 

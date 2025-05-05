@@ -1,15 +1,27 @@
 /* Estilos para la barra de navegación */
 .app-navbar {
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   position: sticky;
   top: 0;
   z-index: 1100;
+  background-color: rgba(114, 0, 42, 0.85) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .app-navbar.scrolled {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-  background-color: var(--navbar-bg) !important;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  background-color: rgba(114, 0, 42, 0.95) !important;
+}
+
+/* Aplica mayor especificidad al selector */
+.app-navbar .MuiIconButton-root .profile-avatar.MuiAvatar-root {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border: 2px solid rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Logo animado */
@@ -19,45 +31,166 @@
   font-weight: 700;
   letter-spacing: 0.5px;
   position: relative;
-  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
-.navbar-logo::after {
+.navbar-logo:hover {
+  transform: translateY(-2px);
+}
+
+.navbar-logo img {
+  margin-right: 10px;
+  height: 32px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover img {
+  transform: rotate(10deg);
+}
+
+/* Navegación principal */
+.navbar-links {
+  display: flex;
+  gap: 16px;
+  margin-left: 24px;
+}
+
+.nav-link {
+  position: relative;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.nav-link:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.nav-link.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.nav-link.active::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
   background-color: white;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  animation: navIndicator 0.3s ease forwards;
 }
 
-.navbar-logo:hover::after {
-  width: 100%;
+@keyframes navIndicator {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 60%;
+    opacity: 1;
+  }
+}
+
+/* Perfil y menú de usuario */
+.user-profile {
+  position: relative;
+}
+
+.profile-avatar {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
 }
 
 /* Menú desplegable con animación */
 .navbar-menu {
   transition: transform 0.4s ease, opacity 0.4s ease;
+  border-radius: 12px !important;
+  overflow: hidden;
 }
 
-.navbar-menu.entering, 
-.navbar-menu.exiting {
-  transform: translateY(-20px);
-  opacity: 0;
+.navbar-menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  z-index: -1;
 }
 
-.navbar-menu.entered {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Ícono de menú con animación */
-.menu-icon {
+/* Menú móvil */
+.mobile-nav-icon {
   transition: transform 0.3s ease;
 }
 
-.menu-icon.open {
-  transform: rotate(180deg);
+.mobile-nav-icon.open {
+  transform: rotate(90deg);
 }
+
+.mobile-drawer .MuiPaper-root {
+  background-color: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+.mobile-drawer-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .navbar-logo {
+    font-size: 1.2rem !important;
+  }
+  
+  .nav-link {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+}
+.css-1y0zbv7 {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  background-color: #a0003b !important;
+  border-radius: 12px !important;
+}
+@media (max-width: 600px) {
+  .app-navbar {
+    padding: 0 8px !important;
+  }
+  
+  .navbar-logo {
+    font-size: 1rem !important;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .app-navbar .MuiIconButton-root .profile-avatar.MuiAvatar-root {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+}
+
