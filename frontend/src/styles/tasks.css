@@ -60,16 +60,14 @@
   }
 }
 
-
-
+/* Colores de las letras de los chips de prioridad, ramo */
 .css-19m61dl-MuiChip-label {
-  font-size: 14px;
-  color: white;
+  font-size: 14px !important;
+  color: white !important;
 }
 
-
 .css-v2sga5-MuiTypography-root {
-  color: var(--text);
+  color: var(--text) !important;
   font-style: bold !important;
   font-size: 25px !important;
   font-weight: 600 !important;
