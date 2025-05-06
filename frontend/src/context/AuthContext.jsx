@@ -18,20 +18,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      console.log('Intentando iniciar sesión con:', { email });
-      
-      const response = await api.post(
-        '/auth',
-        { email, password },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true // Añade esta línea
-        }
-      );
-      
-      console.log('Respuesta del servidor:', response.data);
+      const response = await api.post('/auth', { email, password });
       
       // Guardar token en localStorage
       localStorage.setItem('token', response.data.token);
@@ -42,15 +29,15 @@ export const AuthProvider = ({ children }) => {
       // Cargar datos del usuario
       const userRes = await api.get('/auth');
       
-      console.log('Datos del usuario:', userRes.data);
-      
       setUser(userRes.data);
       setIsAuth(true);
       
       return true;
     } catch (err) {
       console.error('Error completo:', err);
-      setError('Error al iniciar sesión: ' + (err.response?.data?.msg || err.message));
+      const errorMsg = err.response?.data?.msg || err.message || 'Error al iniciar sesión';
+      setError(errorMsg);
+      throw { msg: errorMsg }; // Lanzar el error para que pueda ser capturado
       return false;
     } finally {
       setLoading(false);

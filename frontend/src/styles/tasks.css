@@ -59,3 +59,18 @@
     transform: translateX(100%);
   }
 }
+
+
+
+.css-19m61dl-MuiChip-label {
+  font-size: 14px;
+  color: white;
+}
+
+
+.css-v2sga5-MuiTypography-root {
+  color: var(--text);
+  font-style: bold !important;
+  font-size: 25px !important;
+  font-weight: 600 !important;
+}

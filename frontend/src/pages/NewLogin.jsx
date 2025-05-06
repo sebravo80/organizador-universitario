@@ -20,7 +20,10 @@ const NewLogin = () => {
     email: '',
     password: ''
   });
-  
+
+  // Estado para manejar errores
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Manejar cambios en los campos de login
   const handleLoginChange = (e) => {
     setLoginData({
@@ -40,18 +43,30 @@ const NewLogin = () => {
   // Manejar envío del formulario de login
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(loginData.email, loginData.password);
-    if (success) {
-      navigate('/dashboard');
+    
+    try {
+      const success = await login(loginData.email, loginData.password);
+      if (success) {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      // Asegúrate de que el error se muestre correctamente
+      setErrorMessage(err.msg || 'Error al iniciar sesión. Verifica tus credenciales.');
     }
   };
   
   // Manejar envío del formulario de registro
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    const success = await register(registerData.name, registerData.email, registerData.password);
-    if (success) {
-      navigate('/dashboard');
+    
+    try {
+      const success = await register(registerData.name, registerData.email, registerData.password);
+      if (success) {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      // Asegúrate de que el error se muestre correctamente
+      setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
     }
   };
 
@@ -60,7 +75,7 @@ const NewLogin = () => {
       <div className="form-box login">
         <form onSubmit={handleLoginSubmit}>
           <h1>Iniciar Sesión</h1>
-          {error && <p className="error">{error}</p>}
+          {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 
               type="email" 
@@ -95,7 +110,7 @@ const NewLogin = () => {
       <div className="form-box register">
         <form onSubmit={handleRegisterSubmit}>
           <h1>Registrarse</h1>
-          {error && <p className="error">{error}</p>}
+          {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 
               type="text" 
