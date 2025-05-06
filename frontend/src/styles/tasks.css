@@ -72,3 +72,12 @@
   font-size: 25px !important;
   font-weight: 600 !important;
 }
+
+.css-oruufx {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  padding-left: 7px !important;
+  padding-right: 7px !important;
+  color: white !important;
+}
