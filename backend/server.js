@@ -32,27 +32,29 @@ try {
   process.exit(1);
 }
 
-// Configuración avanzada de CORS
-app.use((req, res, next) => {
-  // Permite tanto el localhost como tu dominio de producción
-  const allowedOrigins = ['http://localhost:5173', 'https://diatomeauniversitaria.netlify.app', 'https://www.diatomeauniversitaria.studio'];
-  const origin = req.headers.origin;
-  
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-auth-token');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Manejo específico para solicitudes OPTIONS (preflight)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
+// Actualiza tu lista de orígenes permitidos
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://diatomeauniversitaria.netlify.app',
+  'https://www.diatomeauniversitaria.studio',
+  'http://localhost',
+  'https://organizador-universitario-api-49b169773d7f.herokuapp.com',
+  'https://localhost'
+];
+
+// Asegúrate que la configuración de CORS sea así:
+app.use(cors({
+  origin: function(origin, callback) {
+    // Permitir solicitudes sin origen (como aplicaciones móviles)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('Origen no permitido por CORS'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 
 // Middleware
 app.use(express.json({ extended: false }));

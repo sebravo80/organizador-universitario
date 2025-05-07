@@ -1,36 +1,40 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 
-// Determinar la URL base según el entorno
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Determinar URL base según el entorno
+let baseURL = 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
+
+// No es necesario cambiar la URL para dispositivos móviles
+// pues usaremos la misma URL de producción
+if (Capacitor.isNativePlatform()) {
+  console.log('Ejecutando en dispositivo nativo, usando URL:', baseURL);
+}
 
 const api = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 30000
 });
 
-// Interceptor para añadir token a cada solicitud
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['x-auth-token'] = token;
-    }
-    console.log('Enviando solicitud:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      data: config.data ? (
-        config.url.includes('/auth') || config.url.includes('/users') 
-          ? { ...config.data, password: config.data.password ? '***' : undefined }
-          : config.data
-      ) : undefined
-    });
-    return config;
+// Para depuración detallada
+api.interceptors.request.use(request => {
+  console.log(`[${new Date().toISOString()}] Enviando ${request.method} a: ${request.url}`);
+  console.log('Headers:', JSON.stringify(request.headers));
+  console.log('Data:', request.data ? JSON.stringify(request.data) : 'Sin datos');
+  return request;
+});
+
+api.interceptors.response.use(
+  response => {
+    console.log(`[${new Date().toISOString()}] Respuesta ${response.status} de: ${response.config.url}`);
+    return response;
   },
-  (error) => {
-    console.error('Error en la solicitud:', error);
+  error => {
+    console.error('Error API:', error);
+    console.error('Status:', error.response?.status);
+    console.error('Data:', error.response?.data ? JSON.stringify(error.response.data) : 'Sin datos');
     return Promise.reject(error);
   }
 );

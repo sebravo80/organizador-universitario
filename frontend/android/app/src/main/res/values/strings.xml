@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Organizador Universitario</string>
+    <string name="title_activity_main">Organizador Universitario</string>
+    <string name="package_name">com.diatomea.organizadoruniversitario</string>
+    <string name="custom_url_scheme">com.diatomea.organizadoruniversitario</string>
+    <string name="server_url">http://organizador-universitario-api-49b169773d7f.herokuapp.com</string>
+</resources>

@@ -1,0 +1,17 @@
+{
+  "appId": "com.diatomea.organizadoruniversitario",
+  "appName": "Organizador Universitario",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": [
+      "diatomeauniversitaria.netlify.app",
+      "organizador-universitario-api-49b169773d7f.herokuapp.com"
+    ]
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
