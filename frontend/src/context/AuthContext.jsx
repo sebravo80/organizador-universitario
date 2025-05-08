@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
       const errorMsg = err.response?.data?.msg || err.message || 'Error al iniciar sesión';
       setError(errorMsg);
       throw { msg: errorMsg }; // Lanzar el error para que pueda ser capturado
-      return false;
     } finally {
       setLoading(false);
     }
@@ -109,6 +108,7 @@ export const AuthProvider = ({ children }) => {
         setUser(res.data);
         setIsAuth(true);
         setError(null);
+        
       } catch (err) {
         console.error('Error al cargar usuario:', err);
         
@@ -132,10 +132,11 @@ export const AuthProvider = ({ children }) => {
     isAuth,
     user,
     loading,
+    error,
     login,
     logout,
     register
-  }), [isAuth, user, loading]);
+  }), [isAuth, user, loading, error]);
 
   return (
     <AuthContext.Provider value={contextValue}>

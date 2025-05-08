@@ -1,27 +1,31 @@
 /* Estilos para la barra de navegación */
 .app-navbar {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
   top: 0;
   z-index: 1100;
-  background-color: rgba(114, 0, 42, 0.85) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, rgba(114, 0, 42, 0.95), rgba(163, 0, 68, 0.95)) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .app-navbar.scrolled {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-  background-color: rgba(114, 0, 42, 0.95) !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25) !important;
+  background: linear-gradient(90deg, rgba(114, 0, 42, 0.98), rgba(163, 0, 68, 0.98)) !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
 }
 
 /* Aplica mayor especificidad al selector */
 .app-navbar .MuiIconButton-root .profile-avatar.MuiAvatar-root {
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  min-height: 40px !important;
-  border: 2px solid rgba(255, 255, 255, 0.7) !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 /* Logo animado */
@@ -29,9 +33,10 @@
   display: flex;
   align-items: center;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   position: relative;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-logo:hover {
@@ -39,28 +44,43 @@
 }
 
 .navbar-logo img {
-  margin-right: 10px;
-  height: 32px;
-  transition: transform 0.3s ease;
+  margin-right: 12px;
+  height: 36px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .navbar-logo:hover img {
-  transform: rotate(10deg);
+  transform: rotate(15deg) scale(1.1);
 }
 
-/* Navegación principal */
+/* Navegación principal con efecto de línea animada */
 .navbar-links {
   display: flex;
   gap: 16px;
   margin-left: 24px;
+  height: 100%;
 }
 
 .nav-link {
   position: relative;
   opacity: 0.9;
   transition: all 0.3s ease;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 8px;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  transition: width 0.3s ease;
+  border-radius: 2px;
 }
 
 .nav-link:hover {
@@ -69,9 +89,16 @@
   transform: translateY(-2px);
 }
 
+.nav-link:hover::before {
+  width: 80%;
+  left: 10%;
+}
+
 .nav-link.active {
   opacity: 1;
   font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .nav-link.active::after {
@@ -82,9 +109,10 @@
   transform: translateX(-50%);
   width: 60%;
   height: 3px;
-  background-color: white;
-  border-radius: 2px;
-  animation: navIndicator 0.3s ease forwards;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  border-radius: 3px;
+  animation: navIndicator 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 @keyframes navIndicator {
@@ -101,23 +129,39 @@
 /* Perfil y menú de usuario */
 .user-profile {
   position: relative;
+  isolation: isolate;
+}
+
+.user-profile::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.user-profile:hover::after {
+  opacity: 1;
 }
 
 .profile-avatar {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
 .profile-avatar:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 /* Menú desplegable con animación */
 .navbar-menu {
   transition: transform 0.4s ease, opacity 0.4s ease;
-  border-radius: 12px !important;
+  border-radius: 16px !important;
   overflow: hidden;
 }
 
@@ -128,30 +172,80 @@
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   z-index: -1;
 }
 
+.navbar-menu .MuiMenuItem-root {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-menu .MuiMenuItem-root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(114, 0, 42, 0), rgba(114, 0, 42, 0.1), rgba(114, 0, 42, 0));
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+  pointer-events: none;
+}
+
+.navbar-menu .MuiMenuItem-root:hover::after {
+  transform: translateX(100%);
+}
+
+.navbar-menu .MuiMenuItem-root:hover {
+  background-color: rgba(114, 0, 42, 0.08);
+  padding-left: 24px;
+}
+
 /* Menú móvil */
-.mobile-nav-icon {
-  transition: transform 0.3s ease;
-}
-
-.mobile-nav-icon.open {
-  transform: rotate(90deg);
-}
-
 .mobile-drawer .MuiPaper-root {
   background-color: var(--bg-secondary) !important;
   border-right: 1px solid var(--border-color);
-  padding-top: 12px;
+  padding-top: 16px;
+  background-image: linear-gradient(to bottom, rgba(114, 0, 42, 0.05), transparent);
 }
 
 .mobile-drawer-header {
   padding: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.mobile-drawer-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+}
+
+.mobile-drawer-content .MuiListItem-root {
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.mobile-drawer-content .MuiListItem-root:hover {
+  background-color: rgba(114, 0, 42, 0.08);
+  transform: translateX(4px);
+}
+
+.mobile-drawer-content .MuiListItem-root.Mui-selected {
+  background-color: rgba(114, 0, 42, 0.15);
+  font-weight: 600;
+}
+
+.mobile-drawer-content .MuiListItemIcon-root {
+  min-width: 40px;
+  color: var(--primary-color);
 }
 
 /* Responsive */
@@ -161,21 +255,18 @@
   }
   
   .nav-link {
-    padding: 6px 8px;
+    padding: 6px 10px;
     font-size: 0.9rem;
   }
 }
-.css-1y0zbv7 {
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  padding-top: 12px !important;
-  padding-bottom: 12px !important;
-  background-color: #a0003b !important;
-  border-radius: 12px !important;
-}
+
 @media (max-width: 600px) {
   .app-navbar {
-    padding: 0 8px !important;
+    padding: 0 12px !important;
+  }
+  
+  .app-navbar .MuiToolbar-root {
+    min-height: 64px !important;
   }
   
   .navbar-logo {
@@ -185,12 +276,22 @@
     white-space: nowrap;
     overflow: hidden;
   }
-
+  
   .app-navbar .MuiIconButton-root .profile-avatar.MuiAvatar-root {
     width: 36px !important;
     height: 36px !important;
     min-width: 36px !important;
     min-height: 36px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Mejoras para el menú móvil */
+  .mobile-nav-icon {
+    transform-origin: center;
+  }
+  
+  .mobile-nav-icon.open {
+    transform: rotate(90deg);
   }
 }
 

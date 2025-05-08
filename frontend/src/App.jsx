@@ -1,8 +1,7 @@
-import React, { useContext, Suspense, lazy, useEffect } from 'react';
+import React, { useContext, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
-import { initializeNotifications } from './services/notificationService';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -86,11 +85,6 @@ function App() {
   const { isAuth } = useContext(AuthContext);
   const theme = useTheme(); // Obtener el tema desde el contexto
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Usar el tema correctamente
-  
-  // Inicializar notificaciones al iniciar la app
-  useEffect(() => {
-    initializeNotifications();
-  }, []);
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
