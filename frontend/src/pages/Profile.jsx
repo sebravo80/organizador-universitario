@@ -3,7 +3,7 @@ import {
   Container, Typography, Box, TextField, 
   Button, Avatar, Grid, Alert, CircularProgress,
   Divider, Card, CardContent, Tabs, Tab, InputAdornment,
-  Paper, IconButton
+  Paper, IconButton, Switch, FormControlLabel, Slider
 } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
 import { changePassword, getUserInfo } from '../services/authService';
@@ -23,9 +23,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import '../styles/animations.css';
 import '../styles/profile.css';
 import api from '../services/api';
+import { checkNotificationsPermission, getNotificationPreferences, saveNotificationPreferences } from '../services/notificationService';
 
 function Profile() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -53,6 +54,83 @@ function Profile() {
     newPassword: '',
     confirmPassword: ''
   });
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    taskNotificationTime: 60, // 1 hora por defecto
+    eventNotificationTime: 15 // 15 minutos por defecto
+  });
+
+  useEffect(() => {
+    const checkPermission = async () => {
+      const hasPermission = await checkNotificationsPermission();
+      setNotificationsEnabled(hasPermission);
+    };
+    
+    checkPermission();
+  }, []);
+  
+  useEffect(() => {
+    const loadNotificationPreferences = async () => {
+      const prefs = await getNotificationPreferences();
+      setNotificationsEnabled(prefs.enabled);
+      setNotificationPrefs({
+        taskNotificationTime: prefs.taskNotificationTime,
+        eventNotificationTime: prefs.eventNotificationTime
+      });
+    };
+    
+    loadNotificationPreferences();
+  }, []);
+  
+  const handleNotificationToggle = async () => {
+    const newValue = !notificationsEnabled;
+    setNotificationsEnabled(newValue);
+    
+    if (newValue) {
+      const hasPermission = await checkNotificationsPermission();
+      if (hasPermission) {
+        await saveNotificationPreferences({
+          ...notificationPrefs,
+          enabled: true
+        });
+      } else {
+        setNotificationsEnabled(false);
+      }
+    } else {
+      await saveNotificationPreferences({
+        ...notificationPrefs,
+        enabled: false
+      });
+    }
+  };
+  
+  const handleNotificationTimeChange = (type, value) => {
+    const newPrefs = { ...notificationPrefs };
+    newPrefs[type] = value;
+    setNotificationPrefs(newPrefs);
+    
+    saveNotificationPreferences({
+      ...newPrefs,
+      enabled: notificationsEnabled
+    });
+  };
+  
+  const formatTimeLabelTask = (value) => {
+    if (value >= 60) {
+      const hours = Math.floor(value / 60);
+      return `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+    }
+    return `${value} minutos`;
+  };
+  
+  const formatTimeLabelEvent = (value) => {
+    if (value >= 60) {
+      const hours = Math.floor(value / 60);
+      return `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+    }
+    return `${value} minutos`;
+  };
   
   // Cargar datos del usuario
   useEffect(() => {
@@ -143,28 +221,17 @@ function Profile() {
       console.log('Respuesta de actualización:', response);
       
       // Operación exitosa si llegamos hasta aquí
-      setUser({
-        ...user,
+      setProfileForm({
         name: profileForm.name,
         email: profileForm.email
       });
-      setSuccess('¡Perfil actualizado correctamente!');
       
+      setSuccess('¡Perfil actualizado correctamente! Los cambios se verán al volver a iniciar sesión.');
       localStorage.setItem('userName', profileForm.name);
+      
     } catch (err) {
       console.error("Error al actualizar perfil:", err);
-
-      setSuccess('¡Perfil actualizado! Recarga la página para ver los cambios.');
-      
-      // Intentar refrescar los datos del usuario
-      try {
-        const userResponse = await api.get('/auth');
-        if (userResponse && userResponse.data) {
-          setUser(userResponse.data);
-        }
-      } catch (fetchErr) {
-        console.error("Error al intentar obtener datos actualizados:", fetchErr);
-      }
+      setError('Error al actualizar el perfil. Verifica tus datos e inténtalo nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -502,6 +569,120 @@ function Profile() {
                   }
                 }}
               />
+              
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="h6">Notificaciones</Typography>
+                
+                <FormControlLabel
+                  control={<Switch checked={notificationsEnabled} onChange={handleNotificationToggle} />}
+                  label="Activar notificaciones de recordatorios"
+                />
+                <Typography variant="body2" color="text.secondary">
+                  Recibirás alertas de tareas próximas a vencer y eventos cercanos
+                </Typography>
+              </Box>
+
+              {notificationsEnabled && (
+              <Box sx={{ 
+                mt: 3, 
+                p: 3, 
+                bgcolor: theme => theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.08)' 
+                  : 'rgba(0, 0, 0, 0.04)', 
+                borderRadius: 2, 
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                border: '1px solid',
+                borderColor: theme => theme.palette.mode === 'dark'
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(0, 0, 0, 0.1)'
+              }}>
+                <Typography gutterBottom>
+                  Recibir notificaciones para tareas:
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Slider
+                    value={notificationPrefs.taskNotificationTime}
+                    onChange={(e, value) => handleNotificationTimeChange('taskNotificationTime', value)}
+                    step={15}
+                    marks
+                    min={15}
+                    max={1440} // 24 horas
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={formatTimeLabelTask}
+                    sx={{ 
+                      mx: 2, 
+                      flexGrow: 1,
+                      color: 'var(--primary-color)',
+                      '& .MuiSlider-thumb': {
+                        backgroundColor: 'var(--primary-color)',
+                      },
+                      '& .MuiSlider-track': {
+                        backgroundColor: 'var(--primary-color)',
+                      },
+                      '& .MuiSlider-rail': {
+                        backgroundColor: theme => theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.3)'
+                          : 'rgba(0, 0, 0, 0.2)'
+                      },
+                      '& .MuiSlider-mark': {
+                        backgroundColor: theme => theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.2)'
+                          : 'rgba(0, 0, 0, 0.2)'
+                      }
+                    }}
+                    disabled={!notificationsEnabled}
+                  />
+                  <Typography sx={{ minWidth: 80, color: 'text.primary' }}>
+                    {formatTimeLabelTask(notificationPrefs.taskNotificationTime)} antes
+                  </Typography>
+                </Box>
+                
+                <Typography gutterBottom sx={{ mt: 3 }}>
+                  Recibir notificaciones para eventos:
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Slider
+                    value={notificationPrefs.eventNotificationTime}
+                    onChange={(e, value) => handleNotificationTimeChange('eventNotificationTime', value)}
+                    step={5}
+                    marks
+                    min={5}
+                    max={120} // 2 horas
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={formatTimeLabelEvent}
+                    sx={{ 
+                      mx: 2, 
+                      flexGrow: 1,
+                      color: 'var(--primary-color)',
+                      '& .MuiSlider-thumb': {
+                        backgroundColor: 'var(--primary-color)',
+                      },
+                      '& .MuiSlider-track': {
+                        backgroundColor: 'var(--primary-color)',
+                      },
+                      '& .MuiSlider-rail': {
+                        backgroundColor: theme => theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.3)'
+                          : 'rgba(0, 0, 0, 0.2)'
+                      },
+                      '& .MuiSlider-mark': {
+                        backgroundColor: theme => theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.2)'
+                          : 'rgba(0, 0, 0, 0.2)'
+                      }
+                    }}
+                    disabled={!notificationsEnabled}
+                  />
+                  <Typography sx={{ minWidth: 80, color: 'text.primary' }}>
+                    {formatTimeLabelEvent(notificationPrefs.eventNotificationTime)} antes
+                  </Typography>
+                </Box>
+                
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                  Las notificaciones te ayudarán a recordar tareas próximas y eventos importantes.
+                </Typography>
+              </Box>
+            )}
               
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
                 <Button

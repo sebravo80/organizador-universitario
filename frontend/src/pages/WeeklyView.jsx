@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+import { scheduleEventNotification } from '../services/notificationService';
 import { 
   Container, Typography, Box, Button, 
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -251,8 +252,7 @@ const WeeklyView = () => {
       };
       
       const res = await api.post('/events', eventData);
-      
-      // Agregar el nuevo evento a la lista
+      await scheduleEventNotification(res.data);
       setEvents([...events, res.data]);
       
       // Cerrar diálogo

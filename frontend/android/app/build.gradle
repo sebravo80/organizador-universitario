@@ -19,9 +19,9 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../diatomea-key.keystore")
+            storeFile file("../../diatomea-key.keystore")
             storePassword "Genshin21."
-            keyAlias "sebravo80"
+            keyAlias "diatomea"
             keyPassword "Genshin21."
         }
     }

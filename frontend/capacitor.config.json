@@ -5,13 +5,18 @@
   "server": {
     "androidScheme": "https",
     "allowNavigation": [
-      "diatomeauniversitaria.netlify.app",
-      "organizador-universitario-api-49b169773d7f.herokuapp.com"
+      "organizador-universitario-api-49b169773d7f.herokuapp.com",
+      "diatomeauniversitaria.netlify.app"
     ]
   },
   "plugins": {
-    "CapacitorHttp": {
-      "enabled": true
+    "LocalNotifications": {
+      "smallIcon": "ic_notification",
+      "iconColor": "#72002A",
+      "sound": "notification.wav"
     }
+  },
+  "android": {
+    "allowMixedContent": true
   }
 }

@@ -1,7 +1,8 @@
-import React, { useContext, Suspense, lazy } from 'react';
+import React, { useContext, Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
+import { initializeNotifications } from './services/notificationService';
 import './App.css';
 import './styles/theme.css';
 
@@ -55,6 +56,11 @@ const PublicRoute = () => {
 
 function App() {
   const { isAuth } = useContext(AuthContext);
+  
+  // Inicializar notificaciones al iniciar la app
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

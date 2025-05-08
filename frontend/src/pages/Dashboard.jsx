@@ -33,19 +33,19 @@ const Dashboard = () => {
       try {
         setLoading(true);
         
-        // Obtener cursos
+        // Obtener cursos usando API directamente
         const coursesRes = await api.get('/courses');
         setCourses(coursesRes.data);
         
-        // Obtener tareas
+        // Obtener tareas usando API directamente
         const tasksRes = await api.get('/tasks');
         setTasks(tasksRes.data);
         
-        // Obtener eventos
+        // Obtener eventos usando API directamente
         const eventsRes = await api.get('/events');
         setEvents(eventsRes.data);
-
-        // Obtener pendientes
+        
+        // Obtener pendientes usando el servicio todoService
         const todosRes = await getTodos();
         setTodos(todosRes);
         

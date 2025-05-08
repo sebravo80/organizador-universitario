@@ -18,6 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import EventCard from '../components/EventCard';
+import { scheduleEventNotification } from '../services/notificationService';
 
 const Events = () => {
   const { isAuth } = useContext(AuthContext);
@@ -228,21 +229,39 @@ const Events = () => {
   const totalPages = Math.ceil(sortedEvents.length / rowsPerPage);
   
   const handleSubmit = async () => {
+    const eventData = {
+      title: eventForm.title,
+      description: eventForm.description,
+      startDate: eventForm.startDate,
+      endDate: eventForm.endDate,
+      location: eventForm.location,
+      color: eventForm.color,
+      course: eventForm.course === "" ? null : eventForm.course
+    };
+
     try {
-      const eventData = {
-        ...eventForm,
-        course: eventForm.course === "" ? null : eventForm.course
-      };
+      let savedEvent;
       
       if (isEditing) {
         const res = await api.put(`/events/${currentEventId}`, eventData);
-        
-        setEvents(events.map(event => event._id === currentEventId ? res.data : event));
+        savedEvent = res.data;
+        setEvents(events.map(event => event._id === currentEventId ? savedEvent : event));
       } else {
         const res = await api.post('/events', eventData);
-        
-        setEvents([...events, res.data]);
+        savedEvent = res.data;
+        setEvents([...events, savedEvent]);
       }
+      
+      // Programar notificación solo si el evento se guardó correctamente
+      if (savedEvent && savedEvent._id) {
+        try {
+          await scheduleEventNotification(savedEvent);
+        } catch (notifError) {
+          console.error('Error al programar la notificación del evento:', notifError);
+          // No interrumpimos el flujo si la notificación falla
+        }
+      }
+      
     } catch (error) {
       console.error('Error:', error);
       setError(`Error al ${isEditing ? 'actualizar' : 'crear'} el evento. Por favor, intenta nuevamente.`);

@@ -1,7 +1,7 @@
-// src/pages/Tasks.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+import { scheduleTaskNotification } from '../services/notificationService';
 import { 
   Container, Typography, Box, TextField, Button, 
   FormControl, InputLabel, Select, MenuItem,
@@ -152,13 +152,29 @@ const Tasks = () => {
         setError('Por favor, ingresa un título y una fecha de vencimiento.');
         return;
       }
+      
+      let savedTask;
+      
       if (isEditing) {
-        const res = await api.put(`/tasks/${currentTaskId}`, taskForm);
-        setTasks(tasks.map(task => task._id === currentTaskId ? res.data : task));
+        const response = await api.put(`/tasks/${currentTaskId}`, taskForm);
+        savedTask = response.data;
+        setTasks(tasks.map(task => task._id === currentTaskId ? savedTask : task));
       } else {
-        const res = await api.post('/tasks', taskForm);
-        setTasks([...tasks, res.data]);
+        const response = await api.post('/tasks', taskForm);
+        savedTask = response.data;
+        setTasks([...tasks, savedTask]);
       }
+      
+      // Programar notificación solo si la tarea se guardó correctamente
+      if (savedTask && savedTask._id) {
+        try {
+          await scheduleTaskNotification(savedTask);
+        } catch (notifError) {
+          console.error('Error al programar la notificación:', notifError);
+          // No interrumpimos el flujo si la notificación falla
+        }
+      }
+      
       handleClose();
       setError(null);
     } catch (err) {
