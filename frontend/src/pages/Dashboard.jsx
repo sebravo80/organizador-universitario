@@ -342,20 +342,20 @@ const Dashboard = () => {
                           <ListItemText
                             primary={event.title}
                             secondary={
-                              <>
-                                <Box component="span" display="block">
+                              <span>
+                                <Typography variant="body2" component="span" display="block">
                                   Fecha: {formatDate(event.startDate)}
-                                </Box>
-                                <Box component="span" display="block">
+                                </Typography>
+                                <Typography variant="body2" component="span" display="block">
                                   Hora: {formatTime(event.startDate)} - {formatTime(event.endDate)}
-                                </Box>
+                                </Typography>
                                 {event.location && (
-                                  <Box component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <Typography variant="body2" component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
                                     {event.location}
-                                  </Box>
+                                  </Typography>
                                 )}
-                              </>
+                              </span>
                             }
                           />
                         </ListItem>
