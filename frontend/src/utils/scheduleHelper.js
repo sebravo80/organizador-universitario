@@ -30,7 +30,7 @@ export const convertCoursesToEvents = (courses) => {
         console.log(`Procesando horario: "${schedule}"`);
         
         // Extracción más flexible del día y el horario
-        const dayMatch = schedule.match(/^(\w{3})\s+(\d{1,2}:\d{2})-(\d{1,2}:\d{2})$/);
+        const dayMatch = schedule.match(/^([A-Za-zÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÑñ]{3})\s+(\d{1,2}:\d{2})-(\d{1,2}:\d{2})$/);
         
         if (!dayMatch) {
           console.warn(`Formato de horario no reconocido: "${schedule}"`);
@@ -68,11 +68,11 @@ export const convertCoursesToEvents = (courses) => {
           'Lun': 'Lunes', 
           'Mar': 'Martes',
           'Mié': 'Miércoles',
-          'Mie': 'Miércoles', // Añadida esta variante
+          'Mie': 'Miércoles',
           'Jue': 'Jueves',
           'Vie': 'Viernes',
           'Sáb': 'Sábado',
-          'Sab': 'Sábado' // Añadida esta variante
+          'Sab': 'Sábado' 
         };
         
         // Crear fechas para este horario en la semana actual

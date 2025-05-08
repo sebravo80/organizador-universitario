@@ -1,6 +1,6 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Capacitor } from '@capacitor/core';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
 
 // Valores predeterminados para las notificaciones
 const DEFAULT_TASK_NOTIFICATION_TIME = 60; // 60 minutos (1 hora) antes
@@ -11,7 +11,7 @@ export const saveNotificationPreferences = async (preferences) => {
   if (!Capacitor.isNativePlatform()) return;
   
   try {
-    await Storage.set({
+    await Preferences.set({
       key: 'notificationPreferences',
       value: JSON.stringify(preferences)
     });
@@ -34,7 +34,7 @@ export const getNotificationPreferences = async () => {
   }
   
   try {
-    const { value } = await Storage.get({ key: 'notificationPreferences' });
+    const { value } = await Preferences.get({ key: 'notificationPreferences' });
     
     if (!value) {
       // Valores predeterminados
