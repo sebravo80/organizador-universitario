@@ -6,7 +6,8 @@ import {
   FormControl, InputLabel, Select, MenuItem, Chip,
   Dialog, DialogTitle, DialogContent, DialogActions,
   Grid, Card, CardContent, CardActions, IconButton,
-  List, ListItem, ListItemText, Divider, Avatar
+  List, ListItem, ListItemText, Divider, Avatar,
+  CircularProgress, Paper, Fab, Alert
 } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -21,6 +22,9 @@ import CodeIcon from '@mui/icons-material/Code';
 import PersonIcon from '@mui/icons-material/Person';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SchoolIcon from '@mui/icons-material/School';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
+import { toast } from 'react-toastify';
 import '../styles/animations.css';
 import '../styles/courses.css';
 
@@ -52,7 +56,7 @@ const Courses = () => {
     'Lunes': 'Lun',
     'Martes': 'Mar',
     'Miércoles': 'Mié',
-    'Miercoles': 'Mie',
+    'Miercoles': 'Mié',
     'Jueves': 'Jue',
     'Viernes': 'Vie',
     'Sábado': 'Sáb',
@@ -69,6 +73,7 @@ const Courses = () => {
       } catch (err) {
         console.error('Error al cargar ramos:', err);
         setError('Error al cargar los ramos. Por favor, intenta nuevamente.');
+        toast.error('Error al cargar los ramos');
       } finally {
         setLoading(false);
       }
@@ -172,7 +177,7 @@ const Courses = () => {
     });
     
     setTempSchedule({
-      day: 'Lunes',
+      day: tempSchedule.day,
       startTime: null,
       endTime: null
     });
@@ -188,133 +193,205 @@ const Courses = () => {
   const saveCourse = async () => {
     try {
       if (!courseForm.name.trim()) {
-        setError('Por favor, ingresa un nombre para el ramo.');
+        toast.error('Por favor, ingresa un nombre para el ramo.');
         return;
       }
       
+      setLoading(true);
       console.log('Enviando datos del ramo:', courseForm);
       
       if (isEditing) {
         const res = await api.put(`/courses/${currentCourseId}`, courseForm);
         setCourses(courses.map(course => course._id === currentCourseId ? res.data : course));
+        toast.success('¡Ramo actualizado con éxito!');
       } else {
         const res = await api.post('/courses', courseForm);
         setCourses([...courses, res.data]);
+        toast.success('¡Nuevo ramo agregado con éxito!');
       }
       
       handleClose();
       setError(null);
     } catch (err) {
       console.error('Error al guardar ramo:', err);
-      setError(`Error al ${isEditing ? 'actualizar' : 'crear'} el ramo. Por favor, intenta nuevamente.`);
+      toast.error(`Error al ${isEditing ? 'actualizar' : 'crear'} el ramo.`);
+    } finally {
+      setLoading(false);
     }
   };
   
   const deleteCourse = async (id) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este ramo? Esta acción no se puede deshacer.')) {
+      return;
+    }
+    
     try {
+      setLoading(true);
       await api.delete(`/courses/${id}`);
       setCourses(courses.filter(course => course._id !== id));
+      toast.success('Ramo eliminado con éxito');
       setError(null);
     } catch (err) {
       console.error('Error al eliminar ramo:', err);
-      setError('Error al eliminar el ramo. Por favor, intenta nuevamente.');
+      toast.error('Error al eliminar el ramo');
+    } finally {
+      setLoading(false);
     }
   };
   
   return (
     <Container maxWidth="lg" className="page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Mis Ramos
-        </Typography>
-        
-        <Button 
-          variant="contained" 
-          startIcon={<AddIcon />}
-          onClick={handleOpenCreate}
-          sx={{ mb: 3 }}
-        >
-          Nuevo Ramo
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h4" component="h1" sx={{ 
+            display: 'flex',
+            alignItems: 'center', 
+            gap: 1,
+            fontWeight: 'bold'
+          }}>
+            <SchoolIcon color="primary" fontSize="large" />
+            Mis Ramos
+          </Typography>
+          
+          <Button 
+            variant="contained" 
+            startIcon={<AddIcon />}
+            onClick={handleOpenCreate}
+            sx={{ display: { xs: 'none', sm: 'flex' } }}
+          >
+            Nuevo Ramo
+          </Button>
+        </Box>
         
         {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 3 }}>
             {error}
-          </Typography>
+          </Alert>
         )}
         
-        {loading ? (
-          <Typography>Cargando ramos...</Typography>
+        {loading && courses.length === 0 ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
         ) : courses.length === 0 ? (
-          <Typography>No tienes ramos registrados.</Typography>
+          <Paper 
+            elevation={1}
+            className="courses-empty-state"
+            sx={{ 
+              textAlign: 'center', 
+              p: 4, 
+              my: 3,
+              borderRadius: 2,
+              backgroundColor: (theme) => 
+                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2
+            }}
+          >
+            <SchoolIcon className="course-icon" color="action" />
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No tienes ramos registrados
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 450, mb: 2 }}>
+              Los ramos te permiten organizar tus clases, tareas y eventos académicos. Comienza añadiendo tu primer ramo.
+            </Typography>
+            <Button 
+              variant="contained" 
+              startIcon={<AddIcon />}
+              onClick={handleOpenCreate}
+            >
+              Añadir Ramo
+            </Button>
+          </Paper>
         ) : (
           <Grid container spacing={3}>
             {courses.map((course, index) => (
               <Grid item xs={12} sm={6} md={4} key={course._id} className="staggered-item">
-                <Card sx={{ 
-                  borderTop: `4px solid ${course.color}`,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)'
-                  }
-                }}>
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 0 }}>
+                <Card className="course-card" sx={{ borderTop: `4px solid ${course.color}` }}>
+                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                    <Box className="course-card-header">
+                      <Typography variant="h6" component="h2" sx={{ 
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                      }}>
                         {course.name}
                       </Typography>
-                      <Avatar sx={{ bgcolor: course.color, width: 34, height: 34, fontSize: '1rem' }}>
+                      <Avatar 
+                        className="course-avatar"
+                        sx={{ 
+                          bgcolor: course.color, 
+                          boxShadow: `0 2px 8px ${course.color}80`,
+                          width: 36, 
+                          height: 36, 
+                          fontSize: '1rem' 
+                        }}
+                      >
                         {course.name.charAt(0)}
                       </Avatar>
                     </Box>
                     
-                    {course.courseCode && (
-                      <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <CodeIcon fontSize="small" sx={{ mr: 0.5, color: course.color }} />
-                        Código: {course.courseCode}
+                    <Box sx={{ mt: 2 }}>
+                      {course.courseCode && (
+                        <Box className="course-info">
+                          <CodeIcon fontSize="small" sx={{ color: course.color }} />
+                          <Typography variant="body2">
+                            <strong>Código:</strong> {course.courseCode}
+                          </Typography>
+                        </Box>
+                      )}
+                      
+                      {course.professor && (
+                        <Box className="course-info">
+                          <PersonIcon fontSize="small" sx={{ color: course.color }} />
+                          <Typography variant="body2">
+                            <strong>Profesor:</strong> {course.professor}
+                          </Typography>
+                        </Box>
+                      )}
+                      
+                      {course.room && (
+                        <Box className="course-info">
+                          <RoomIcon fontSize="small" sx={{ color: course.color }} />
+                          <Typography variant="body2">
+                            <strong>Sala:</strong> {course.room}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                    
+                    <Divider sx={{ my: 2 }} />
+                    
+                    <Box className="course-schedule-title">
+                      <ScheduleIcon fontSize="small" sx={{ mr: 1, color: course.color }} />
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        Horarios:
                       </Typography>
-                    )}
+                    </Box>
                     
-                    {course.professor && (
-                      <Typography variant="body1" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }} gutterBottom>
-                        <PersonIcon fontSize="small" sx={{ mr: 0.5, color: course.color }} />
-                        {course.professor}
-                      </Typography>
-                    )}
-                    
-                    {course.room && (
-                      <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <RoomIcon fontSize="small" sx={{ mr: 0.5, color: course.color }} />
-                        Sala: {course.room}
-                      </Typography>
-                    )}
-                    
-                    <Typography variant="body2" sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                      <ScheduleIcon fontSize="small" sx={{ mr: 0.5, color: course.color }} />
-                      Horario:
-                    </Typography>
-                    
-                    <List className="schedule-list" dense sx={{ mt: 1, maxHeight: '120px', overflow: 'auto' }}>
-                      {course.scheduleStrings && course.scheduleStrings.map((schedule, index) => (
-                        <ListItem className="schedule-item" key={index} disableGutters>
-                          <AccessTimeIcon fontSize="small" sx={{ color: course.color }} />
-                          <span className="schedule-text">
-                            {schedule}
-                          </span>
-                        </ListItem>
-                      ))}
-                    </List>
+                    <Box className="course-schedule-container">
+                      {course.scheduleStrings && course.scheduleStrings.length > 0 ? (
+                        <List className="schedule-list" dense>
+                          {course.scheduleStrings.map((schedule, index) => (
+                            <ListItem className="schedule-item" key={index} disableGutters>
+                              <AccessTimeIcon fontSize="small" sx={{ color: course.color }} />
+                              <span className="schedule-text">{schedule}</span>
+                            </ListItem>
+                          ))}
+                        </List>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                          No hay horarios registrados
+                        </Typography>
+                      )}
+                    </Box>
                   </CardContent>
                   
-                  <CardActions sx={{ 
-                    justifyContent: 'flex-end',
-                    bgcolor: 'rgba(0, 0, 0, 0.03)',
-                    borderTop: '1px solid',
-                    borderColor: 'divider'
-                  }}>
+                  <CardActions className="course-actions">
                     <IconButton 
                       aria-label="editar"
                       onClick={() => handleOpenEdit(course)}
@@ -349,28 +426,60 @@ const Courses = () => {
         )}
       </Box>
       
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+      {/* Botón flotante para móvil */}
+      <Fab 
+        color="primary" 
+        aria-label="add" 
+        sx={{ 
+          position: 'fixed', 
+          bottom: 16, 
+          right: 16,
+          display: { xs: 'flex', sm: 'none' } 
+        }}
+        onClick={handleOpenCreate}
+      >
+        <AddIcon />
+      </Fab>
+      
+      {/* Modal para crear/editar ramo */}
+      <Dialog 
+        open={open} 
+        onClose={handleClose} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: 'hidden'
+          }
+        }}
+      >
         <DialogTitle sx={{ 
           borderLeft: `4px solid ${courseForm.color}`,
           bgcolor: `${courseForm.color}10`,
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          p: 2
         }}>
           <Box component="span" sx={{ 
-            width: 24, 
-            height: 24, 
+            width: 32, 
+            height: 32, 
             borderRadius: '50%', 
             bgcolor: courseForm.color, 
-            mr: 1.5,
+            mr: 2,
             display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            boxShadow: `0 2px 8px ${courseForm.color}80`,
           }}>
-            {isEditing ? <EditIcon sx={{ color: 'white', fontSize: 16 }} /> : <AddIcon sx={{ color: 'white', fontSize: 16 }} />}
+            {isEditing ? <EditIcon sx={{ color: 'white', fontSize: 18 }} /> : <AddIcon sx={{ color: 'white', fontSize: 18 }} />}
           </Box>
-          {isEditing ? 'Editar Ramo' : 'Nuevo Ramo'}
+          <Typography variant="h6">
+            {isEditing ? 'Editar Ramo' : 'Nuevo Ramo'}
+          </Typography>
         </DialogTitle>
-        <DialogContent>
+        
+        <DialogContent sx={{ px: 3, py: 2 }}>
           <Box component="form" sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -381,6 +490,7 @@ const Courses = () => {
               name="name"
               value={courseForm.name}
               onChange={handleChange}
+              autoFocus
               InputProps={{
                 sx: { '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }
               }}
@@ -442,26 +552,62 @@ const Courses = () => {
               }}
             />
             
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 3, mb: 2 }}>
-              <TextField
-                margin="normal"
-                fullWidth
-                id="color"
-                label="Color"
-                name="color"
-                type="color"
-                value={courseForm.color}
-                onChange={handleChange}
-                sx={{ maxWidth: 100, mr: 2 }}
-              />
-              <Box sx={{ 
+            <Box sx={{ mt: 3, mb: 2 }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 1, 
                 display: 'flex', 
-                alignItems: 'center', 
-                py: 1, 
-                px: 2, 
-                borderRadius: 1, 
-                bgcolor: `${courseForm.color}20`,
-                border: `1px solid ${courseForm.color}40` 
+                alignItems: 'center',
+                fontWeight: 500
+              }}>
+                <ColorLensIcon sx={{ mr: 1, color: courseForm.color }} />
+                Color del ramo
+              </Typography>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <TextField
+                  type="color"
+                  fullWidth
+                  name="color"
+                  value={courseForm.color}
+                  onChange={handleChange}
+                  variant="outlined"
+                  label="Selecciona un color"
+                  InputProps={{
+                    startAdornment: (
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: '50%',
+                          bgcolor: courseForm.color,
+                          mr: 1,
+                          border: '2px solid white',
+                          boxShadow: `0 0 5px rgba(0,0,0,0.2)`,
+                        }}
+                      />
+                    ),
+                    sx: { 
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color },
+                      '& input[type=color]': { 
+                        width: '50px',
+                        cursor: 'pointer',
+                        padding: '0',
+                        marginLeft: 'auto',
+                        backgroundColor: 'transparent'
+                      }
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { '&.Mui-focused': { color: courseForm.color } }
+                  }}
+                />
+              </Box>
+              
+              <Box className="color-preview" sx={{ 
+                bgcolor: `${courseForm.color}20`, 
+                border: `1px solid ${courseForm.color}40`,
+                mt: 2
               }}>
                 <Typography variant="body2" sx={{ color: courseForm.color, fontWeight: 500 }}>
                   Vista previa del color
@@ -469,12 +615,14 @@ const Courses = () => {
               </Box>
             </Box>
             
+            <Divider sx={{ my: 3 }} />
+            
             <Typography variant="h6" sx={{ 
-              mt: 3, 
               mb: 2,
               display: 'flex',
               alignItems: 'center',
-              color: courseForm.color
+              color: courseForm.color,
+              fontWeight: 600
             }}>
               <ScheduleIcon sx={{ mr: 1 }} />
               Horario
@@ -547,7 +695,7 @@ const Courses = () => {
             </Grid>
             
             {courseForm.scheduleStrings.length > 0 && (
-              <Box sx={{ mt: 2 }}>
+              <Box sx={{ mt: 3 }}>
                 <Typography variant="subtitle1" sx={{ mb: 1, color: courseForm.color, fontWeight: 500 }}>
                   Horarios agregados:
                 </Typography>
@@ -557,12 +705,12 @@ const Courses = () => {
                       className="schedule-item"
                       key={index}
                       secondaryAction={
-                        <IconButton edge="end" aria-label="delete" onClick={() => removeSchedule(index)} color="error">
-                          <DeleteIcon />
+                        <IconButton edge="end" aria-label="delete" onClick={() => removeSchedule(index)} size="small">
+                          <DeleteIcon fontSize="small" sx={{ color: 'error.main' }} />
                         </IconButton>
                       }
                     >
-                      <AccessTimeIcon sx={{ color: courseForm.color }} />
+                      <AccessTimeIcon sx={{ color: courseForm.color, fontSize: '1rem' }} />
                       <span className="schedule-text">{schedule}</span>
                     </ListItem>
                   ))}
@@ -571,11 +719,13 @@ const Courses = () => {
             )}
           </Box>
         </DialogContent>
-        <DialogActions sx={{ px: 3, py: 2 }}>
+        
+        <DialogActions sx={{ px: 3, py: 2, backgroundColor: `${courseForm.color}08` }}>
           <Button onClick={handleClose} variant="outlined">Cancelar</Button>
           <Button 
             onClick={saveCourse} 
             variant="contained" 
+            disabled={!courseForm.name.trim() || loading}
             sx={{ 
               bgcolor: courseForm.color,
               '&:hover': {
@@ -584,7 +734,14 @@ const Courses = () => {
               }
             }}
           >
-            {isEditing ? 'Guardar cambios' : 'Crear'}
+            {loading ? (
+              <>
+                <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
+                {isEditing ? 'Guardando...' : 'Creando...'}
+              </>
+            ) : (
+              isEditing ? 'Guardar cambios' : 'Crear'
+            )}
           </Button>
         </DialogActions>
       </Dialog>

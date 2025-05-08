@@ -6,21 +6,32 @@
 /* Tarjetas del dashboard con mejor espaciado */
 .dashboard-card {
   height: 100%;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-radius: 16px !important;
   animation: slideInUp 0.5s ease forwards;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  backdrop-filter: blur(15px);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Estilo para modo oscuro */
+html[data-theme='dark'] .dashboard-card {
+  background-color: rgba(37, 37, 37, 0.8);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .dashboard-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.15),
+    0 10px 10px -5px rgba(0, 0, 0, 0.08) !important;
 }
 
 .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
@@ -30,10 +41,10 @@
 
 /* Cabeceras de tarjetas más llamativas */
 .dashboard-card .MuiCardHeader-root {
-  background: linear-gradient(to right, rgba(114, 0, 42, 0.08), transparent);
-  border-bottom: 1px solid rgba(114, 0, 42, 0.1);
-  padding: 16px;
   position: relative;
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to right, rgba(114, 0, 42, 0.08), transparent);
   overflow: hidden;
 }
 
@@ -42,24 +53,24 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 6px;
+  width: 8px;
   height: 100%;
   background-color: var(--primary-color);
-}
-
-html[data-theme='dark'] .dashboard-card {
-  background-color: rgba(30, 30, 30, 0.85);
-  border-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0 2px 2px 0;
 }
 
 html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0));
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme='dark'] .dashboard-card .MuiCardHeader-root::before {
+  background-color: var(--primary-light);
 }
 
 /* Contenido de tarjetas con mejor estructuración */
 .dashboard-card .MuiCardContent-root {
-  padding: 16px;
+  padding: 20px 16px;
   flex-grow: 1;
   overflow-y: auto;
   max-height: 300px;
@@ -73,6 +84,7 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
 
 .dashboard-card .MuiCardContent-root::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
 }
 
 .dashboard-card .MuiCardContent-root::-webkit-scrollbar-thumb {
@@ -87,8 +99,10 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
 /* Estilo mejorado para elementos de lista */
 .dashboard-card .MuiListItem-root {
   border-radius: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  padding: 8px 12px;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .dashboard-card .MuiListItem-root:hover {
@@ -96,13 +110,31 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
   transform: translateX(4px);
 }
 
+.dashboard-card .MuiListItem-root:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.05), transparent);
+}
+
+.dashboard-card .MuiListItem-root:last-child:after {
+  display: none;
+}
+
 html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
+html[data-theme='dark'] .dashboard-card .MuiListItem-root:after {
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05), transparent);
+}
+
 /* Separadores más sutiles */
 .dashboard-card .MuiDivider-root {
-  margin: 0;
+  margin: 4px 0;
   opacity: 0.6;
 }
 
@@ -123,11 +155,36 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
   background-color: #9c27b0;
 }
 
+.course-section .MuiSvgIcon-root {
+  color: #1976d2;
+}
+
+.task-section .MuiSvgIcon-root {
+  color: #ff9800;
+}
+
+.event-section .MuiSvgIcon-root {
+  color: #4caf50;
+}
+
+.todo-section .MuiSvgIcon-root {
+  color: #9c27b0;
+}
+
+.course-section .MuiCardHeader-title,
+.task-section .MuiCardHeader-title,
+.event-section .MuiCardHeader-title,
+.todo-section .MuiCardHeader-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
 .course-section .MuiListItemText-primary {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+  font-weight: 500;
 }
 
 .task-section .MuiChip-root {
@@ -138,65 +195,115 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
 
 .event-section .MuiListItemText-secondary {
   margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* Tarjeta de saludo mejorada */
 .greeting-card {
-  background: linear-gradient(135deg, rgba(114, 0, 42, 0.12), rgba(255, 77, 151, 0.08));
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(114, 0, 42, 0.1), rgba(255, 77, 151, 0.05));
+  backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.3s ease;
   animation: slideInUp 0.5s ease forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.greeting-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
 }
 
 .greeting-card:hover {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
 }
 
+.greeting-card:hover::after {
+  transform: translateX(100%);
+}
+
+html[data-theme='dark'] .greeting-card {
+  background: linear-gradient(135deg, rgba(114, 0, 42, 0.2), rgba(0, 0, 0, 0.3));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .greeting-avatar {
-  background: linear-gradient(45deg, var(--primary-color), #dc004e);
-  box-shadow: 0 4px 20px rgba(114, 0, 42, 0.4);
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+  box-shadow: 
+    0 4px 20px rgba(114, 0, 42, 0.4),
+    0 0 0 5px rgba(255, 255, 255, 0.2) !important;
   transition: all 0.3s ease;
 }
 
 .greeting-avatar:hover {
-  transform: scale(1.05);
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 
+    0 6px 25px rgba(114, 0, 42, 0.5),
+    0 0 0 8px rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Botones de acción mejorados */
 .dashboard-card .MuiButton-outlined {
   border-radius: 20px;
   text-transform: none;
-  border-width: 1.5px;
+  border-width: 1.5px !important;
   transition: all 0.2s ease;
+  font-weight: 500 !important;
+  padding: 5px 16px !important;
 }
 
 .dashboard-card .MuiButton-outlined:hover {
   background-color: rgba(114, 0, 42, 0.08);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(114, 0, 42, 0.2);
 }
 
 /* Estilos para indicadores de status o prioridad */
 .status-indicator {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
+  position: relative;
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.4;
+  z-index: -1;
 }
 
 .priority-high {
   background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
 }
 
 .priority-medium {
   background-color: #ff9800;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
 }
 
 .priority-low {
   background-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
 }
 
 /* Animaciones */
@@ -220,15 +327,25 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
 @media (max-width: 600px) {
   .dashboard-card {
     margin-bottom: 16px;
+    border-radius: 12px !important;
   }
   
   .dashboard-card .MuiCardContent-root {
-    padding: 12px;
+    padding: 16px 12px;
     max-height: 250px;
   }
   
   .dashboard-card .MuiCardHeader-root {
     padding: 12px;
+  }
+  
+  .greeting-card {
+    padding: 16px !important;
+  }
+  
+  .greeting-avatar {
+    width: 48px !important;
+    height: 48px !important;
   }
   
   .dashboard-card .MuiTypography-h5 {
@@ -249,6 +366,11 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
   }
   
   .dashboard-card .MuiListItemText-secondary {
+    font-size: 0.8rem;
+  }
+  
+  .dashboard-card .MuiButton-outlined {
+    padding: 4px 10px !important;
     font-size: 0.8rem;
   }
 }

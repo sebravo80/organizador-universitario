@@ -16,6 +16,12 @@ import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SchoolIcon from '@mui/icons-material/School';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AddIcon from '@mui/icons-material/Add';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import '../styles/animations.css';
 import '../styles/dashboard.css';
 
@@ -125,36 +131,52 @@ const Dashboard = () => {
     <Container maxWidth="lg" className="page-transition dashboard-container">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Paper 
-          elevation={2} 
+          elevation={3} 
           className="greeting-card"
           sx={{ 
-            p: 3, 
+            p: { xs: 2, sm: 3 }, 
             mb: 4, 
             borderRadius: 3,
+            overflow: 'hidden'
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2, position: 'relative' }}>
             <Avatar 
               className="greeting-avatar"
               sx={{ 
-                width: 56, 
-                height: 56, 
-                bgcolor: 'primary.main'
+                width: { xs: 50, sm: 60 }, 
+                height: { xs: 50, sm: 60 }, 
+                fontSize: { xs: '1.5rem', sm: '2rem' }
               }}
             >
               {user?.name?.charAt(0) || 'U'}
             </Avatar>
             <Box>
-              <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 0.5 }}>
-                Hola hola, {user?.name}
+              <Typography variant="h4" component="h1" sx={{ 
+                mb: 0.5, 
+                fontWeight: 700, 
+                background: 'linear-gradient(45deg, #72002a, #a30044)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0px 2px 5px rgba(0,0,0,0.1)'
+              }}>
+                ¡Hola, {user?.name}!
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {new Date().toLocaleDateString('es-ES', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+              <Typography variant="body1" sx={{ 
+                color: 'text.secondary',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}>
+                <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CalendarTodayIcon fontSize="small" sx={{ mr: 0.5 }} />
+                  {new Date().toLocaleDateString('es-ES', { 
+                    weekday: 'long', 
+                    day: 'numeric',
+                    month: 'long'
+                  })}
+                </Box>
               </Typography>
             </Box>
           </Box>
@@ -171,6 +193,11 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card course-section">
               <CardHeader 
+                avatar={
+                  <Avatar sx={{ bgcolor: 'rgba(25, 118, 210, 0.1)' }}>
+                    <SchoolOutlinedIcon sx={{ color: '#1976d2' }}/>
+                  </Avatar>
+                }
                 title="Mis Ramos" 
                 action={
                   <Button component={Link} to="/courses" size="small" variant="outlined">
@@ -180,7 +207,29 @@ const Dashboard = () => {
               />
               <CardContent>
                 {courses.length === 0 ? (
-                  <Typography>No tienes ramos registrados.</Typography>
+                  <Box 
+                    sx={{ 
+                      textAlign: 'center', 
+                      py: 4, 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: 'center',
+                      opacity: 0.7
+                    }}
+                  >
+                    <SchoolIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                    <Typography color="text.secondary">No tienes ramos registrados</Typography>
+                    <Button 
+                      component={Link} 
+                      to="/courses" 
+                      size="small" 
+                      variant="outlined" 
+                      sx={{ mt: 2 }}
+                      startIcon={<AddIcon />}
+                    >
+                      Añadir ramo
+                    </Button>
+                  </Box>
                 ) : (
                   <List>
                     {coursesList.map(course => (
@@ -246,6 +295,11 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card task-section">
               <CardHeader 
+                avatar={
+                  <Avatar sx={{ bgcolor: 'rgba(255, 193, 7, 0.1)' }}>
+                    <AssignmentOutlinedIcon sx={{ color: '#ffc107' }}/>
+                  </Avatar>
+                }
                 title="Tareas Próximas" 
                 action={
                   <Button component={Link} to="/tasks" size="small" variant="outlined">
@@ -270,11 +324,18 @@ const Dashboard = () => {
                                 gap: 1
                               }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                  <span className={`status-indicator priority-${task.priority === 'Alta' ? 'high' : (task.priority === 'Media' ? 'medium' : 'low')}`}></span>
+                                  <Box className={`status-indicator priority-${task.priority === 'Alta' ? 'high' : (task.priority === 'Media' ? 'medium' : 'low')}`}></Box>
                                   <Typography 
                                     component="span" 
                                     variant="body1" 
-                                    sx={{ fontWeight: 500 }}
+                                    sx={{ 
+                                      fontWeight: 600,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 1,
+                                      WebkitBoxOrient: 'vertical',
+                                    }}
                                   >
                                     {task.title}
                                   </Typography>
@@ -324,6 +385,11 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card event-section">
               <CardHeader 
+                avatar={
+                  <Avatar sx={{ bgcolor: 'rgba(76, 175, 80, 0.1)' }}>
+                    <EventNoteOutlinedIcon sx={{ color: '#4caf50' }}/>
+                  </Avatar>
+                }
                 title="Eventos Próximos" 
                 action={
                   <Button component={Link} to="/weekly" size="small" variant="outlined">
@@ -372,6 +438,11 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card todo-section">
               <CardHeader 
+                avatar={
+                  <Avatar sx={{ bgcolor: 'rgba(33, 150, 243, 0.1)' }}>
+                    <CheckCircleOutlineIcon sx={{ color: '#2196f3' }}/>
+                  </Avatar>
+                }
                 title="Pendientes Rápidos" 
                 action={
                   <Button component={Link} to="/todos" size="small" variant="outlined">
