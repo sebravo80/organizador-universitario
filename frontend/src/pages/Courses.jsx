@@ -53,6 +53,7 @@ const Courses = () => {
     'Lunes': 'Lun',
     'Martes': 'Mar',
     'Miércoles': 'Mié',
+    'Miercoles': 'Mie',
     'Jueves': 'Jue',
     'Viernes': 'Vie',
     'Sábado': 'Sáb',
@@ -158,7 +159,12 @@ const Courses = () => {
     const formattedStartTime = format(tempSchedule.startTime, 'HH:mm');
     const formattedEndTime = format(tempSchedule.endTime, 'HH:mm');
     
-    const dayAbbr = dayAbbreviations[tempSchedule.day] || tempSchedule.day;
+    // Asegurarse de que 'Miércoles' siempre se traduzca a 'Mié' con acento
+    let dayAbbr = dayAbbreviations[tempSchedule.day] || tempSchedule.day;
+    if (tempSchedule.day === 'Miércoles') {
+      dayAbbr = 'Mié';  // Forzar el acento
+    }
+    
     const scheduleString = `${dayAbbr} ${formattedStartTime}-${formattedEndTime}`;
     
     setCourseForm({

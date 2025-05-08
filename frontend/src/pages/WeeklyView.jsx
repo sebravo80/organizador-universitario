@@ -6,7 +6,8 @@ import { scheduleEventNotification } from '../services/notificationService';
 import { 
   Container, Typography, Box, Button, 
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, FormControl, InputLabel, Select, MenuItem
+  TextField, FormControlLabel, Switch,
+  Avatar, Chip, List, ListItem, ListItemIcon, ListItemText
 } from '@mui/material';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -19,8 +20,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import AddIcon from '@mui/icons-material/Add';
+import SchoolIcon from '@mui/icons-material/School';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import RoomIcon from '@mui/icons-material/Room';
+import PersonIcon from '@mui/icons-material/Person';
+import EditIcon from '@mui/icons-material/Edit';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import FlagIcon from '@mui/icons-material/Flag';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EventIcon from '@mui/icons-material/Event';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 import { Link } from 'react-router-dom';
 import '../styles/calendar.css';
+import { convertCoursesToEvents } from '../utils/scheduleHelper';
 
 const WeeklyView = () => {
   const { isAuth } = useContext(AuthContext);
@@ -38,6 +51,19 @@ const WeeklyView = () => {
     endDate: null,
     color: '#4CAF50'
   });
+
+  // Añadir este estado
+  const [showCourseSchedules, setShowCourseSchedules] = useState(true);
+
+  // Añade este nuevo estado
+  const [courseModalOpen, setCourseModalOpen] = useState(false);
+  const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
+
+  // Añadir estos nuevos estados para los modales de tareas y eventos
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [selectedTaskInfo, setSelectedTaskInfo] = useState(null);
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [selectedEventInfo, setSelectedEventInfo] = useState(null);
   
   // Cargar datos
   useEffect(() => {
@@ -102,6 +128,9 @@ const WeeklyView = () => {
   
   // Memoizar eventos para el calendario
   const calendarEvents = useMemo(() => {
+    // Obtener eventos de cursos (horarios) solo si está activada la opción
+    const courseScheduleEvents = showCourseSchedules ? convertCoursesToEvents(courses) : [];
+    
     return [
       // Eventos regulares
       ...events.map(event => ({
@@ -136,9 +165,12 @@ const WeeklyView = () => {
           priority: task.priority,
           course: task.course
         }
-      }))
+      })),
+      
+      // Añadir los horarios de cursos
+      ...courseScheduleEvents
     ];
-  }, [events, tasks]); // Solo se recalcula cuando cambian events o tasks
+  }, [events, tasks, courses, showCourseSchedules]); // Añadir showCourseSchedules a las dependencias
   
   // Obtener color de prioridad
   function getPriorityColor(priority) {
@@ -176,14 +208,68 @@ const WeeklyView = () => {
     const eventType = event.extendedProps.type;
     
     if (eventType === 'task') {
-      // Redirigir a la página de tareas
-      window.location.href = '/tasks';
+      // Mostrar información de la tarea en un modal
+      const taskId = event.id.replace('task-', '');
+      
+      // Encontrar la tarea completa para obtener todos sus datos
+      const task = tasks.find(t => t._id === taskId);
+      
+      if (task) {
+        setSelectedTaskInfo({
+          id: task._id,
+          title: task.title,
+          description: task.description || 'Sin descripción',
+          dueDate: new Date(task.dueDate),
+          priority: task.priority,
+          status: task.status,
+          color: getPriorityColor(task.priority),
+          course: task.course ? task.course.name : 'No asignado',
+          courseId: task.course ? task.course._id : null,
+          courseColor: task.course ? task.course.color : null
+        });
+        setTaskModalOpen(true);
+      }
+    } else if (eventType === 'course-schedule') {
+      // Mostrar información del curso en un modal (código existente)
+      const courseId = event.extendedProps.courseId;
+      
+      // Encontrar el curso completo para obtener todos sus datos
+      const course = courses.find(c => c._id === courseId);
+      
+      if (course) {
+        setSelectedCourseInfo({
+          id: courseId,
+          title: event.title,
+          location: event.extendedProps.location || 'No especificada',
+          professor: event.extendedProps.professor || 'No especificado',
+          courseCode: course.courseCode || 'No especificado',
+          color: event.backgroundColor,
+          dayTime: `${event.extendedProps.dayName || ''} ${event.extendedProps.startTime || ''} - ${event.extendedProps.endTime || ''}`,
+          description: event.extendedProps.description || ''
+        });
+        setCourseModalOpen(true);
+      }
     } else {
-      // Mostrar detalles del evento
+      // Mostrar detalles del evento en un modal
       const eventId = event.id;
-      window.location.href = `/events?id=${eventId}`;
+      const selectedEvent = events.find(e => e._id === eventId);
+      
+      if (selectedEvent) {
+        setSelectedEventInfo({
+          id: selectedEvent._id,
+          title: selectedEvent.title,
+          description: selectedEvent.description || 'Sin descripción',
+          startDate: new Date(selectedEvent.startDate),
+          endDate: new Date(selectedEvent.endDate),
+          location: selectedEvent.location || 'No especificada',
+          color: selectedEvent.color || '#4CAF50',
+          course: selectedEvent.course ? selectedEvent.course.name : 'No asignado',
+          courseId: selectedEvent.course ? selectedEvent.course._id : null
+        });
+        setEventModalOpen(true);
+      }
     }
-  }, [events, tasks]);
+  }, [courses, events, tasks]); // Dependencias actualizadas
   
   // Manejar cambios en el formulario de evento rápido
   const handleQuickEventChange = (e) => {
@@ -295,50 +381,85 @@ const WeeklyView = () => {
         {loading ? (
           <Typography>Cargando calendario...</Typography>
         ) : (
-          <Box 
-            sx={{ 
-              height: 'calc(100vh - 200px)', 
-              minHeight: '600px',
-              '& .fc': {
-                '--fc-page-bg-color': 'transparent',
-                '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
-                '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
-              }
-            }}
-            className="custom-calendar-container"
-          >
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
-              headerToolbar={{
-                left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
-                center: 'title',
-                right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
+          <>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showCourseSchedules}
+                    onChange={(e) => setShowCourseSchedules(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Mostrar horario de clases"
+              />
+            </Box>
+            <Box 
+              sx={{ 
+                height: 'calc(100vh - 200px)', 
+                minHeight: '600px',
+                '& .fc': {
+                  '--fc-page-bg-color': 'transparent',
+                  '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
+                  '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
+                }
               }}
-              locale={esLocale}
-              events={calendarEvents}
-              eventClick={handleEventClick}
-              dateClick={handleDateClick}
-              editable={false}
-              selectable={true}
-              selectMirror={true}
-              dayMaxEvents={true}
-              weekends={true}
-              allDaySlot={true}
-              slotMinTime="07:00:00"
-              slotMaxTime="22:00:00"
-              height="100%"
-              eventTimeFormat={{
-                hour: '2-digit',
-                minute: '2-digit',
-                meridiem: false
-              }}
-              slotLabelClassNames="calendar-slot-label"
-              dayCellClassNames="calendar-day-cell"
-              dayHeaderClassNames="calendar-day-header"
-              slotLaneClassNames="calendar-slot-lane"
-            />
-          </Box>
+              className="custom-calendar-container"
+            >
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
+                headerToolbar={{
+                  left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
+                  center: 'title',
+                  right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
+                }}
+                locale={esLocale}
+                events={calendarEvents} // Esto ya incluye los horarios de cursos
+                eventClick={handleEventClick}
+                dateClick={handleDateClick}
+                editable={false}
+                selectable={true}
+                selectMirror={true}
+                dayMaxEvents={true}
+                weekends={true}
+                allDaySlot={true}
+                slotMinTime="07:00:00"
+                slotMaxTime="22:00:00"
+                height="100%"
+                eventTimeFormat={{
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  meridiem: false
+                }}
+                // Modificar el eventDidMount en el componente FullCalendar
+                eventDidMount={(info) => {
+                  if (info.event.extendedProps.type === 'course-schedule') {
+                    info.el.classList.add('course-schedule-event');
+                    // Añadir un icono o distintivo si lo deseas
+                    const titleEl = info.el.querySelector('.fc-event-title');
+                    if (titleEl) {
+                      titleEl.innerHTML = `<span style="font-weight:bold;">🎓 ${info.event.title}</span>`;
+                      // Si hay una sala, mostrarla
+                      if (info.event.extendedProps.location) {
+                        titleEl.innerHTML += `<br><small>Sala: ${info.event.extendedProps.location}</small>`;
+                      }
+                    }
+                  } else if (info.event.extendedProps.type === 'event') {
+                    info.el.classList.add('custom-event');
+                    // Personalizar eventos regulares
+                    const titleEl = info.el.querySelector('.fc-event-title');
+                    if (titleEl) {
+                      titleEl.innerHTML = `<span style="font-weight:bold;">📅 ${info.event.title}</span>`;
+                      if (info.event.extendedProps.location) {
+                        titleEl.innerHTML += `<br><small>Lugar: ${info.event.extendedProps.location}</small>`;
+                      }
+                    }
+                  }
+                }}
+              />
+            </Box>
+          </>
         )}
       </Box>
       
@@ -399,6 +520,303 @@ const WeeklyView = () => {
             Crear
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Modal de detalles del curso */}
+      <Dialog 
+        open={courseModalOpen} 
+        onClose={() => setCourseModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        {selectedCourseInfo && (
+          <>
+            <DialogTitle sx={{ 
+              borderLeft: `4px solid ${selectedCourseInfo.color}`,
+              bgcolor: `${selectedCourseInfo.color}15`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ bgcolor: selectedCourseInfo.color, mr: 1 }}>
+                  <SchoolIcon />
+                </Avatar>
+                {selectedCourseInfo.title}
+              </Box>
+              <Chip 
+                label={selectedCourseInfo.courseCode} 
+                size="small"
+                sx={{ bgcolor: `${selectedCourseInfo.color}30`, fontWeight: 'bold' }}
+              />
+            </DialogTitle>
+            
+            <DialogContent sx={{ pt: 2 }}>
+              <List dense>
+                <ListItem>
+                  <ListItemIcon>
+                    <ScheduleIcon sx={{ color: selectedCourseInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Horario" 
+                    secondary={selectedCourseInfo.dayTime} 
+                  />
+                </ListItem>
+                
+                <ListItem>
+                  <ListItemIcon>
+                    <RoomIcon sx={{ color: selectedCourseInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Sala" 
+                    secondary={selectedCourseInfo.location} 
+                  />
+                </ListItem>
+                
+                <ListItem>
+                  <ListItemIcon>
+                    <PersonIcon sx={{ color: selectedCourseInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Profesor" 
+                    secondary={selectedCourseInfo.professor} 
+                  />
+                </ListItem>
+              </List>
+            </DialogContent>
+            
+            <DialogActions sx={{ px: 3, pb: 2 }}>
+              <Button 
+                onClick={() => setCourseModalOpen(false)} 
+                color="primary"
+              >
+                Cerrar
+              </Button>
+              <Button 
+                component={Link} 
+                to={`/courses?id=${selectedCourseInfo.id}`}
+                variant="contained" 
+                sx={{ 
+                  bgcolor: selectedCourseInfo.color,
+                  '&:hover': { bgcolor: selectedCourseInfo.color, filter: 'brightness(0.9)' }
+                }}
+                startIcon={<EditIcon />}
+              >
+                Ver Curso
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+
+      {/* Modal de detalles de tarea */}
+      <Dialog 
+        open={taskModalOpen} 
+        onClose={() => setTaskModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        {selectedTaskInfo && (
+          <>
+            <DialogTitle sx={{ 
+              borderLeft: `4px solid ${selectedTaskInfo.color}`,
+              bgcolor: `${selectedTaskInfo.color}15`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ bgcolor: selectedTaskInfo.color, mr: 1 }}>
+                  <AssignmentIcon />
+                </Avatar>
+                {selectedTaskInfo.title}
+              </Box>
+              <Chip 
+                label={selectedTaskInfo.status} 
+                color={selectedTaskInfo.status === 'Completada' ? 'success' : 'default'}
+                size="small"
+                sx={{ fontWeight: 'bold' }}
+              />
+            </DialogTitle>
+            
+            <DialogContent sx={{ pt: 2 }}>
+              <List dense>
+                <ListItem>
+                  <ListItemIcon>
+                    <AccessTimeIcon sx={{ color: selectedTaskInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Fecha de vencimiento" 
+                    secondary={format(selectedTaskInfo.dueDate, 'PPP, p', { locale: es })}
+                  />
+                </ListItem>
+                
+                <ListItem>
+                  <ListItemIcon>
+                    <FlagIcon sx={{ color: selectedTaskInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Prioridad" 
+                    secondary={selectedTaskInfo.priority} 
+                  />
+                </ListItem>
+                
+                {selectedTaskInfo.courseId && (
+                  <ListItem>
+                    <ListItemIcon>
+                      <SchoolIcon sx={{ color: selectedTaskInfo.courseColor || selectedTaskInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Curso" 
+                      secondary={selectedTaskInfo.course} 
+                    />
+                  </ListItem>
+                )}
+                
+                {selectedTaskInfo.description && (
+                  <ListItem>
+                    <ListItemIcon>
+                      <DescriptionIcon sx={{ color: selectedTaskInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Descripción" 
+                      secondary={selectedTaskInfo.description} 
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </DialogContent>
+            
+            <DialogActions sx={{ px: 3, pb: 2 }}>
+              <Button 
+                onClick={() => setTaskModalOpen(false)} 
+                color="primary"
+              >
+                Cerrar
+              </Button>
+              <Button 
+                component={Link} 
+                to={`/tasks?id=${selectedTaskInfo.id}`}
+                variant="contained" 
+                sx={{ 
+                  bgcolor: selectedTaskInfo.color,
+                  '&:hover': { bgcolor: selectedTaskInfo.color, filter: 'brightness(0.9)' }
+                }}
+                startIcon={<EditIcon />}
+              >
+                Ver Tarea
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+
+      {/* Modal de detalles de evento */}
+      <Dialog 
+        open={eventModalOpen} 
+        onClose={() => setEventModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        {selectedEventInfo && (
+          <>
+            <DialogTitle sx={{ 
+              borderLeft: `4px solid ${selectedEventInfo.color}`,
+              bgcolor: `${selectedEventInfo.color}15`,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ bgcolor: selectedEventInfo.color, mr: 1 }}>
+                  <EventIcon />
+                </Avatar>
+                {selectedEventInfo.title}
+              </Box>
+            </DialogTitle>
+            
+            <DialogContent sx={{ pt: 2 }}>
+              <List dense>
+                <ListItem>
+                  <ListItemIcon>
+                    <DateRangeIcon sx={{ color: selectedEventInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Fecha" 
+                    secondary={format(selectedEventInfo.startDate, 'PPP', { locale: es })}
+                  />
+                </ListItem>
+                
+                <ListItem>
+                  <ListItemIcon>
+                    <AccessTimeIcon sx={{ color: selectedEventInfo.color }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Horario" 
+                    secondary={`${format(selectedEventInfo.startDate, 'p', { locale: es })} - ${format(selectedEventInfo.endDate, 'p', { locale: es })}`}
+                  />
+                </ListItem>
+                
+                {selectedEventInfo.location !== 'No especificada' && (
+                  <ListItem>
+                    <ListItemIcon>
+                      <RoomIcon sx={{ color: selectedEventInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Ubicación" 
+                      secondary={selectedEventInfo.location} 
+                    />
+                  </ListItem>
+                )}
+                
+                {selectedEventInfo.courseId && (
+                  <ListItem>
+                    <ListItemIcon>
+                      <SchoolIcon sx={{ color: selectedEventInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Curso relacionado" 
+                      secondary={selectedEventInfo.course} 
+                    />
+                  </ListItem>
+                )}
+                
+                {selectedEventInfo.description !== 'Sin descripción' && (
+                  <ListItem>
+                    <ListItemIcon>
+                      <DescriptionIcon sx={{ color: selectedEventInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Descripción" 
+                      secondary={selectedEventInfo.description} 
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </DialogContent>
+            
+            <DialogActions sx={{ px: 3, pb: 2 }}>
+              <Button 
+                onClick={() => setEventModalOpen(false)} 
+                color="primary"
+              >
+                Cerrar
+              </Button>
+              <Button 
+                component={Link} 
+                to={`/events?id=${selectedEventInfo.id}`}
+                variant="contained" 
+                sx={{ 
+                  bgcolor: selectedEventInfo.color,
+                  '&:hover': { bgcolor: selectedEventInfo.color, filter: 'brightness(0.9)' }
+                }}
+                startIcon={<EditIcon />}
+              >
+                Ver Evento
+              </Button>
+            </DialogActions>
+          </>
+        )}
       </Dialog>
     </Container>
   );

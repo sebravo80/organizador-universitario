@@ -193,3 +193,74 @@ html[data-theme='dark'] .fc-header-toolbar {
     font-size: 0.85em;
   }
 }
+
+/* Estilos para los horarios de cursos en el calendario */
+.course-schedule-event {
+  border-left: 4px solid rgba(0, 0, 0, 0.5) !important;
+  opacity: 0.9;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.course-schedule-event:hover {
+  opacity: 1;
+  z-index: 100;
+  transform: scale(1.02);
+}
+
+.course-schedule-event .fc-event-main {
+  padding: 4px 6px;
+}
+
+.course-schedule-event .fc-event-title {
+  font-size: 0.85em;
+}
+
+/* Estilo para textos pequeños dentro de eventos */
+.fc-event-title small {
+  display: block;
+  font-size: 0.8em;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* Para evitar que los eventos de cursos se superpongan incorrectamente */
+.fc-timegrid-event-harness {
+  z-index: 5;
+}
+
+/* Añadir estos estilos para eventos personalizados */
+.custom-event {
+  border-left: 4px solid rgba(76, 175, 80, 0.8) !important;
+  opacity: 0.9;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.custom-event:hover {
+  opacity: 1;
+  z-index: 100;
+  transform: scale(1.02);
+}
+
+/* Estilos para los eventos de tareas */
+.fc-daygrid-event.task-event {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)) !important;
+  border: 2px solid;
+  font-weight: bold;
+  transition: transform 0.2s;
+}
+
+.fc-daygrid-event.task-event:hover {
+  transform: translateY(-2px);
+}
+
+/* Estilos mejorados para modales */
+.modal-content-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Asegurar textos legibles para descripciones largas */
+.description-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
