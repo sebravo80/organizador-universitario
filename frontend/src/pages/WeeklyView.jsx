@@ -369,7 +369,7 @@ const WeeklyView = () => {
           </Typography>
           
           <Box>
-            <Button 
+            <Button   
               component={Link}
               to="/events"
               variant="contained" 
@@ -394,7 +394,7 @@ const WeeklyView = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <FormControlLabel
                 control={
-                  <Switch
+                  <Switch 
                     checked={showCourseSchedules}
                     onChange={(e) => setShowCourseSchedules(e.target.checked)}
                     color="primary"
