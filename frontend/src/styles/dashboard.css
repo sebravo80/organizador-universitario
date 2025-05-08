@@ -12,6 +12,10 @@
   overflow: hidden;
   border-radius: 16px !important;
   animation: slideInUp 0.5s ease forwards;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .dashboard-card:hover {
@@ -29,6 +33,23 @@
   background: linear-gradient(to right, rgba(114, 0, 42, 0.08), transparent);
   border-bottom: 1px solid rgba(114, 0, 42, 0.1);
   padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-card .MuiCardHeader-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background-color: var(--primary-color);
+}
+
+html[data-theme='dark'] .dashboard-card {
+  background-color: rgba(30, 30, 30, 0.85);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
@@ -67,11 +88,12 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
 .dashboard-card .MuiListItem-root {
   border-radius: 8px;
   margin-bottom: 4px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .dashboard-card .MuiListItem-root:hover {
   background-color: rgba(0, 0, 0, 0.04);
+  transform: translateX(4px);
 }
 
 html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
@@ -85,6 +107,22 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
 }
 
 /* Estilos específicos para diferentes secciones */
+.course-section .MuiCardHeader-root::before {
+  background-color: #1976d2;
+}
+
+.task-section .MuiCardHeader-root::before {
+  background-color: #ff9800;
+}
+
+.event-section .MuiCardHeader-root::before {
+  background-color: #4caf50;
+}
+
+.todo-section .MuiCardHeader-root::before {
+  background-color: #9c27b0;
+}
+
 .course-section .MuiListItemText-primary {
   display: flex;
   align-items: center;
@@ -94,46 +132,79 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
 
 .task-section .MuiChip-root {
   margin: 2px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .event-section .MuiListItemText-secondary {
   margin-top: 4px;
 }
 
-.css-1kn0uly {
-  position: relative;
-  display: flex
-;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-family: Roboto, Helvetica, Arial, sans-serif;
-  font-size: 1.25rem;
-  line-height: 1;
+/* Tarjeta de saludo mejorada */
+.greeting-card {
+  background: linear-gradient(135deg, rgba(114, 0, 42, 0.12), rgba(255, 77, 151, 0.08));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease;
+  animation: slideInUp 0.5s ease forwards;
+}
+
+.greeting-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+}
+
+.greeting-avatar {
+  background: linear-gradient(45deg, var(--primary-color), #dc004e);
+  box-shadow: 0 4px 20px rgba(114, 0, 42, 0.4);
+  transition: all 0.3s ease;
+}
+
+.greeting-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Botones de acción mejorados */
+.dashboard-card .MuiButton-outlined {
+  border-radius: 20px;
+  text-transform: none;
+  border-width: 1.5px;
+  transition: all 0.2s ease;
+}
+
+.dashboard-card .MuiButton-outlined:hover {
+  background-color: rgba(114, 0, 42, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(114, 0, 42, 0.2);
+}
+
+/* Estilos para indicadores de status o prioridad */
+.status-indicator {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  overflow: hidden;
-  user-select: none;
-  color: rgb(255, 255, 255);
-  width: 56px;
-  height: 56px;
-  background-color: #a0003b !important;
-  box-shadow: rgba(114, 0, 42, 0.3) 0px 4px 12px;
+  display: inline-block;
+  margin-right: 8px;
 }
 
-@media (max-width: 600px) {
-  .dashboard-card .MuiCardContent-root {
-    padding: 12px;
-    max-height: 250px;
-  }
-  
-  .dashboard-card .MuiCardHeader-root {
-    padding: 12px;
-  }
+.priority-high {
+  background-color: #f44336;
 }
 
-/* Animaciones para los elementos que se cargan */
+.priority-medium {
+  background-color: #ff9800;
+}
+
+.priority-low {
+  background-color: #4caf50;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -145,9 +216,19 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:hover {
   }
 }
 
+/* Ajustes responsivos */
 @media (max-width: 600px) {
   .dashboard-card {
     margin-bottom: 16px;
+  }
+  
+  .dashboard-card .MuiCardContent-root {
+    padding: 12px;
+    max-height: 250px;
+  }
+  
+  .dashboard-card .MuiCardHeader-root {
+    padding: 12px;
   }
   
   .dashboard-card .MuiTypography-h5 {

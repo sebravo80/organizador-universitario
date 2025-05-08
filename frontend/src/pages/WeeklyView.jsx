@@ -407,45 +407,55 @@ const WeeklyView = () => {
               className="custom-calendar-container"
             >
               <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
-                headerToolbar={{
-                  left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
-                  center: 'title',
-                  right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
-                }}
-                locale={esLocale}
-                events={calendarEvents} // Esto ya incluye los horarios de cursos
-                eventClick={handleEventClick}
-                dateClick={handleDateClick}
-                editable={false}
-                selectable={true}
-                selectMirror={true}
-                dayMaxEvents={true}
-                weekends={true}
-                allDaySlot={true}
-                slotMinTime="07:00:00"
-                slotMaxTime="22:00:00"
-                height="100%"
-                eventTimeFormat={{
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  meridiem: false
-                }}
-                // Modificar el eventDidMount en el componente FullCalendar
-                eventDidMount={(info) => {
-                  if (info.event.extendedProps.type === 'course-schedule') {
-                    info.el.classList.add('course-schedule-event');
-                    // Añadir un icono o distintivo si lo deseas
-                    const titleEl = info.el.querySelector('.fc-event-title');
-                    if (titleEl) {
-                      titleEl.innerHTML = `<span style="font-weight:bold;">🎓 ${info.event.title}</span>`;
-                      // Si hay una sala, mostrarla
-                      if (info.event.extendedProps.location) {
-                        titleEl.innerHTML += `<br><small>Sala: ${info.event.extendedProps.location}</small>`;
-                      }
+                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                  initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
+                  headerToolbar={{
+                    left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
+                    center: 'title',
+                    right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
+                  }}
+                  locale={esLocale}
+                  events={calendarEvents} // Mantener esto igual
+                  eventClick={handleEventClick}
+                  dateClick={handleDateClick}
+                  editable={false}
+                  selectable={true}
+                  selectMirror={true}
+                  dayMaxEvents={true}
+                  weekends={true}
+                  allDaySlot={true}
+                  slotMinTime="07:00:00"
+                  slotMaxTime="22:00:00"
+                  height="100%"
+                  eventTimeFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false
+                  }}
+                  // Añadir esta propiedad para manejar eventos recurrentes en vista diaria
+                  datesSet={(dateInfo) => {
+                    // Este callback se ejecuta cuando cambia la vista o la fecha
+                    const currentView = dateInfo.view.type;
+                    const currentDate = dateInfo.start;
+                    
+                    // Si estamos en vista diaria, necesitamos asegurarnos que se muestren
+                    // los eventos recurrentes del horario para el día actual
+                    if (currentView === 'timeGridDay') {
+                      console.log('Vista diaria activa, fecha:', currentDate);
                     }
-                  } else if (info.event.extendedProps.type === 'event') {
+                  }}
+                  eventDidMount={(info) => {
+                    // Configuración para eventos de horario
+                    if (info.event.extendedProps.type === 'course-schedule') {
+                      info.el.classList.add('course-schedule-event');
+                      const titleEl = info.el.querySelector('.fc-event-title');
+                      if (titleEl) {
+                        titleEl.innerHTML = `<span style="font-weight:bold;">🎓 ${info.event.title}</span>`;
+                        if (info.event.extendedProps.location) {
+                          titleEl.innerHTML += `<br><small>Sala: ${info.event.extendedProps.location}</small>`;
+                        }
+                      }
+                    } else if (info.event.extendedProps.type === 'event') {
                     info.el.classList.add('custom-event');
                     // Personalizar eventos regulares
                     const titleEl = info.el.querySelector('.fc-event-title');

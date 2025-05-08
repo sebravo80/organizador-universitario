@@ -125,23 +125,21 @@ const Dashboard = () => {
     <Container maxWidth="lg" className="page-transition dashboard-container">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Paper 
-          elevation={0} 
+          elevation={2} 
+          className="greeting-card"
           sx={{ 
             p: 3, 
             mb: 4, 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, rgba(114, 0, 42, 0.08), rgba(255, 77, 151, 0.05))',
-            border: '1px solid',
-            borderColor: 'divider'
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
             <Avatar 
+              className="greeting-avatar"
               sx={{ 
                 width: 56, 
                 height: 56, 
-                bgcolor: 'primary.main',
-                boxShadow: '0 4px 12px rgba(114, 0, 42, 0.3)'
+                bgcolor: 'primary.main'
               }}
             >
               {user?.name?.charAt(0) || 'U'}
@@ -271,13 +269,16 @@ const Dashboard = () => {
                                 flexWrap: 'wrap',
                                 gap: 1
                               }}>
-                                <Typography 
-                                  component="span" 
-                                  variant="body1" 
-                                  sx={{ fontWeight: 500 }}
-                                >
-                                  {task.title}
-                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                  <span className={`status-indicator priority-${task.priority === 'Alta' ? 'high' : (task.priority === 'Media' ? 'medium' : 'low')}`}></span>
+                                  <Typography 
+                                    component="span" 
+                                    variant="body1" 
+                                    sx={{ fontWeight: 500 }}
+                                  >
+                                    {task.title}
+                                  </Typography>
+                                </Box>
                                 <Chip 
                                   size="small" 
                                   label={task.priority} 

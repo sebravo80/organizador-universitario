@@ -3,6 +3,8 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
 import { initializeNotifications } from './services/notificationService';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import './styles/theme.css';
 
@@ -140,6 +142,20 @@ function App() {
       
       {/* Alertas de tareas (solo visible si está autenticado) */}
       {isAuth && <TaskAlerts />}
+
+      {/* Contenedor de Toast para las notificaciones */}
+      <ToastContainer 
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </Box>
   );
 }

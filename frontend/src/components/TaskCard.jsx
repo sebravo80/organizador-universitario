@@ -1,12 +1,16 @@
 import React, { memo } from 'react';
 import {
   Card, CardContent, CardActions, Typography, Box, 
-  IconButton, Chip, Avatar
+  IconButton, Chip, Avatar, Tooltip, CardActionArea
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UndoIcon from '@mui/icons-material/Undo';
+import SchoolIcon from '@mui/icons-material/School';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FlagIcon from '@mui/icons-material/Flag';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import TaskCountdown from './TaskCountdown';
@@ -42,25 +46,16 @@ const darkenColor = (color, factor) => {
   r = Math.max(0, Math.floor(r * (1 - factor)));
   g = Math.max(0, Math.floor(g * (1 - factor)));
   b = Math.max(0, Math.floor(b * (1 - factor)));
-  
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 };
 
-// Obtener color de prioridad
-const getPriorityColorHex = (priority) => {
-  switch (priority) {
-    case 'Alta':
-      return '#f44336';
-    case 'Media':
-      return '#ff9800';
-    case 'Baja':
-      return '#4caf50';
-    default:
-      return '#757575';
-  }
+// Formatear fecha
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, 'PPP', { locale: es });
 };
 
-// Obtener color de estado
+// Obtener color para el estado
 const getStatusColor = (status) => {
   switch (status) {
     case 'Completada':
@@ -74,10 +69,31 @@ const getStatusColor = (status) => {
   }
 };
 
-// Formatear fecha
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return format(date, 'PPP', { locale: es });
+// Obtener color para la prioridad
+const getPriorityColorHex = (priority) => {
+  switch (priority) {
+    case 'Alta':
+      return '#f44336'; // Rojo
+    case 'Media':
+      return '#fb8c00'; // Naranja
+    case 'Baja':
+      return '#4caf50'; // Verde
+    default:
+      return '#9e9e9e'; // Gris
+  }
+};
+
+const getPriorityIcon = (priority) => {
+  switch (priority) {
+    case 'Alta':
+      return <FlagIcon sx={{ color: getPriorityColorHex(priority), fontSize: '0.9rem' }} />;
+    case 'Media':
+      return <FlagIcon sx={{ color: getPriorityColorHex(priority), fontSize: '0.9rem' }} />;
+    case 'Baja':
+      return <FlagIcon sx={{ color: getPriorityColorHex(priority), fontSize: '0.9rem' }} />;
+    default:
+      return null;
+  }
 };
 
 const TaskCard = memo(({ 
@@ -88,6 +104,7 @@ const TaskCard = memo(({
   onReopen 
 }) => {
   const cardColor = task.course ? task.course.color : getPriorityColorHex(task.priority);
+  const dueDate = new Date(task.dueDate);
   
   return (
     <Card 
@@ -96,121 +113,159 @@ const TaskCard = memo(({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        opacity: task.status === 'Completada' ? 0.7 : 1,
-        borderLeft: `4px solid ${cardColor}`,
+        opacity: task.status === 'Completada' ? 0.8 : 1,
+        borderLeft: `5px solid ${cardColor}`,
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(10px)',
+        background: task.status === 'Completada' ? 
+          'rgba(240, 240, 240, 0.5)' : 
+          'rgba(255, 255, 255, 0.85)',
         transition: 'all 0.3s ease',
         '&:hover': {
           transform: 'translateY(-5px)',
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.12)'
         }
       }}
     >
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h5" component="h2" sx={{ 
-            textDecoration: task.status === 'Completada' ? 'line-through' : 'none'
+      <Box sx={{ 
+        p: 1, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        backgroundColor: task.status === 'Completada' ? 
+          'rgba(0, 0, 0, 0.03)' : 
+          `${cardColor}15`
+      }}>
+        <Chip 
+          label={task.priority} 
+          size="small"
+          icon={getPriorityIcon(task.priority)}
+          sx={{ 
+            fontSize: '0.75rem',
+            bgcolor: getPriorityColorHex(task.priority),
+            color: '#fff',
+            fontWeight: 'bold'
+          }}
+        />
+        <Chip 
+          label={task.status} 
+          size="small"
+          sx={{
+            fontWeight: 500,
+            bgcolor: task.status === 'Completada' ? 'success.light' :
+                    task.status === 'En progreso' ? 'info.light' : 'warning.light',
+            color: '#fff'
+          }}
+        />
+      </Box>
+
+      <CardActionArea onClick={() => onEdit(task)} sx={{ flexGrow: 1 }}>
+        <CardContent sx={{ flexGrow: 1, p: 2 }}>
+          <Typography variant="h6" component="h2" sx={{ 
+            mb: 1.5,
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            textDecoration: task.status === 'Completada' ? 'line-through' : 'none',
+            color: task.status === 'Completada' ? 'text.disabled' : 'text.primary'
           }}>
             {task.title}
           </Typography>
           
-          <Chip 
-            label={task.status} 
-            color={getStatusColor(task.status)}
-            size="small"
-            sx={{
-              fontWeight: 500,
-              textShadow: '0 0 1px rgba(0,0,0,0.2)'
-            }}
-          />
-        </Box>
-        
-        <Box sx={{ mb: 2 }}>
-          <Chip 
-            label={task.priority} 
-            color={getStatusColor(task.priority)}
-            size="small"
-            sx={{ 
-              mr: 1,
-              fontWeight: 500,
-            }}
-          />
-          
-          {task.course && (
-            <Chip
-              avatar={
-                <Avatar 
-                  sx={{ 
-                    bgcolor: task.course.color,
-                    color: calculateContrastColor(task.course.color),
-                    fontWeight: 'bold',
-                    fontSize: '0.7rem'
-                  }}
-                >
-                  {task.course.name.substring(0, 1)}
-                </Avatar>
-              }
-              label={task.course.name}
-              size="small"
-              variant="outlined"
-              sx={{ 
-                borderColor: task.course.color,
-                color: 'text.primary'
-              }}
-            />
-          )}
-        </Box>
-        
-        {task.description && (
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {task.description}
-          </Typography>
-        )}
-        
-        <Typography variant="body2">
-          Fecha de entrega: {formatDate(task.dueDate)}
-        </Typography>
-        
-        {task.status !== 'Completada' && (
-          <Box sx={{ mt: 2 }}>
-            <TaskCountdown dueDate={task.dueDate} />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {task.description && (
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                <DescriptionIcon fontSize="small" color="action" sx={{ mt: 0.3, opacity: 0.7 }} />
+                <Typography variant="body2" color="text.secondary" sx={{ 
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                }}>
+                  {task.description}
+                </Typography>
+              </Box>
+            )}
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AccessTimeIcon fontSize="small" color="action" sx={{ opacity: 0.7 }} />
+              <Typography variant="body2" color="text.secondary">
+                {formatDate(task.dueDate)}
+              </Typography>
+            </Box>
+
+            {task.course && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <SchoolIcon fontSize="small" color="action" sx={{ opacity: 0.7 }} />
+                <Typography variant="body2" color="text.secondary">
+                  {task.course.name}
+                </Typography>
+              </Box>
+            )}
+            
+            {task.status !== 'Completada' && (
+              <Box sx={{ mt: 1 }}>
+                <TaskCountdown dueDate={task.dueDate} />
+              </Box>
+            )}
           </Box>
-        )}
-      </CardContent>
+        </CardContent>
+      </CardActionArea>
       
-      <CardActions>
+      <CardActions sx={{ 
+        padding: 1,
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        borderTop: '1px solid rgba(0, 0, 0, 0.05)',
+        backgroundColor: task.status === 'Completada' ? 
+          'rgba(0, 0, 0, 0.03)' : 
+          'transparent'
+      }}>
         {task.status === 'Completada' ? (
-          <IconButton 
-            aria-label="reabrir"
-            onClick={() => onReopen(task._id)}
-            color="warning"
-            title="Marcar como pendiente"
-          >
-            <UndoIcon />
-          </IconButton>
+          <Tooltip title="Marcar como pendiente">
+            <IconButton 
+              size="small"
+              onClick={() => onReopen(task._id)}
+              color="warning"
+            >
+              <UndoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         ) : (
-          <IconButton 
-            aria-label="completar"
-            onClick={() => onComplete(task._id)}
-            color="success"
-            title="Marcar como completada"
-          >
-            <CheckCircleIcon />
-          </IconButton>
+          <Tooltip title="Marcar como completada">
+            <IconButton 
+              size="small"
+              onClick={() => onComplete(task._id)}
+              color="success"
+            >
+              <CheckCircleIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         )}
-        <IconButton 
-          aria-label="editar"
-          onClick={() => onEdit(task)}
-          title="Editar tarea"
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton 
-          aria-label="eliminar"
-          onClick={() => onDelete(task._id)}
-          title="Eliminar tarea"
-        >
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title="Editar tarea">
+          <IconButton 
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(task);
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Eliminar tarea">
+          <IconButton 
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(task._id);
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </CardActions>
     </Card>
   );
