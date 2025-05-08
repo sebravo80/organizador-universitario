@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import { IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -49,39 +49,81 @@ const MobileMenu = () => {
         <List sx={{ width: 250 }}>
           <ListItem button onClick={() => handleNavigate('/dashboard')}>
             <ListItemIcon><DashboardIcon /></ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Dashboard
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/weekly')}>
             <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
-            <ListItemText primary="Calendario" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Calendario
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/tasks')}>
             <ListItemIcon><AssignmentIcon /></ListItemIcon>
-            <ListItemText primary="Tareas" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Tareas
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/courses')}>
             <ListItemIcon><SchoolIcon /></ListItemIcon>
-            <ListItemText primary="Cursos" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Cursos
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <ListItem button onClick={() => handleNavigate('/grade-calculator')}>
             <ListItemIcon><CalculateIcon /></ListItemIcon>
-            <ListItemText primary="Calculadora" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Calculadora
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <Divider />
           
           <ListItem button onClick={() => handleNavigate('/profile')}>
             <ListItemIcon><AccountCircleIcon /></ListItemIcon>
-            <ListItemText primary="Perfil" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Perfil
+                </Typography>
+              } 
+            />
           </ListItem>
           
           <ListItem button onClick={handleLogout}>
             <ListItemIcon><LogoutIcon /></ListItemIcon>
-            <ListItemText primary="Cerrar sesión" />
+            <ListItemText 
+              primary={
+                <Typography component="span">
+                  Cerrar sesión
+                </Typography>
+              } 
+            />
           </ListItem>
         </List>
       </Drawer>

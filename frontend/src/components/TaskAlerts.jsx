@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Snackbar, Alert, Button, Dialog, DialogTitle, 
   DialogContent, List, ListItem, ListItemText, 
-  Chip, DialogActions, Box
+  Chip, DialogActions, Box, Typography
 } from '@mui/material';
 import { getTasks } from '../services/taskService';
 
@@ -172,10 +172,13 @@ function TaskAlerts() {
                   <ListItemText
                     primary={task.title}
                     secondary={
-                      <>
-                        {task.course?.name && `${task.course.name} - `}
-                        {new Date(task.dueDate).toLocaleDateString()}
-                      </>
+                      <span>
+                        {task.course?.name && (
+                          <Typography component="span" variant="body2" display="block">
+                            {task.course.name} - {new Date(task.dueDate).toLocaleDateString()}
+                          </Typography>
+                        )}
+                      </span>
                     }
                   />
                   <Box sx={{ ml: 2 }}>

@@ -136,9 +136,15 @@ const EventForm = ({ open, onClose, onSave, event }) => {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
+      fullScreen={fullScreen} // Usar pantalla completa en móviles
+      PaperProps={{
+        sx: {
+          borderRadius: { xs: 0, sm: 2 }, // Sin bordes redondeados en móviles para mejor uso del espacio
+          maxHeight: { xs: '100%', sm: '90vh' }
+        }
+      }}
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Typography variant="h6">

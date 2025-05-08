@@ -5,7 +5,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider as CustomThemeProvider } from './context/ThemeContext';
+import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import App from './App.jsx';
 import './index.css';
 import './styles/variables.css';
@@ -17,15 +19,33 @@ import './styles/navbar.css';
 import './styles/todo.css';
 import './styles/dashboard.css';
 import './styles/profile.css';
+import './styles/responsive.css';
+import './styles/common.css';
+
+// Crear un tema por defecto para MUI
+const defaultTheme = createTheme({
+  // Puedes personalizar tu tema aquí
+  palette: {
+    primary: {
+      main: '#72002a',
+    },
+    secondary: {
+      main: '#a30044',
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
+          <MUIThemeProvider theme={defaultTheme}>
+            <CssBaseline />
+            <CustomThemeProvider>
+              <App />
+            </CustomThemeProvider>
+          </MUIThemeProvider>
         </LocalizationProvider>
       </AuthProvider>
     </BrowserRouter>

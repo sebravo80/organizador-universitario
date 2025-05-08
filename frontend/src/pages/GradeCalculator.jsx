@@ -259,27 +259,16 @@ const GradeCalculator = () => {
           '100%': { opacity: 1, transform: 'translateY(0)' }
         }
       }}>
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          gutterBottom
-          sx={{
-            fontWeight: 700,
+        <Typography variant="h4" component="h1" 
+          className="page-title"
+          sx={{ 
             display: 'flex',
-            alignItems: 'center',
-            color: 'primary.main',
-            mb: 3,
-            '&::after': {
-              content: '""',
-              display: 'block',
-              height: '3px',
-              background: theme => `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-              flexGrow: 1,
-              ml: 2
-            }
+            alignItems: 'center', 
+            gap: 1,
+            mb: 3
           }}
         >
-          <ClassIcon sx={{ mr: 1, fontSize: '2rem' }} />
+          <CalculateIcon fontSize="large" />
           Calculadora de Notas
         </Typography>
         

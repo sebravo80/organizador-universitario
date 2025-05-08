@@ -355,7 +355,16 @@ const WeeklyView = () => {
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
+          <Typography variant="h4" component="h1" 
+            className="page-title"
+            sx={{ 
+              display: 'flex',
+              alignItems: 'center', 
+              gap: 1,
+              mb: 3
+            }}
+          >
+            <EventIcon fontSize="large" />
             Calendario Semanal
           </Typography>
           
@@ -391,17 +400,23 @@ const WeeklyView = () => {
                     color="primary"
                   />
                 }
-                label="Mostrar horario de clases"
+                label={
+                  <Typography sx={{ color: 'white' }}>
+                    Mostrar horario de clases
+                  </Typography>
+                }
               />
             </Box>
             <Box 
               sx={{ 
-                height: 'calc(100vh - 200px)', 
-                minHeight: '600px',
+                height: { xs: 'calc(100vh - 160px)', sm: 'calc(100vh - 200px)' }, 
+                minHeight: { xs: '500px', sm: '600px' },
                 '& .fc': {
                   '--fc-page-bg-color': 'transparent',
                   '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
                   '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
+                  '--fc-event-border-color': 'transparent',
+                  '--fc-today-bg-color': 'rgba(114, 0, 42, 0.1)'
                 }
               }}
               className="custom-calendar-container"

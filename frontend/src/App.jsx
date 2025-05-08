@@ -1,12 +1,13 @@
 import React, { useContext, Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { AuthContext } from './context/AuthContext';
 import { initializeNotifications } from './services/notificationService';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import './styles/theme.css';
+import { styled } from '@mui/system';
 
 // Componentes esenciales (no lazy)
 import Navbar from './components/Navbar';
@@ -25,6 +26,31 @@ const TodoList = lazy(() => import('./pages/TodoList'));
 const NewLogin = lazy(() => import('./pages/NewLogin'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+
+// Modificar el componente Main para añadir la clase has-fab-button:
+const DRAWER_WIDTH = 240; // Definir el ancho del drawer si no está definido
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    marginLeft: 0,
+    ...(open && {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: `${DRAWER_WIDTH}px`,
+    }),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2),
+      paddingBottom: theme.spacing(8), // Añadir espacio para botón flotante
+    },
+  }),
+);
 
 // Ruta privada (requiere autenticación)
 const PrivateRoute = () => {
@@ -58,6 +84,8 @@ const PublicRoute = () => {
 
 function App() {
   const { isAuth } = useContext(AuthContext);
+  const theme = useTheme(); // Obtener el tema desde el contexto
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Usar el tema correctamente
   
   // Inicializar notificaciones al iniciar la app
   useEffect(() => {
@@ -68,7 +96,11 @@ function App() {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       
-      <Box component="main" sx={{ flexGrow: 1, pt: 8, pb: 4 }}>
+      <Main 
+        component="main" 
+        sx={{ flexGrow: 1, pt: 8, pb: 4 }}
+        className={isMobile ? "has-fab-button" : ""}
+      >
         <Routes>
           {/* Rutas públicas (solo accesibles si el usuario no está autenticado) */}
           <Route element={<PublicRoute />}>
@@ -138,7 +170,7 @@ function App() {
             isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
           } />
         </Routes>
-      </Box>
+      </Main>
       
       {/* Alertas de tareas (solo visible si está autenticado) */}
       {isAuth && <TaskAlerts />}

@@ -52,7 +52,7 @@ const darkenColor = (color, factor) => {
   r = Math.max(0, Math.floor(r * (1 - factor)));
   g = Math.max(0, Math.floor(g * (1 - factor)));
   b = Math.max(0, Math.floor(b * (1 - factor)));
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}`;
 };
 
 const Tasks = () => {
@@ -367,8 +367,15 @@ const Tasks = () => {
     <Container maxWidth="lg" className="page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 'bold' }}>
-            <AssignmentIcon color="primary" fontSize="large" />
+          <Typography variant="h4" component="h1" 
+            className="page-title"
+            sx={{ 
+              display: 'flex',
+              alignItems: 'center', 
+              gap: 1
+            }}
+          >
+            <AssignmentIcon fontSize="large" />
             Mis Tareas
           </Typography>
           
@@ -543,7 +550,13 @@ const Tasks = () => {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
-        <Box sx={{ width: 280, p: 3 }}>
+        <Box sx={{ 
+          width: { xs: '280px', sm: '320px' },
+          p: { xs: 2, sm: 3 },
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6">Filtros</Typography>
             <IconButton onClick={() => setDrawerOpen(false)}>
@@ -617,7 +630,12 @@ const Tasks = () => {
             </Select>
           </FormControl>
           
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            mt: 'auto', 
+            pt: 3
+          }}>
             <Button 
               variant="outlined" 
               fullWidth

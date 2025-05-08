@@ -135,7 +135,7 @@ const Dashboard = () => {
           className="greeting-card"
           sx={{ 
             p: { xs: 2, sm: 3 }, 
-            mb: 4, 
+            mb: { xs: 3, sm: 4 }, 
             borderRadius: 3,
             overflow: 'hidden'
           }}
@@ -188,7 +188,7 @@ const Dashboard = () => {
           </Typography>
         )}
         
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
           {/* Ramos */}
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card course-section">
@@ -261,24 +261,24 @@ const Dashboard = () => {
                               </Box>
                             }
                             secondary={
-                              <>
+                              <span>
                                 {course.professor && (
-                                  <Box component="span" display="block">
+                                  <Typography variant="body2" component="span" display="block">
                                     Profesor: {course.professor}
-                                  </Box>
+                                  </Typography>
                                 )}
                                 {course.room && (
-                                  <Box component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <Typography variant="body2" component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
                                     {course.room}
-                                  </Box>
+                                  </Typography>
                                 )}
                                 {course.scheduleStrings && course.scheduleStrings.length > 0 && (
-                                  <Box component="span" display="block">
+                                  <Typography variant="body2" component="span" display="block">
                                     Horario: {course.scheduleStrings.join(', ')}
-                                  </Box>
+                                  </Typography>
                                 )}
-                              </>
+                              </span>
                             }
                           />
                         </ListItem>
@@ -317,29 +317,22 @@ const Dashboard = () => {
                         <ListItem>
                           <ListItemText
                             primary={
-                              <Box sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                flexWrap: 'wrap',
-                                gap: 1
-                              }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                  <Box className={`status-indicator priority-${task.priority === 'Alta' ? 'high' : (task.priority === 'Media' ? 'medium' : 'low')}`}></Box>
-                                  <Typography 
-                                    component="span" 
-                                    variant="body1" 
-                                    sx={{ 
-                                      fontWeight: 600,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      display: '-webkit-box',
-                                      WebkitLineClamp: 1,
-                                      WebkitBoxOrient: 'vertical',
-                                    }}
-                                  >
-                                    {task.title}
-                                  </Typography>
-                                </Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <Box className={`status-indicator priority-${task.priority === 'Alta' ? 'high' : (task.priority === 'Media' ? 'medium' : 'low')}`}></Box>
+                                <Typography 
+                                  component="span" 
+                                  variant="body1" 
+                                  sx={{ 
+                                    fontWeight: 600,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 1,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                  {task.title}
+                                </Typography>
                                 <Chip 
                                   size="small" 
                                   label={task.priority} 
@@ -348,7 +341,7 @@ const Dashboard = () => {
                               </Box>
                             }
                             secondary={
-                              <Box sx={{ mt: 0.5 }}>
+                              <span>
                                 <Typography variant="body2" component="span" display="block" sx={{ 
                                   display: 'flex', 
                                   alignItems: 'center',
@@ -368,7 +361,7 @@ const Dashboard = () => {
                                     {task.course.name}
                                   </Typography>
                                 )}
-                              </Box>
+                              </span>
                             }
                           />
                         </ListItem>
@@ -408,7 +401,7 @@ const Dashboard = () => {
                           <ListItemText
                             primary={event.title}
                             secondary={
-                              <span>
+                              <span style={{ marginTop: '4px', display: 'block' }}>
                                 <Typography variant="body2" component="span" display="block">
                                   Fecha: {formatDate(event.startDate)}
                                 </Typography>

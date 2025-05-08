@@ -243,13 +243,15 @@ const Courses = () => {
     <Container maxWidth="lg" className="page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4" component="h1" sx={{ 
-            display: 'flex',
-            alignItems: 'center', 
-            gap: 1,
-            fontWeight: 'bold'
-          }}>
-            <SchoolIcon color="primary" fontSize="large" />
+          <Typography variant="h4" component="h1" 
+            className="page-title"
+            sx={{ 
+              display: 'flex',
+              alignItems: 'center', 
+              gap: 1
+            }}
+          >
+            <SchoolIcon fontSize="large" />
             Mis Ramos
           </Typography>
           
@@ -307,10 +309,13 @@ const Courses = () => {
             </Button>
           </Paper>
         ) : (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             {courses.map((course, index) => (
               <Grid item xs={12} sm={6} md={4} key={course._id} className="staggered-item">
-                <Card className="course-card" sx={{ borderTop: `4px solid ${course.color}` }}>
+                <Card className="course-card" sx={{ 
+                  borderTop: `4px solid ${course.color}`,
+                  height: '100%'
+                }}>
                   <CardContent sx={{ flexGrow: 1, p: 3 }}>
                     <Box className="course-card-header">
                       <Typography variant="h6" component="h2" sx={{ 

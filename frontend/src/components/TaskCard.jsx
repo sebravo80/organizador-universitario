@@ -162,7 +162,12 @@ const TaskCard = memo(({
       </Box>
 
       <CardActionArea onClick={() => onEdit(task)} sx={{ flexGrow: 1 }}>
-        <CardContent sx={{ flexGrow: 1, p: 2 }}>
+        <CardContent sx={{ 
+          flexGrow: 1, 
+          p: { xs: 1.5, sm: 2 },  // Padding reducido en móviles
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
           <Typography variant="h6" component="h2" sx={{ 
             mb: 1.5,
             fontSize: '1.1rem',
@@ -175,15 +180,33 @@ const TaskCard = memo(({
           
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {task.description && (
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                <DescriptionIcon fontSize="small" color="action" sx={{ mt: 0.3, opacity: 0.7 }} />
-                <Typography variant="body2" color="text.secondary" sx={{ 
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                gap: { xs: 0.5, sm: 1 }, // Espacio reducido en móviles
+                mb: { xs: 0.5, sm: 1 }   // Margen inferior reducido en móviles
+              }}>
+                <DescriptionIcon 
+                  fontSize="small" 
+                  color="action" 
+                  sx={{ 
+                    mt: 0.3, 
+                    opacity: 0.7,
+                    fontSize: { xs: '0.9rem', sm: '1rem' } // Tamaño de icono reducido en móviles
+                  }} 
+                />
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ 
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: { xs: 1, sm: 2 }, // Solo 1 línea en móviles
+                    WebkitBoxOrient: 'vertical',
+                    fontSize: { xs: '0.8rem', sm: '0.875rem' } // Tamaño de texto reducido en móviles
+                  }}
+                >
                   {task.description}
                 </Typography>
               </Box>

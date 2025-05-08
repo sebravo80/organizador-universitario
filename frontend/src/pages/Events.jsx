@@ -11,7 +11,8 @@ import {
   Tab,
   Paper,
   Fab,
-  Fade
+  Fade,
+  Grid
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -28,8 +29,6 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
-// IMPORTANTE: Quitar esta línea si no has instalado react-toastify
-// import { toast } from 'react-toastify';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -255,16 +254,17 @@ const Events = () => {
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ mt: 3 }}>
-          {filteredEvents.map(event => (
-            <EventItem
-              key={event._id}
-              event={event}
-              onEdit={handleEditEvent}
-              onDelete={handleDeleteEvent}
-            />
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
+          {filteredEvents.map((event) => (
+            <Grid item xs={12} sm={6} md={4} key={event._id} className="staggered-item">
+              <EventItem
+                event={event}
+                onEdit={() => handleEditEvent(event)}
+                onDelete={() => handleDeleteEvent(event._id)}
+              />
+            </Grid>
           ))}
-        </Box>
+        </Grid>
       )}
       
       {/* Botón flotante para añadir eventos (solo en móvil) */}
