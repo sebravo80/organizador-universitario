@@ -6,7 +6,10 @@ import '../styles/newLogin.css';
 const NewLogin = () => {
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
-  const { login, register, loading, error } = useContext(AuthContext);
+  const { login, register, loading: authLoading, error } = useContext(AuthContext);
+  
+  // Añade este estado para manejar la carga local
+  const [loading, setLoading] = useState(false);
   
   // Estado para formulario de login
   const [loginData, setLoginData] = useState({
@@ -48,13 +51,15 @@ const NewLogin = () => {
     e.preventDefault();
     
     try {
+      setLoading(true);
       const success = await login(loginData.email, loginData.password);
       if (success) {
         navigate('/dashboard');
       }
     } catch (err) {
-      // Asegúrate de que el error se muestre correctamente
       setErrorMessage(err.msg || 'Error al iniciar sesión. Verifica tus credenciales.');
+    } finally {
+      setLoading(false);
     }
   };
   
