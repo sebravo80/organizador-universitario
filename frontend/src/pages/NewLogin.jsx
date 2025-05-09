@@ -58,7 +58,7 @@ const NewLogin = () => {
     }
   };
   
-  // Modificar la función handleRegisterSubmit
+  // Manejar envío del formulario de registro
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     
