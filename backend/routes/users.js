@@ -124,7 +124,7 @@ router.post('/', async (req, res) => {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                   <tr>
                     <td style="padding: 20px 0; text-align: center; background-color: #72002a;">
-                      <img src="https://diatomeauniversitaria.studio/diatoicon.png" alt="Organizador Universitario Logo" width="60" style="display: inline-block;">
+                      <img src="https://i.imgur.com/zkQVtwR.png" alt="Organizador Universitario Logo" width="60" style="display: inline-block;">
                       <h1 style="color: white; margin: 10px 0;">Organizador Universitario</h1>
                     </td>
                   </tr>

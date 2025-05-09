@@ -292,6 +292,28 @@ body {
     font-size: 16px;
 }
 
+/* Añadir al final del archivo o cerca de donde está definido el estilo .error */
+.success {
+    color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.15);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 14px;
+    border-left: 4px solid #2ecc71;
+    animation: fadeIn 0.5s ease-in;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.25);
+}
+
+.success::before {
+    content: '✓';
+    margin-right: 8px;
+    font-size: 16px;
+}
+
 /* Mejorar la animación de aparición */
 @keyframes fadeIn {
     from {

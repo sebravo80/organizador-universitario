@@ -23,6 +23,9 @@ const NewLogin = () => {
 
   // Estado para manejar errores
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Estado para manejar mensajes de éxito
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Manejar cambios en los campos de login
   const handleLoginChange = (e) => {
@@ -55,14 +58,32 @@ const NewLogin = () => {
     }
   };
   
-  // Manejar envío del formulario de registro
+  // Modificar la función handleRegisterSubmit
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     
     try {
       const success = await register(registerData.name, registerData.email, registerData.password);
       if (success) {
-        navigate('/dashboard');
+        // En lugar de navegar al dashboard, mostramos el mensaje de éxito
+        setIsActive(false); // Cambiamos al panel de login
+        setLoginData({ ...loginData, email: registerData.email }); // Copiamos el email al formulario de login
+        
+        // Resetear el formulario de registro
+        setRegisterData({
+          name: '',
+          email: '',
+          password: ''
+        });
+        
+        // Mostrar mensaje de éxito
+        setErrorMessage(''); // Limpiamos cualquier mensaje de error previo
+        setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+        
+        // Opcionalmente, el mensaje de éxito puede desaparecer después de unos segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 5000);
       }
     } catch (err) {
       // Asegúrate de que el error se muestre correctamente
@@ -75,6 +96,7 @@ const NewLogin = () => {
       <div className="form-box login">
         <form onSubmit={handleLoginSubmit}>
           <h1>Iniciar Sesión</h1>
+          {successMessage && <p className="success">{successMessage}</p>}
           {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 
