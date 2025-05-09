@@ -447,6 +447,11 @@ const WeeklyView = () => {
                     minute: '2-digit',
                     meridiem: false
                   }}
+                  slotLabelFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                  }}
                   // Añadir esta propiedad para manejar eventos recurrentes en vista diaria
                   datesSet={(dateInfo) => {
                     // Este callback se ejecuta cuando cambia la vista o la fecha
