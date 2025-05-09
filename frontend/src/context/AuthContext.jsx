@@ -43,26 +43,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Función para registrar usuario
+  // Modificar la función register para que no inicie sesión automáticamente después del registro
   const register = async (name, email, password) => {
     try {
       setLoading(true);
       
       const res = await api.post('/users', { name, email, password });
       
-      // Guardar token en localStorage
-      localStorage.setItem('token', res.data.token);
-      
-      // Configurar token en headers
-      api.defaults.headers.common['x-auth-token'] = res.data.token;
-      
-      // Cargar datos del usuario
-      const userRes = await api.get('/auth');
-      
-      setUser(userRes.data);
-      setIsAuth(true);
+      // No guardamos el token ni iniciamos sesión automáticamente
       setError(null);
-      
       return true;
     } catch (err) {
       console.error('Error al registrar usuario:', err);

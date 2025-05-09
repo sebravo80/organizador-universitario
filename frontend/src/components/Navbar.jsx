@@ -295,7 +295,7 @@ function Navbar() {
             <RouterLink to={isAuth ? "/dashboard" : "/"} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
               <img src="/diatoicon.png" alt="Logo" width="32" height="32" />
               {!isMobile && "Organizador Universitario"}
-              {isMobile && "Organizador"}
+              {isMobile && "Org. Universitario"}
             </RouterLink>
           </Typography>
           
