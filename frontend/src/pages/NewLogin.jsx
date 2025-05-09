@@ -65,7 +65,7 @@ const NewLogin = () => {
     try {
       const success = await register(registerData.name, registerData.email, registerData.password);
       if (success) {
-        // Resetear el formulario de registro primero
+        // Primero resetear el formulario de registro
         setRegisterData({
           name: '',
           email: '',
@@ -73,23 +73,26 @@ const NewLogin = () => {
         });
         
         // Copiar el email al formulario de login
-        setLoginData({ ...loginData, email: registerData.email });
+        setLoginData(prev => ({ 
+          ...prev, 
+          email: registerData.email 
+        }));
         
         // Limpiar cualquier mensaje de error previo
         setErrorMessage('');
         
-        // Cambiar al panel de login
+        // Importante: Primero cambiar al panel de login
         setIsActive(false);
         
-        // Esperar a que termine la transición antes de mostrar el mensaje de éxito
+        // Esperar a que termine la transición de animación antes de mostrar el mensaje
         setTimeout(() => {
           setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
           
-          // Opcionalmente, hacer que el mensaje desaparezca después de un tiempo
+          // Hacer que el mensaje desaparezca después de un tiempo
           setTimeout(() => {
             setSuccessMessage('');
-          }, 8000); // Dejarlo visible por un poco más de tiempo
-        }, 700); // Esperar justo un poco más que la duración de la transición (600ms)
+          }, 5000);
+        }, 700); // Esperar más que la duración de la animación de transición CSS (600ms)
       }
     } catch (err) {
       setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
