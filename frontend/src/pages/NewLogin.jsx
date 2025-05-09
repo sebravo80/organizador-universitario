@@ -58,35 +58,40 @@ const NewLogin = () => {
     }
   };
   
-  // Manejar envío del formulario de registro
+  // Modificar la función handleRegisterSubmit
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     
     try {
       const success = await register(registerData.name, registerData.email, registerData.password);
       if (success) {
-        // En lugar de navegar al dashboard, mostramos el mensaje de éxito
-        setIsActive(false); // Cambiamos al panel de login
-        setLoginData({ ...loginData, email: registerData.email }); // Copiamos el email al formulario de login
-        
-        // Resetear el formulario de registro
+        // Resetear el formulario de registro primero
         setRegisterData({
           name: '',
           email: '',
           password: ''
         });
         
-        // Mostrar mensaje de éxito
-        setErrorMessage(''); // Limpiamos cualquier mensaje de error previo
-        setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+        // Copiar el email al formulario de login
+        setLoginData({ ...loginData, email: registerData.email });
         
-        // Opcionalmente, el mensaje de éxito puede desaparecer después de unos segundos
+        // Limpiar cualquier mensaje de error previo
+        setErrorMessage('');
+        
+        // Cambiar al panel de login
+        setIsActive(false);
+        
+        // Esperar a que termine la transición antes de mostrar el mensaje de éxito
         setTimeout(() => {
-          setSuccessMessage('');
-        }, 5000);
+          setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+          
+          // Opcionalmente, hacer que el mensaje desaparezca después de un tiempo
+          setTimeout(() => {
+            setSuccessMessage('');
+          }, 8000); // Dejarlo visible por un poco más de tiempo
+        }, 700); // Esperar justo un poco más que la duración de la transición (600ms)
       }
     } catch (err) {
-      // Asegúrate de que el error se muestre correctamente
       setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
     }
   };
