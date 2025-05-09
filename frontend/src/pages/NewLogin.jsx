@@ -63,39 +63,37 @@ const NewLogin = () => {
     e.preventDefault();
     
     try {
+      // Mostrar alguna indicación de carga DENTRO del formulario antes de enviar la solicitud
+      setErrorMessage('');
+      setLoading(true);
+      
       const success = await register(registerData.name, registerData.email, registerData.password);
       if (success) {
-        // Primero mostrar el mensaje de éxito directamente en el panel de registro
-        // usando un nuevo estado para manejar el éxito en el registro
-        setSuccessMessage('¡Registro exitoso!');
+        // Primero, completar el registro y actualizar el estado
+        setLoginData({
+          ...loginData,
+          email: registerData.email
+        });
         
-        // Esperar un momento para que el usuario pueda ver el mensaje
+        // Resetear el formulario de registro
+        setRegisterData({
+          name: '',
+          email: '',
+          password: ''
+        });
+        
+        // Establecer el mensaje de éxito para que se muestre en el panel de login
+        setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+        
+        // Usar setTimeout con 0ms para asegurar que el mensaje se establezca antes de la transición
         setTimeout(() => {
-          // Resetear el formulario de registro
-          setRegisterData({
-            name: '',
-            email: '',
-            password: ''
-          });
-          
-          // Copiar el email al formulario de login
-          setLoginData(prev => ({ 
-            ...prev, 
-            email: registerData.email 
-          }));
-          
-          // Luego cambiar al panel de login con el mensaje
-          setIsActive(false);
-          
-          // Mensaje en el panel de login (será visible una vez completada la transición)
-          setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
-          
-          // Limpiar cualquier mensaje de error previo
-          setErrorMessage('');
-        }, 1500); // Dar tiempo al usuario para ver el mensaje antes de la transición
+          setIsActive(false); // Cambiar al panel de login después de que todo esté listo
+        }, 10);
       }
     } catch (err) {
       setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
