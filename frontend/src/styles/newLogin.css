@@ -442,3 +442,10 @@ body {
         text-decoration: underline;
     }
 }
+
+
+@media (max-width: 600px) {
+    .app-navbar {
+        padding: 0 120px !important;
+    }
+}
