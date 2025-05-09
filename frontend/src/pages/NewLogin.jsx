@@ -65,34 +65,34 @@ const NewLogin = () => {
     try {
       const success = await register(registerData.name, registerData.email, registerData.password);
       if (success) {
-        // Primero resetear el formulario de registro
-        setRegisterData({
-          name: '',
-          email: '',
-          password: ''
-        });
+        // Primero mostrar el mensaje de éxito directamente en el panel de registro
+        // usando un nuevo estado para manejar el éxito en el registro
+        setSuccessMessage('¡Registro exitoso!');
         
-        // Copiar el email al formulario de login
-        setLoginData(prev => ({ 
-          ...prev, 
-          email: registerData.email 
-        }));
-        
-        // Limpiar cualquier mensaje de error previo
-        setErrorMessage('');
-        
-        // Importante: Primero cambiar al panel de login
-        setIsActive(false);
-        
-        // Esperar a que termine la transición de animación antes de mostrar el mensaje
+        // Esperar un momento para que el usuario pueda ver el mensaje
         setTimeout(() => {
+          // Resetear el formulario de registro
+          setRegisterData({
+            name: '',
+            email: '',
+            password: ''
+          });
+          
+          // Copiar el email al formulario de login
+          setLoginData(prev => ({ 
+            ...prev, 
+            email: registerData.email 
+          }));
+          
+          // Luego cambiar al panel de login con el mensaje
+          setIsActive(false);
+          
+          // Mensaje en el panel de login (será visible una vez completada la transición)
           setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
           
-          // Hacer que el mensaje desaparezca después de un tiempo
-          setTimeout(() => {
-            setSuccessMessage('');
-          }, 5000);
-        }, 700); // Esperar más que la duración de la animación de transición CSS (600ms)
+          // Limpiar cualquier mensaje de error previo
+          setErrorMessage('');
+        }, 1500); // Dar tiempo al usuario para ver el mensaje antes de la transición
       }
     } catch (err) {
       setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
@@ -104,7 +104,7 @@ const NewLogin = () => {
       <div className="form-box login">
         <form onSubmit={handleLoginSubmit}>
           <h1>Iniciar Sesión</h1>
-          {successMessage && <p className="success">{successMessage}</p>}
+          {successMessage && !isActive && <p className="success">{successMessage}</p>}
           {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 
@@ -140,6 +140,7 @@ const NewLogin = () => {
       <div className="form-box register">
         <form onSubmit={handleRegisterSubmit}>
           <h1>Registrarse</h1>
+          {successMessage && isActive && <p className="success">{successMessage}</p>}
           {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 

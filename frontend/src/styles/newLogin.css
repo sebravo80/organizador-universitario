@@ -306,6 +306,7 @@ body {
     display: flex;
     align-items: center;
     box-shadow: 0 2px 8px rgba(46, 204, 113, 0.25);
+    text-align: left;
 }
 
 .success::before {
