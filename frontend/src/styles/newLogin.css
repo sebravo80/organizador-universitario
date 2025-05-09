@@ -292,7 +292,7 @@ body {
     font-size: 16px;
 }
 
-/* Añadir al final del archivo o cerca de donde está definido el estilo .error */
+/* Asegurarse que la clase success es visible y llamativa */
 .success {
     color: #2ecc71;
     background-color: rgba(46, 204, 113, 0.15);
@@ -307,6 +307,8 @@ body {
     align-items: center;
     box-shadow: 0 2px 8px rgba(46, 204, 113, 0.25);
     text-align: left;
+    opacity: 1; /* Asegurarse que sea completamente visible */
+    z-index: 5; /* Asegurar que esté por encima de otros elementos */
 }
 
 .success::before {

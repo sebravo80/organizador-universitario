@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/newLogin.css';
@@ -29,6 +29,29 @@ const NewLogin = () => {
   
   // Estado para manejar mensajes de éxito
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Verificar mensaje de registro exitoso al cargar
+  useEffect(() => {
+    const registrationSuccess = sessionStorage.getItem('registrationSuccess');
+    const registeredEmail = sessionStorage.getItem('registeredEmail');
+    
+    if (registrationSuccess === 'true') {
+      // Mostrar mensaje de éxito
+      setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+      
+      // Si hay email guardado, colocarlo en el formulario de login
+      if (registeredEmail) {
+        setLoginData(prev => ({
+          ...prev,
+          email: registeredEmail
+        }));
+      }
+      
+      // Limpiar sessionStorage
+      sessionStorage.removeItem('registrationSuccess');
+      sessionStorage.removeItem('registeredEmail');
+    }
+  }, []);
 
   // Manejar cambios en los campos de login
   const handleLoginChange = (e) => {
@@ -68,32 +91,32 @@ const NewLogin = () => {
     e.preventDefault();
     
     try {
-      // Mostrar alguna indicación de carga DENTRO del formulario antes de enviar la solicitud
       setErrorMessage('');
       setLoading(true);
       
-      const success = await register(registerData.name, registerData.email, registerData.password);
+      // Almacenar email antes de registro (por si hay redirección)
+      const userEmail = registerData.email;
+
+      // Registrar usuario
+      const success = await register(registerData.name, userEmail, registerData.password);
+      
       if (success) {
-        // Primero, completar el registro y actualizar el estado
-        setLoginData({
-          ...loginData,
-          email: registerData.email
-        });
+        // Guardar mensaje en sessionStorage (persistirá si hay recarga)
+        sessionStorage.setItem('registrationSuccess', 'true');
+        sessionStorage.setItem('registeredEmail', userEmail);
         
-        // Resetear el formulario de registro
+        // Limpiar formulario
         setRegisterData({
           name: '',
           email: '',
           password: ''
         });
         
-        // Establecer el mensaje de éxito para que se muestre en el panel de login
-        setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
+        // Cambiar al panel de login
+        setIsActive(false);
         
-        // Usar setTimeout con 0ms para asegurar que el mensaje se establezca antes de la transición
-        setTimeout(() => {
-          setIsActive(false); // Cambiar al panel de login después de que todo esté listo
-        }, 10);
+        // Establecer mensaje
+        setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión con tus credenciales.');
       }
     } catch (err) {
       setErrorMessage(err.msg || 'Error al registrar usuario. Inténtalo de nuevo.');
@@ -107,7 +130,7 @@ const NewLogin = () => {
       <div className="form-box login">
         <form onSubmit={handleLoginSubmit}>
           <h1>Iniciar Sesión</h1>
-          {successMessage && !isActive && <p className="success">{successMessage}</p>}
+          {successMessage && <p className="success" style={{ display: 'block', marginBottom: '15px' }}>{successMessage}</p>}
           {(error || errorMessage) && <p className="error">{error || errorMessage}</p>}
           <div className="input-box">
             <input 
