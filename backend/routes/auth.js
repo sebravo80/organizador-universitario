@@ -118,14 +118,23 @@ router.post('/forgot-password', async (req, res) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
-      }
+      },
+      // Para servicios que requieren configuración SMTP específica
+      ...(process.env.EMAIL_HOST && {
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT || '587'),
+        secure: process.env.EMAIL_PORT === '465'
+      })
     });
     
     // Configurar el mensaje
     const mailOptions = {
       to: user.email,
-      from: process.env.EMAIL_FROM,
-      subject: 'Recuperación de contraseña - Organizador Universitario',
+      from: {
+        name: "Organizador Universitario",
+        address: process.env.EMAIL_USER  // diatomeauniversitaria@gmail.com
+      },
+      subject: 'Recuperación de Contraseña - Organizador Universitario',
       html: `
         <p>Has solicitado restablecer tu contraseña.</p>
         <p>Haz clic en el siguiente enlace para continuar:</p>
@@ -275,6 +284,52 @@ router.put('/password', auth, async (req, res) => {
   } catch (err) {
     console.error('Error al cambiar contraseña:', err.message);
     res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
+// Añade esta ruta solo para pruebas, elimínala después
+router.post('/test-email', async (req, res) => {
+  try {
+    // Configurar transporter
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      },
+      ...(process.env.EMAIL_HOST && {
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT || '587'),
+        secure: process.env.EMAIL_PORT === '465'
+      })
+    });
+    
+    // Enviar correo de prueba
+    await transporter.sendMail({
+      to: req.body.email || process.env.EMAIL_USER,
+      from: {
+        name: "Organizador Universitario",
+        address: process.env.EMAIL_USER
+      },
+      subject: 'Prueba de Configuración de Correo',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+          <h2 style="color: #72002a;">¡Configuración de Correo Exitosa!</h2>
+          <p>Este es un correo de prueba para verificar que la configuración del servidor de correo funciona correctamente.</p>
+          <p>Fecha y hora: ${new Date().toLocaleString()}</p>
+        </div>
+      `
+    });
+    
+    res.json({ success: true, message: 'Correo de prueba enviado correctamente' });
+  } catch (error) {
+    console.error('Error al enviar correo de prueba:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al enviar correo de prueba',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 

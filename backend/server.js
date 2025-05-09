@@ -37,6 +37,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://diatomeauniversitaria.netlify.app',
   'https://www.diatomeauniversitaria.studio',
+  'https://diatomeauniversitaria.studio',
   'http://localhost',
   'https://organizador-universitario-api-49b169773d7f.herokuapp.com',
   'https://localhost'

@@ -7,6 +7,8 @@ const User = require('../models/User');
 // Agregar la importación de nodemailer
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+// Añade esta importación al inicio del archivo
+const { logEmailActivity } = require('../utils/emailLogger');
 
 // @route   POST api/users
 // @desc    Register a user
@@ -94,36 +96,76 @@ router.post('/', async (req, res) => {
             auth: {
               user: process.env.EMAIL_USER,
               pass: process.env.EMAIL_PASSWORD
-            }
+            },
+            // Para servicios que requieren configuración SMTP específica
+            ...(process.env.EMAIL_HOST && {
+              host: process.env.EMAIL_HOST,
+              port: parseInt(process.env.EMAIL_PORT || '587'),
+              secure: process.env.EMAIL_PORT === '465'
+            })
           });
           
           // Configurar el mensaje
           const mailOptions = {
             to: user.email,
-            from: process.env.EMAIL_FROM,
+            from: {
+              name: "Organizador Universitario",
+              address: process.env.EMAIL_USER
+            },
             subject: '¡Bienvenido a Organizador Universitario!',
             html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-                <h2 style="color: #72002a; text-align: center;">¡Hola ${user.name}!</h2>
-                <p style="font-size: 16px; line-height: 1.5;">Gracias por registrarte en <strong>Organizador Universitario</strong>.</p>
-                <p style="font-size: 16px; line-height: 1.5;">Tu cuenta ha sido creada exitosamente y ya puedes comenzar a utilizar todas nuestras herramientas para organizar tus estudios:</p>
-                <ul style="font-size: 15px; line-height: 1.5;">
-                  <li>Gestión de tareas y recordatorios</li>
-                  <li>Calendario de eventos y clases</li>
-                  <li>Organización de ramos y horarios</li>
-                  <li>Calculadora de notas</li>
-                </ul>
-                <p style="font-size: 16px; line-height: 1.5;">Para comenzar, simplemente inicia sesión en tu cuenta con tu correo electrónico y contraseña.</p>
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="${process.env.FRONTEND_URL}/login" style="background-color: #72002a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Iniciar Sesión</a>
-                </div>
-                <p style="font-size: 14px; color: #666; margin-top: 40px; text-align: center;">Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
-              </div>
+              <!DOCTYPE html>
+              <html lang="es">
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=600px, initial-scale=1.0">
+              </head>
+              <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td style="padding: 20px 0; text-align: center; background-color: #72002a;">
+                      <img src="https://diatomeauniversitaria.studio/diatoicon.png" alt="Organizador Universitario Logo" width="60" style="display: inline-block;">
+                      <h1 style="color: white; margin: 10px 0;">Organizador Universitario</h1>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; margin: 0 auto;">
+                        <tr>
+                          <td style="padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            <h2 style="color: #72002a; margin-top: 0;">¡Hola ${user.name}!</h2>
+                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Gracias por registrarte en <strong>Organizador Universitario</strong>.</p>
+                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Tu cuenta ha sido creada exitosamente y ya puedes comenzar a utilizar todas nuestras herramientas:</p>
+                            <ul style="font-size: 15px; line-height: 1.5; color: #333;">
+                              <li>Gestión de tareas y recordatorios</li>
+                              <li>Calendario de eventos y clases</li>
+                              <li>Organización de ramos y horarios</li>
+                              <li>Calculadora de notas</li>
+                              <li>Lista de pendientes</li>
+                            </ul>
+                            <div style="text-align: center; margin: 30px 0;">
+                              <a href="${process.env.FRONTEND_URL}/login" style="background-color: #72002a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Iniciar Sesión</a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px; text-align: center; color: #666; font-size: 12px; background-color: #f1f1f1;">
+                      <p>© ${new Date().getFullYear()} Organizador Universitario. Todos los derechos reservados.</p>
+                      <p>Este es un mensaje automatizado. Por favor no respondas a este correo.</p>
+                    </td>
+                  </tr>
+                </table>
+              </body>
+              </html>
             `
           };
           
           // Enviar correo
           await transporter.sendMail(mailOptions);
+          logEmailActivity('WELCOME', user.email, '¡Bienvenido a Organizador Universitario!', true);
           console.log('Correo de bienvenida enviado a:', user.email);
           
         } catch (emailErr) {
