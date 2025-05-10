@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { initializeNotifications, registerNotificationChannels } from './services/notificationService';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
@@ -21,6 +23,13 @@ import './styles/dashboard.css';
 import './styles/profile.css';
 import './styles/responsive.css';
 import './styles/common.css';
+
+// Inicializar sistema de notificaciones si estamos en un dispositivo nativo
+if (Capacitor.isNativePlatform()) {
+  console.log('Inicializando sistema de notificaciones nativas');
+  initializeNotifications();
+  registerNotificationChannels();
+}
 
 // Crear un tema por defecto para MUI
 const defaultTheme = createTheme({
