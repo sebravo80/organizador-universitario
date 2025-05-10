@@ -135,4 +135,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Account Secure Credentials
 frontend/android/keystore.properties
+
