@@ -449,6 +449,6 @@ body {
 
 @media (max-width: 600px) {
     .app-navbar {
-        padding: 0 80px !important;
+        padding: 0 60px !important;
     }
 }
