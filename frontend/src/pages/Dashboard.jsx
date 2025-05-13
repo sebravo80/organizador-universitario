@@ -274,7 +274,7 @@ const Dashboard = () => {
                                   <Chip 
                                     size="small" 
                                     label={course.courseCode} 
-                                    sx={{ ml: 1 }}
+                                    sx={{ ml: 1, "& .MuiChip-label": { color: "#1976d2", fontWeight: "bold" } }}
                                     icon={<CodeIcon />}
                                   />
                                 )}
