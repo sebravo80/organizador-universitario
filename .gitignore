@@ -140,4 +140,4 @@ frontend/android/keystore.properties
 
 # android exlusion
 
-frontend/android
+/frontend/android/
