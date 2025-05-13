@@ -138,3 +138,6 @@ dist
 # Account Secure Credentials
 frontend/android/keystore.properties
 
+# android exlusion
+
+frontend/android
