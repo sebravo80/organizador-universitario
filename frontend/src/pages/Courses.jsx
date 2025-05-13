@@ -1,21 +1,20 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
-import { 
-  Container, Typography, Box, TextField, Button, 
-  FormControl, InputLabel, Select, MenuItem, Chip,
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Grid, Card, CardContent, CardActions, IconButton,
-  List, ListItem, ListItemText, Divider, Avatar,
-  CircularProgress, Paper, Fab, Alert
-} from '@mui/material';
-import { TimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { es } from 'date-fns/locale';
+import { 
+  Container, Typography, Box, Grid, Card, CardContent, CardActions,
+  Button, IconButton, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, Select, MenuItem, FormControl,
+  InputLabel, CircularProgress, Divider, List, ListItem,
+  Paper, Fab, Avatar
+} from '@mui/material';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RoomIcon from '@mui/icons-material/Room';
 import CodeIcon from '@mui/icons-material/Code';
@@ -24,6 +23,8 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SchoolIcon from '@mui/icons-material/School';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import Alert from '@mui/material/Alert';
 import { toast } from 'react-toastify';
 import '../styles/animations.css';
 import '../styles/courses.css';
@@ -95,11 +96,6 @@ const Courses = () => {
       color: '#3498db',
       scheduleStrings: []
     });
-    setTempSchedule({
-      day: 'Lunes',
-      startTime: null,
-      endTime: null
-    });
     setOpen(true);
   };
   
@@ -113,11 +109,6 @@ const Courses = () => {
       room: course.room || '',
       color: course.color || '#3498db',
       scheduleStrings: course.scheduleStrings || []
-    });
-    setTempSchedule({
-      day: 'Lunes',
-      startTime: null,
-      endTime: null
     });
     setOpen(true);
   };
@@ -181,6 +172,15 @@ const Courses = () => {
       startTime: null,
       endTime: null
     });
+
+    // Pequeña animación para dar feedback visual
+    const scheduleList = document.querySelector('.schedule-list');
+    if (scheduleList) {
+      scheduleList.classList.add('pulse-effect');
+      setTimeout(() => {
+        scheduleList.classList.remove('pulse-effect');
+      }, 1000);
+    }
   };
   
   const removeSchedule = (index) => {
@@ -240,25 +240,26 @@ const Courses = () => {
   };
   
   return (
-    <Container maxWidth="lg" className="page-transition">
+    <Container maxWidth="lg" className="page-transition courses-container">
       <Box sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Typography variant="h4" component="h1" 
-            className="page-title"
+            className="page-title courses-title"
             sx={{ 
               display: 'flex',
               alignItems: 'center', 
               gap: 1
             }}
           >
-            <SchoolIcon fontSize="large" />
-            Mis Ramos
+            <SchoolIcon className="icon-spin-hover" fontSize="large" />
+            <span className="text-gradient">Mis Ramos</span>
           </Typography>
           
           <Button 
             variant="contained" 
             startIcon={<AddIcon />}
             onClick={handleOpenCreate}
+            className="add-button-animate"
             sx={{ display: { xs: 'none', sm: 'flex' } }}
           >
             Nuevo Ramo
@@ -266,19 +267,28 @@ const Courses = () => {
         </Box>
         
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 3 }} className="slide-in-top">
             {error}
           </Alert>
         )}
         
         {loading && courses.length === 0 ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress />
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }} className="loading-container">
+            <CircularProgress className="pulse-effect" />
+            <SchoolIcon 
+              sx={{ 
+                position: 'absolute', 
+                fontSize: 40, 
+                color: 'primary.main',
+                opacity: 0.7
+              }} 
+              className="rotate-effect"
+            />
           </Box>
         ) : courses.length === 0 ? (
           <Paper 
             elevation={1}
-            className="courses-empty-state"
+            className="courses-empty-state fade-in-up"
             sx={{ 
               textAlign: 'center', 
               p: 4, 
@@ -289,61 +299,75 @@ const Courses = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
               gap: 2
             }}
           >
-            <SchoolIcon className="course-icon" color="action" />
-            <Typography variant="h6" color="text.secondary" gutterBottom>
+            <SchoolIcon className="course-icon bounce-effect" color="action" />
+            <Typography variant="h6" color="text.secondary" gutterBottom className="typing-effect-slow">
               No tienes ramos registrados
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 450, mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 450, mb: 2 }} className="fade-in">
               Los ramos te permiten organizar tus clases, tareas y eventos académicos. Comienza añadiendo tu primer ramo.
             </Typography>
             <Button 
               variant="contained" 
               startIcon={<AddIcon />}
               onClick={handleOpenCreate}
+              className="button-pulse"
             >
               Añadir Ramo
             </Button>
           </Paper>
         ) : (
-          <Grid container spacing={{ xs: 2, sm: 3 }}>
+          <Grid container spacing={{ xs: 2, sm: 3 }} className="courses-grid">
             {courses.map((course, index) => (
-              <Grid item xs={12} sm={6} md={4} key={course._id} className="staggered-item">
-                <Card className="course-card" sx={{ 
-                  borderTop: `4px solid ${course.color}`,
-                  height: '100%'
-                }}>
-                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                    <Box className="course-card-header">
-                      <Typography variant="h6" component="h2" sx={{ 
-                        fontWeight: 600,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                      }}>
-                        {course.name}
-                      </Typography>
-                      <Avatar 
-                        className="course-avatar"
-                        sx={{ 
-                          bgcolor: course.color, 
-                          boxShadow: `0 2px 8px ${course.color}80`,
-                          width: 36, 
-                          height: 36, 
-                          fontSize: '1rem' 
-                        }}
-                      >
-                        {course.name.charAt(0)}
-                      </Avatar>
-                    </Box>
+              <Grid item xs={12} sm={6} md={4} key={course._id} className={`staggered-item delay-${index}`}>
+                <Card 
+                  className="course-card" 
+                  sx={{ 
+                    borderTop: `3px solid ${course.color}`,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <Box 
+                    className="course-color-accent"
+                    sx={{ 
+                      position: 'absolute', 
+                      top: 0, 
+                      left: 0, 
+                      width: '100%', 
+                      height: '100%',
+                      background: `linear-gradient(to bottom, ${course.color}15, transparent)`,
+                      zIndex: 0
+                    }}
+                  />
+                  
+                  <Avatar 
+                    className="course-avatar" 
+                    sx={{ 
+                      bgcolor: course.color, 
+                      position: 'absolute', 
+                      top: 16, 
+                      right: 16,
+                      boxShadow: `0 4px 8px ${course.color}60`
+                    }}
+                  >
+                    <BookmarkIcon />
+                  </Avatar>
+                  
+                  <CardContent sx={{ pb: 1, position: 'relative', zIndex: 1, flexGrow: 1 }}>
+                    <Typography variant="h5" component="h2" sx={{ mb: 2, fontWeight: 600, pr: 5 }} className="course-title-animate">
+                      {course.name}
+                    </Typography>
                     
-                    <Box sx={{ mt: 2 }}>
+                    <Box className="course-details">
                       {course.courseCode && (
-                        <Box className="course-info">
-                          <CodeIcon fontSize="small" sx={{ color: course.color }} />
+                        <Box className="course-info slide-in-left">
+                          <CodeIcon fontSize="small" sx={{ color: course.color }} className="icon-pulse" />
                           <Typography variant="body2">
                             <strong>Código:</strong> {course.courseCode}
                           </Typography>
@@ -351,8 +375,8 @@ const Courses = () => {
                       )}
                       
                       {course.professor && (
-                        <Box className="course-info">
-                          <PersonIcon fontSize="small" sx={{ color: course.color }} />
+                        <Box className="course-info slide-in-left" sx={{ animationDelay: '0.1s' }}>
+                          <PersonIcon fontSize="small" sx={{ color: course.color }} className="icon-pulse" />
                           <Typography variant="body2">
                             <strong>Profesor:</strong> {course.professor}
                           </Typography>
@@ -360,8 +384,8 @@ const Courses = () => {
                       )}
                       
                       {course.room && (
-                        <Box className="course-info">
-                          <RoomIcon fontSize="small" sx={{ color: course.color }} />
+                        <Box className="course-info slide-in-left" sx={{ animationDelay: '0.2s' }}>
+                          <RoomIcon fontSize="small" sx={{ color: course.color }} className="icon-bounce" />
                           <Typography variant="body2">
                             <strong>Sala:</strong> {course.room}
                           </Typography>
@@ -369,10 +393,10 @@ const Courses = () => {
                       )}
                     </Box>
                     
-                    <Divider sx={{ my: 2 }} />
+                    <Divider sx={{ my: 2 }} className="divider-animate" />
                     
                     <Box className="course-schedule-title">
-                      <ScheduleIcon fontSize="small" sx={{ mr: 1, color: course.color }} />
+                      <ScheduleIcon fontSize="small" sx={{ mr: 1, color: course.color }} className="rotate-on-hover" />
                       <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                         Horarios:
                       </Typography>
@@ -382,14 +406,14 @@ const Courses = () => {
                       {course.scheduleStrings && course.scheduleStrings.length > 0 ? (
                         <List className="schedule-list" dense>
                           {course.scheduleStrings.map((schedule, index) => (
-                            <ListItem className="schedule-item" key={index} disableGutters>
-                              <AccessTimeIcon fontSize="small" sx={{ color: course.color }} />
+                            <ListItem className={`schedule-item schedule-animate-${index}`} key={index} disableGutters>
+                              <AccessTimeIcon fontSize="small" sx={{ color: course.color }} className="icon-rotate" />
                               <span className="schedule-text">{schedule}</span>
                             </ListItem>
                           ))}
                         </List>
                       ) : (
-                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }} className="fade-in">
                           No hay horarios registrados
                         </Typography>
                       )}
@@ -401,6 +425,7 @@ const Courses = () => {
                       aria-label="editar"
                       onClick={() => handleOpenEdit(course)}
                       title="Editar ramo"
+                      className="action-button edit-button"
                       sx={{ 
                         color: course.color,
                         '&:hover': { 
@@ -414,6 +439,7 @@ const Courses = () => {
                       aria-label="eliminar"
                       onClick={() => deleteCourse(course._id)}
                       title="Eliminar ramo"
+                      className="action-button delete-button"
                       sx={{ 
                         color: 'error.main',
                         '&:hover': { 
@@ -435,6 +461,7 @@ const Courses = () => {
       <Fab 
         color="primary" 
         aria-label="add" 
+        className="fab-button"
         sx={{ 
           position: 'fixed', 
           bottom: 16, 
@@ -452,6 +479,7 @@ const Courses = () => {
         onClose={handleClose} 
         maxWidth="md" 
         fullWidth
+        className="dialog-animate"
         PaperProps={{
           sx: {
             borderRadius: 2,
@@ -476,27 +504,30 @@ const Courses = () => {
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: `0 2px 8px ${courseForm.color}80`,
-          }}>
+          }}
+          className="pulse-effect">
             {isEditing ? <EditIcon sx={{ color: 'white', fontSize: 18 }} /> : <AddIcon sx={{ color: 'white', fontSize: 18 }} />}
           </Box>
-          <Typography variant="h6">
+          <Typography variant="h6" className="slide-in-right">
             {isEditing ? 'Editar Ramo' : 'Nuevo Ramo'}
           </Typography>
         </DialogTitle>
         
-        <DialogContent sx={{ px: 3, py: 2 }}>
-          <Box component="form" sx={{ mt: 1 }}>
+        <DialogContent dividers sx={{ p: 3 }}>
+          <Box component="form" noValidate>
             <TextField
-              margin="normal"
-              required
               fullWidth
-              id="name"
-              label="Nombre del Ramo"
+              label="Nombre del ramo"
               name="name"
               value={courseForm.name}
               onChange={handleChange}
+              variant="outlined"
+              margin="normal"
+              required
               autoFocus
+              className="form-field-animate"
               InputProps={{
+                startAdornment: <BookmarkIcon fontSize="small" sx={{ mr: 1, color: courseForm.color }} />,
                 sx: { '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }
               }}
               InputLabelProps={{
@@ -505,14 +536,15 @@ const Courses = () => {
             />
             
             <TextField
-              margin="normal"
               fullWidth
-              id="courseCode"
               label="Código del ramo"
               name="courseCode"
               value={courseForm.courseCode}
               onChange={handleChange}
-              placeholder="Ej: MAT1001"
+              variant="outlined"
+              margin="normal"
+              className="form-field-animate"
+              sx={{ animationDelay: '0.1s' }}
               InputProps={{
                 startAdornment: <CodeIcon fontSize="small" sx={{ mr: 1, color: courseForm.color }} />,
                 sx: { '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }
@@ -523,13 +555,15 @@ const Courses = () => {
             />
             
             <TextField
-              margin="normal"
               fullWidth
-              id="professor"
               label="Profesor"
               name="professor"
               value={courseForm.professor}
               onChange={handleChange}
+              variant="outlined"
+              margin="normal"
+              className="form-field-animate"
+              sx={{ animationDelay: '0.2s' }}
               InputProps={{
                 startAdornment: <PersonIcon fontSize="small" sx={{ mr: 1, color: courseForm.color }} />,
                 sx: { '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }
@@ -540,14 +574,15 @@ const Courses = () => {
             />
             
             <TextField
-              margin="normal"
               fullWidth
-              id="room"
               label="Sala"
               name="room"
               value={courseForm.room}
               onChange={handleChange}
-              placeholder="Ej: A-101"
+              variant="outlined"
+              margin="normal"
+              className="form-field-animate"
+              sx={{ animationDelay: '0.3s' }}
               InputProps={{
                 startAdornment: <RoomIcon fontSize="small" sx={{ mr: 1, color: courseForm.color }} />,
                 sx: { '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }
@@ -564,63 +599,45 @@ const Courses = () => {
                 alignItems: 'center',
                 fontWeight: 500
               }}>
-                <ColorLensIcon sx={{ mr: 1, color: courseForm.color }} />
+                <ColorLensIcon sx={{ mr: 1, color: courseForm.color }} className="rotate-effect" />
                 Color del ramo
               </Typography>
               
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: -2 }}>
                 <TextField
                   type="color"
                   fullWidth
                   name="color"
                   value={courseForm.color}
                   onChange={handleChange}
-                  variant="outlined"
+                  variant= "outlined"
+                  margin="normal"
+                  className="form-field-animate"
                   label="Selecciona un color"
-                  InputProps={{
-                    startAdornment: (
-                      <Box
-                        component="span"
-                        sx={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: '50%',
-                          bgcolor: courseForm.color,
-                          mr: 1,
-                          border: '2px solid white',
-                          boxShadow: `0 0 5px rgba(0,0,0,0.2)`,
-                        }}
-                      />
-                    ),
-                    sx: { 
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color },
-                      '& input[type=color]': { 
-                        width: '50px',
-                        cursor: 'pointer',
-                        padding: '0',
-                        marginLeft: 'auto',
-                        backgroundColor: 'transparent'
-                      }
-                    }
-                  }}
-                  InputLabelProps={{
-                    sx: { '&.Mui-focused': { color: courseForm.color } }
-                  }}
+                  sx={{ mb: 1 }}
                 />
-              </Box>
-              
-              <Box className="color-preview" sx={{ 
-                bgcolor: `${courseForm.color}20`, 
-                border: `1px solid ${courseForm.color}40`,
-                mt: 2
-              }}>
-                <Typography variant="body2" sx={{ color: courseForm.color, fontWeight: 500 }}>
-                  Vista previa del color
-                </Typography>
+                
+                <Box className="color-preview" sx={{ 
+                  height: 40, 
+                  width: '100%', 
+                  bgcolor: courseForm.color,
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 1,
+                  boxShadow: `0 2px 8px ${courseForm.color}60`,
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
+                    Vista previa del color
+                  </Typography>
+                </Box>
               </Box>
             </Box>
             
-            <Divider sx={{ my: 3 }} />
+            <Divider sx={{ my: 3 }} className="divider-animate" />
             
             <Typography variant="h6" sx={{ 
               mb: 2,
@@ -628,14 +645,15 @@ const Courses = () => {
               alignItems: 'center',
               color: courseForm.color,
               fontWeight: 600
-            }}>
-              <ScheduleIcon sx={{ mr: 1 }} />
+            }}
+            className="slide-in-left">
+              <ScheduleIcon sx={{ mr: 1 }} className="rotate-on-hover" />
               Horario
             </Typography>
             
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={2} alignItems="center" className="schedule-form-container">
               <Grid item xs={12} sm={3}>
-                <FormControl fullWidth>
+                <FormControl fullWidth className="form-field-animate" sx={{ animationDelay: '0.1s' }}>
                   <InputLabel id="day-label">Día</InputLabel>
                   <Select
                     labelId="day-label"
@@ -663,6 +681,8 @@ const Courses = () => {
                     value={tempSchedule.startTime}
                     onChange={(newValue) => handleScheduleChange('startTime', newValue)}
                     sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }}
+                    className="form-field-animate"
+                    slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -674,6 +694,9 @@ const Courses = () => {
                     value={tempSchedule.endTime}
                     onChange={(newValue) => handleScheduleChange('endTime', newValue)}
                     sx={{ '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: courseForm.color } }}
+                    className="form-field-animate" 
+                    //sx={{ animationDelay: '0.2s' }}
+                    slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -693,6 +716,7 @@ const Courses = () => {
                     }
                   }}
                   startIcon={<AddIcon />}
+                  className="add-schedule-button"
                 >
                   Agregar
                 </Button>
@@ -700,22 +724,30 @@ const Courses = () => {
             </Grid>
             
             {courseForm.scheduleStrings.length > 0 && (
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle1" sx={{ mb: 1, color: courseForm.color, fontWeight: 500 }}>
+              <Box sx={{ mt: 3 }} className="schedules-container fade-in">
+                <Typography variant="subtitle1" sx={{ mb: 1, color: courseForm.color, fontWeight: 500, display: 'flex', alignItems: 'center' }}>
+                  <AccessTimeIcon sx={{ mr: 1, fontSize: '1rem' }} className="pulse-effect" />
                   Horarios agregados:
                 </Typography>
                 <List className="schedule-list">
                   {courseForm.scheduleStrings.map((schedule, index) => (
                     <ListItem 
-                      className="schedule-item"
+                      className="schedule-item staggered-left-item"
                       key={index}
                       secondaryAction={
-                        <IconButton edge="end" aria-label="delete" onClick={() => removeSchedule(index)} size="small">
+                        <IconButton 
+                          edge="end" 
+                          aria-label="delete" 
+                          onClick={() => removeSchedule(index)} 
+                          size="small"
+                          className="delete-schedule-button"
+                        >
                           <DeleteIcon fontSize="small" sx={{ color: 'error.main' }} />
                         </IconButton>
                       }
+                      sx={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <AccessTimeIcon sx={{ color: courseForm.color, fontSize: '1rem' }} />
+                      <AccessTimeIcon sx={{ color: courseForm.color, fontSize: '1rem' }} className="icon-rotate" />
                       <span className="schedule-text">{schedule}</span>
                     </ListItem>
                   ))}
@@ -726,7 +758,13 @@ const Courses = () => {
         </DialogContent>
         
         <DialogActions sx={{ px: 3, py: 2, backgroundColor: `${courseForm.color}08` }}>
-          <Button onClick={handleClose} variant="outlined">Cancelar</Button>
+          <Button 
+            onClick={handleClose} 
+            variant="outlined"
+            className="cancel-button-animate"
+          >
+            Cancelar
+          </Button>
           <Button 
             onClick={saveCourse} 
             variant="contained" 
@@ -738,6 +776,7 @@ const Courses = () => {
                 filter: 'brightness(0.9)'
               }
             }}
+            className="save-button-animate"
           >
             {loading ? (
               <>

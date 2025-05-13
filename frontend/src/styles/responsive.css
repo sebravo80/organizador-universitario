@@ -7,21 +7,10 @@
 
 /* Ajustes generales para dispositivos móviles */
 @media (max-width: 600px) {
-  /* Tamaños de texto ajustados */
-  .MuiTypography-h4 {
-    font-size: 1.5rem !important;
-    line-height: 1.3 !important;
-  }
-  
-  .MuiTypography-h5 {
-    font-size: 1.25rem !important;
-    line-height: 1.3 !important;
-  }
-  
-  .MuiTypography-h6 {
-    font-size: 1.1rem !important;
-    line-height: 1.3 !important;
-  }
+  /* Tamaños de texto */
+  .MuiTypography-h4 { font-size: 1.5rem !important; line-height: 1.3 !important; }
+  .MuiTypography-h5 { font-size: 1.25rem !important; line-height: 1.3 !important; }
+  .MuiTypography-h6 { font-size: 1.1rem !important; line-height: 1.3 !important; }
   
   /* Espaciado general */
   .MuiContainer-root {
@@ -29,76 +18,77 @@
     padding-right: var(--content-padding-mobile) !important;
   }
   
-  /* Ajustes para tarjetas */
+  /* Tarjetas */
   .course-card, .task-card, .event-card, .dashboard-card {
     margin-bottom: var(--card-spacing-mobile) !important;
     border-radius: 12px !important;
   }
   
-  /* Ajustes para botones */
+  /* Botones */
   .MuiButton-root {
     padding: 6px 12px !important;
     font-size: 0.875rem !important;
   }
   
-  /* Ajustes para diálogos */
+  /* Diálogos */
   .MuiDialog-paper {
     margin: 12px !important;
     width: calc(100% - 24px) !important;
     max-height: calc(100% - 24px) !important;
   }
   
-  /* Ajustes para tabs */
+  /* Tabs */
   .MuiTab-root {
     min-width: 0 !important;
     padding: 8px !important;
   }
-
-  /* Ajustes para Chips */
+  
+  /* Chips */
   .MuiChip-root {
     height: 24px !important;
     font-size: 0.75rem !important;
   }
   
-  /* Ajustes para menús */
-  .MuiMenu-paper {
-    max-height: 300px !important;
+  /* Cards */
+  .MuiCard-root { padding: 12px !important; }
+  .MuiCardHeader-root { padding: 8px !important; }
+  .MuiCardContent-root { padding: 8px !important; }
+  .MuiCardActions-root { padding: 4px 8px !important; }
+  .MuiCardHeader-avatar { margin-right: 8px !important; }
+  .MuiCardHeader-title { font-size: 0.95rem !important; }
+  
+  /* Menú y navbar */
+  .MuiAppBar-root { padding: 0 8px !important; }
+  .MuiToolbar-root { min-height: 56px !important; }
+  .app-navbar .MuiIconButton-root .profile-avatar.MuiAvatar-root {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    font-size: 0.9rem !important;
   }
   
-  /* Mejoras para formularios */
-  .MuiFormControl-root {
-    margin-bottom: 12px !important;
+  /* To do list */
+  .todo-actions {
+    opacity: 1;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
   }
   
-  /* Ajustes para modales */
-  .MuiDialogTitle-root {
-    padding: 12px 16px !important;
+  .todo-action-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
   }
   
-  .MuiDialogContent-root {
-    padding: 16px !important;
-  }
+  .todo-action-btn .MuiSvgIcon-root { font-size: 0.9rem; }
+  .todo-pagination .MuiPagination-ul { padding: 4px 8px; }
+  .todo-title::after { width: 40px; height: 2px; }
+  .todo-item:hover { transform: none; }
   
-  .MuiDialogActions-root {
-    padding: 8px 16px 16px !important;
-  }
-}
-
-/* Ajustes específicos para pantallas medianas */
-@media (min-width: 601px) and (max-width: 960px) {
-  .MuiContainer-root {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-}
-
-/* Evitar que el contenido quede debajo del botón flotante */
-.has-fab-button {
-  padding-bottom: 72px !important;
-}
-
-/* Ajustes para FullCalendar en móviles */
-@media (max-width: 600px) {
+  /* Fullcalendar */
   .fc-header-toolbar {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -120,13 +110,8 @@
     padding: 4px 8px !important;
     font-size: 0.75rem !important;
   }
-
-  .fc-view {
-    height: auto !important;
-    min-height: 500px !important;
-  }
   
-  .fc-view-harness {
+  .fc-view, .fc-view-harness {
     height: auto !important;
     min-height: 500px !important;
   }
@@ -135,4 +120,36 @@
     padding: 4px !important;
     font-size: 0.75rem !important;
   }
+}
+
+/* Ajustes para tabletas */
+@media (min-width: 601px) and (max-width: 960px) {
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* Ajustes para pantallas medianas (dashboard) */
+@media (max-width: 768px) {
+  .fc-toolbar { flex-direction: column; }
+  .fc .fc-toolbar-title { font-size: 1.2em; }
+  .fc-event { font-size: 0.85em; }
+  
+  /* Dashboard grid */
+  .dashboard-grid,
+  .task-grid,
+  .course-grid,
+  .event-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .dashboard-card {
+    margin-bottom: 16px !important;
+  }
+}
+
+/* Fix para que el contenido no quede bajo el FAB button */
+.has-fab-button {
+  padding-bottom: 72px !important;
 }

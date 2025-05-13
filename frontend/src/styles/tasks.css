@@ -37,6 +37,11 @@
 .task-card {
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
+  border-radius: 12px !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .task-card::after {
@@ -80,4 +85,463 @@
   padding-left: 7px !important;
   padding-right: 7px !important;
   color: white !important;
+}
+
+/* Estilos mejorados para la página de tareas */
+.tasks-container {
+  animation: fadeIn 0.6s ease;
+}
+
+/* Estilo para el título de la página con efecto de gradiente */
+.tasks-title .text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+  font-weight: 700;
+}
+
+/* Animación para la tarjeta de tarea completa */
+.task-card-animate {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  will-change: transform, box-shadow;
+}
+
+.task-card-animate:hover {
+  transform: translateY(-8px) scale(1.01) !important;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.15), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.08) !important;
+}
+
+.task-card-grid-item {
+  will-change: transform, opacity;
+}
+
+/* Containers para la pantalla de carga */
+.task-loading-container {
+  min-height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.animate-pulse-scale {
+  animation: pulseScale 2s infinite alternate;
+}
+
+@keyframes pulseScale {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Estilos y animaciones para pestañas */
+.tasks-tabs {
+  position: relative;
+  overflow: visible;
+}
+
+.task-tab {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-tab.Mui-selected::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  animation: slideInFromLeft 0.3s ease-out forwards;
+}
+
+.tab-icon {
+  transition: transform 0.3s ease;
+}
+
+.task-tab:hover .tab-icon,
+.task-tab.Mui-selected .tab-icon {
+  transform: scale(1.2);
+}
+
+/* Panel de filtros animado */
+.filters-paper {
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  border-radius: 12px !important;
+}
+
+.filters-paper:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Campo de búsqueda con animaciones */
+.search-field {
+  transition: all 0.3s ease !important;
+}
+
+.search-field:focus-within {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.search-icon {
+  animation: pulse 2s infinite alternate;
+  color: var(--primary-color);
+}
+
+.shake-on-hover:hover {
+  animation: shake 0.5s ease;
+}
+
+/* Botón de filtros animado */
+.filter-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease !important;
+}
+
+.filter-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+}
+
+.filter-button:hover::after {
+  animation: shimmer 1.5s infinite;
+}
+
+/* Selector de ordenamiento con efecto */
+.sort-select {
+  transition: transform 0.3s ease;
+}
+
+.sort-select:hover {
+  transform: translateY(-2px);
+}
+
+.sort-icon {
+  animation: rotate 10s linear infinite;
+  opacity: 0.7;
+}
+
+/* Estado vacío mejorado */
+.empty-state-paper {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 16px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+html[data-theme='dark'] .empty-state-paper {
+  background-color: rgba(18, 18, 18, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.empty-state-paper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12) !important;
+}
+
+.empty-state-icon-wrapper {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(25, 118, 210, 0.1);
+  margin-bottom: 16px;
+}
+
+/* Animación de tipeo para mensajes largos */
+.typing-effect-slow {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid var(--primary-color);
+  width: 0;
+  animation: typing 2.5s steps(40, end) forwards, blink .75s step-end infinite;
+}
+
+/* Rejilla de tareas animada */
+.tasks-grid {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Paginación animada */
+.pagination-container {
+  animation: slideInUp 0.5s ease;
+  margin-top: 2rem;
+}
+
+.pagination-control .MuiPaginationItem-root {
+  transition: all 0.3s ease;
+}
+
+.pagination-control .MuiPaginationItem-root:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-control .Mui-selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  font-weight: bold;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(114, 0, 42, 0.3);
+}
+
+/* Botón flotante móvil */
+.fab-button-tasks {
+  animation: popAndBounce 0.5s cubic-bezier(0.19, 1.27, 0.48, 1.31);
+  box-shadow: 0 4px 15px rgba(114, 0, 42, 0.4) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fab-button-tasks:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(114, 0, 42, 0.5) !important;
+}
+
+/* Panel lateral de filtros */
+.filter-drawer .MuiDrawer-paper {
+  backdrop-filter: blur(15px);
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='dark'] .filter-drawer .MuiDrawer-paper {
+  background-color: rgba(18, 18, 18, 0.85) !important;
+  border-left-color: rgba(255, 255, 255, 0.05);
+}
+
+.drawer-content {
+  animation: slideInFromRight 0.3s ease;
+}
+
+.drawer-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.close-drawer-btn {
+  transition: transform 0.3s ease;
+}
+
+.close-drawer-btn:hover {
+  transform: rotate(90deg);
+}
+
+/* Divider animado */
+.divider-animate {
+  position: relative;
+  overflow: hidden;
+}
+
+.divider-animate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  animation: shimmerDivider 2s infinite;
+}
+
+@keyframes shimmerDivider {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Campos de formulario animados */
+.form-field-animate {
+  animation: slideInUp 0.5s ease forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Punto de color del ramo */
+.course-color-dot {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-color-dot:hover {
+  transform: scale(1.3);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Botones de acción en el drawer */
+.reset-filters-btn, .apply-filters-btn {
+  transition: all 0.3s ease;
+}
+
+.reset-filters-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+}
+
+.apply-filters-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(114, 0, 42, 0.3);
+}
+
+/* Animaciones para el diálogo de tareas */
+.task-dialog-animate {
+  animation: fadeIn 0.3s ease;
+}
+
+.task-form-paper {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.dialog-title-animate {
+  animation: slideInFromTop 0.3s ease;
+}
+
+.dialog-content-animate {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Iconos en el formulario de tareas */
+.calendar-icon-animate {
+  transition: transform 0.3s ease;
+}
+
+.calendar-icon-animate:hover {
+  transform: rotate(20deg) scale(1.2);
+  color: var(--primary-color);
+}
+
+.flag-icon-animate {
+  transition: transform 0.3s ease;
+}
+
+.flag-icon-animate:hover {
+  transform: translateY(-2px);
+}
+
+/* Botones de diálogo */
+.save-button-animate, .cancel-button-animate {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.save-button-animate::after, .cancel-button-animate::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.save-button-animate:active::after, .cancel-button-animate:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+.save-button-animate:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-button-animate:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Ícono flotante en el título */
+.icon-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Para el overflow de texto en tarjetas */
+.MuiTypography-root {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Animación rotar al pasar el cursor */
+.rotate-on-hover {
+  transition: transform 0.3s ease;
+}
+
+.rotate-on-hover:hover {
+  transform: rotate(20deg);
+}
+
+/* Retrasos para animaciones escalonadas */
+.delay-0 { animation-delay: 0.05s !important; }
+.delay-1 { animation-delay: 0.1s !important; }
+.delay-2 { animation-delay: 0.15s !important; }
+.delay-3 { animation-delay: 0.2s !important; }
+.delay-4 { animation-delay: 0.25s !important; }
+.delay-5 { animation-delay: 0.3s !important; }
+.delay-6 { animation-delay: 0.35s !important; }
+.delay-7 { animation-delay: 0.4s !important; }
+.delay-8 { animation-delay: 0.45s !important; }
+
+/* Ajustes responsivos */
+@media (max-width: 600px) {
+  .tasks-container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .task-card {
+    margin-bottom: 8px;
+  }
+
+  .pagination-container {
+    margin-top: 1rem;
+  }
+  
+  .tasks-title {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* Colores para chips de prioridad */
+.priority-high {
+  background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+
+.priority-medium {
+  background-color: #ff9800;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
+}
+
+.priority-low {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
 }

@@ -8,7 +8,7 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Grid, Chip, Paper, Pagination, Stack, Fab, Drawer,
   IconButton, Tabs, Tab, CircularProgress, Divider,
-  InputAdornment, Alert, useMediaQuery, useTheme
+  InputAdornment, Alert, useMediaQuery, useTheme, Avatar
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -24,6 +24,12 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
+import TitleIcon from '@mui/icons-material/Title';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FlagIcon from '@mui/icons-material/Flag';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SchoolIcon from '@mui/icons-material/School';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteConfirmationDialog from '../components/common/DeleteConfirmationDialog';
 import TaskCard from '../components/TaskCard';
 import { toast } from 'react-toastify';
@@ -52,7 +58,8 @@ const darkenColor = (color, factor) => {
   r = Math.max(0, Math.floor(r * (1 - factor)));
   g = Math.max(0, Math.floor(g * (1 - factor)));
   b = Math.max(0, Math.floor(b * (1 - factor)));
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}`;
+  
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 };
 
 const Tasks = () => {
@@ -303,29 +310,29 @@ const Tasks = () => {
   // Filtrado por estado de tab y filtros
   const statusFilter = (task) => {
     // Primero comprobamos el estado del tab
-    if (tabValue === 1 && task.status !== 'Pendiente') return false;
-    if (tabValue === 2 && task.status !== 'En progreso') return false;
-    if (tabValue === 3 && task.status !== 'Completada') return false;
-
-    // Luego aplicamos los otros filtros
     if (filter.status !== 'all' && task.status !== filter.status) {
       return false;
     }
+    
+    // Luego comprobamos la prioridad
     if (filter.priority !== 'all' && task.priority !== filter.priority) {
       return false;
     }
+    
+    // Finalmente el ramo
     if (filter.course !== 'all' && (!task.course || task.course._id !== filter.course)) {
       return false;
     }
+    
     return true;
   };
   
-  // Aplicar todos los filtros y ordenar
+  // Filtrar y ordenar las tareas
   const filteredTasks = tasks.filter(task => searchFilter(task) && statusFilter(task));
   
-  // Ordenar tareas
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
-    switch(sortOrder) {
+  // Ordenar las tareas filtradas
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    switch (sortOrder) {
       case 'date-asc':
         return new Date(a.dueDate) - new Date(b.dueDate);
       case 'date-desc':
@@ -354,35 +361,57 @@ const Tasks = () => {
   
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '50vh' }}>
-          <CircularProgress />
-          <Typography sx={{ mt: 2 }}>Cargando tareas...</Typography>
+      <Container maxWidth="lg" className="task-loading-container">
+        <Box sx={{ 
+          mt: 4, 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          flexDirection: 'column', 
+          height: '50vh',
+          gap: 3
+        }}>
+          <AssignmentIcon className="animate-pulse-scale" sx={{ fontSize: 60, color: 'primary.main' }} />
+          <Typography variant="h6" color="text.secondary" className="typing-effect">
+            Cargando tareas...
+          </Typography>
+          <CircularProgress className="rotate-effect" size={24} />
         </Box>
       </Container>
     );
   }
   
   return (
-    <Container maxWidth="lg" className="page-transition">
+    <Container maxWidth="lg" className="tasks-container page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1" 
-            className="page-title"
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 3,
+          flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          gap: { xs: 2, sm: 1 }
+        }}>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            className="tasks-title"
             sx={{ 
               display: 'flex',
               alignItems: 'center', 
-              gap: 1
+              gap: 1,
+              mb: { xs: 1, sm: 0 }
             }}
           >
-            <AssignmentIcon fontSize="large" />
-            Mis Tareas
+            <AssignmentIcon fontSize="large" className="icon-float" />
+            <span className="text-gradient">Mis Tareas</span>
           </Typography>
           
           <Button 
             variant="contained" 
-            startIcon={<AddIcon />}
+            startIcon={<AddIcon className="rotate-on-hover" />}
             onClick={handleOpenCreate}
+            className="add-button-animate"
             sx={{ display: { xs: 'none', sm: 'flex' } }}
           >
             Nueva Tarea
@@ -390,13 +419,20 @@ const Tasks = () => {
         </Box>
         
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 3 }} className="slide-in-top">
             {error}
           </Alert>
         )}
         
-        <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+        <Paper elevation={2} sx={{ p: 2, mb: 3 }} className="filters-paper slide-in-left">
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 2, 
+            mb: 2, 
+            justifyContent: 'space-between',
+            alignItems: 'center' 
+          }}>
             <TextField
               placeholder="Buscar tareas..."
               variant="outlined"
@@ -404,19 +440,24 @@ const Tasks = () => {
               size="small"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon className="search-icon" />
                   </InputAdornment>
                 ),
                 endAdornment: searchTerm && (
                   <InputAdornment position="end">
                     <IconButton size="small" onClick={() => setSearchTerm('')}>
-                      <CloseIcon fontSize="small" />
+                      <CloseIcon fontSize="small" className="shake-on-hover" />
                     </IconButton>
                   </InputAdornment>
                 )
+              }}
+              sx={{
+                maxWidth: { xs: '100%', sm: '60%' },
+                transition: 'all 0.3s ease'
               }}
             />
             
@@ -426,16 +467,17 @@ const Tasks = () => {
                 startIcon={<FilterListIcon />}
                 onClick={() => setDrawerOpen(true)}
                 sx={{ whiteSpace: 'nowrap' }}
+                className="filter-button"
               >
                 Filtros
               </Button>
               
-              <FormControl variant="outlined" size="small">
+              <FormControl variant="outlined" size="small" className="sort-select">
                 <Select
                   value={sortOrder}
                   onChange={handleSortChange}
                   displayEmpty
-                  startAdornment={<SortIcon sx={{ mr: 0.5 }} />}
+                  startAdornment={<SortIcon sx={{ mr: 0.5 }} className="sort-icon" />}
                 >
                   <MenuItem value="date-asc">Fecha ↑</MenuItem>
                   <MenuItem value="date-desc">Fecha ↓</MenuItem>
@@ -453,11 +495,28 @@ const Tasks = () => {
             variant="scrollable"
             scrollButtons="auto"
             sx={{ borderBottom: 1, borderColor: 'divider' }}
+            className="tasks-tabs"
           >
-            <Tab icon={<AssignmentIcon />} label={`Todas (${tasks.length})`} />
-            <Tab icon={<AssignmentLateIcon />} label={`Pendientes (${tasks.filter(t => t.status === 'Pendiente').length})`} />
-            <Tab icon={<HourglassBottomIcon />} label={`En progreso (${tasks.filter(t => t.status === 'En progreso').length})`} />
-            <Tab icon={<AssignmentTurnedInIcon />} label={`Completadas (${tasks.filter(t => t.status === 'Completada').length})`} />
+            <Tab 
+              icon={<AssignmentIcon className="tab-icon" />} 
+              label={`Todas (${tasks.length})`}
+              className="task-tab"
+            />
+            <Tab 
+              icon={<AssignmentLateIcon className="tab-icon" />} 
+              label={`Pendientes (${tasks.filter(t => t.status === 'Pendiente').length})`}
+              className="task-tab"
+            />
+            <Tab 
+              icon={<HourglassBottomIcon className="tab-icon" />} 
+              label={`En progreso (${tasks.filter(t => t.status === 'En progreso').length})`}
+              className="task-tab"
+            />
+            <Tab 
+              icon={<AssignmentTurnedInIcon className="tab-icon" />} 
+              label={`Completadas (${tasks.filter(t => t.status === 'Completada').length})`}
+              className="task-tab"
+            />
           </Tabs>
         </Paper>
         
@@ -477,51 +536,57 @@ const Tasks = () => {
               justifyContent: 'center',
               gap: 2
             }}
+            className="empty-state-paper fade-in-up"
           >
-            <Box sx={{ mb: 1, opacity: 0.7 }}>
-              <AssignmentIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
+            <Box sx={{ mb: 1, opacity: 0.7 }} className="empty-state-icon-wrapper">
+              <AssignmentIcon sx={{ fontSize: 60, color: 'text.secondary' }} className="bounce-effect" />
             </Box>
-            <Typography variant="h6" color="text.secondary" gutterBottom>
+            <Typography variant="h6" color="text.secondary" gutterBottom className="typing-effect-slow">
               No hay tareas que coincidan con los filtros.
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, maxWidth: 450 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, maxWidth: 450 }} className="fade-in">
               Prueba cambiando los filtros o agrega una nueva tarea.
             </Typography>
             <Button 
               variant="contained" 
               startIcon={<AddIcon />}
               onClick={handleOpenCreate}
+              className="button-pulse"
             >
               Nueva Tarea
             </Button>
           </Paper>
         ) : (
           <>
-            <Grid container spacing={3}>
-              {paginatedTasks.map(task => (
-                <Grid item xs={12} sm={6} md={4} key={task._id} className="staggered-item">
-                  <TaskCard 
-                    task={task} 
-                    onEdit={handleOpenEdit}
+            <Grid container spacing={2} className="tasks-grid">
+              {paginatedTasks.map((task, index) => (
+                <Grid key={task._id} className={`task-card-grid-item staggered-item delay-${index % 9}`} sx={{ 
+                  width: { xs: '100%', sm: '50%', lg: '33.33%' },
+                  padding: 1
+                }}>
+                  <TaskCard
+                    task={task}
                     onDelete={showDeleteConfirmation}
+                    onEdit={handleOpenEdit}
                     onComplete={completeTask}
                     onReopen={reopenTask}
+                    className="task-card-animate"
                   />
                 </Grid>
               ))}
             </Grid>
             
             {totalPages > 1 && (
-              <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }} className="pagination-container">
                 <Pagination 
                   count={totalPages} 
                   page={page} 
-                  onChange={handlePageChange} 
-                  color="primary" 
-                  showFirstButton 
-                  showLastButton
-                  siblingCount={isMobile ? 0 : 1}
+                  onChange={handlePageChange}
+                  color="primary"
                   size={isMobile ? "small" : "medium"}
+                  showFirstButton
+                  showLastButton
+                  className="pagination-control"
                 />
               </Box>
             )}
@@ -540,6 +605,7 @@ const Tasks = () => {
           display: { xs: 'flex', sm: 'none' } 
         }}
         onClick={handleOpenCreate}
+        className="fab-button-tasks"
       >
         <AddIcon />
       </Fab>
@@ -549,6 +615,7 @@ const Tasks = () => {
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        className="filter-drawer"
       >
         <Box sx={{ 
           width: { xs: '280px', sm: '320px' },
@@ -556,17 +623,19 @@ const Tasks = () => {
           height: '100%',
           display: 'flex',
           flexDirection: 'column'
-        }}>
+        }}
+        className="drawer-content"
+        >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">Filtros</Typography>
-            <IconButton onClick={() => setDrawerOpen(false)}>
+            <Typography variant="h6" className="drawer-title">Filtros</Typography>
+            <IconButton onClick={() => setDrawerOpen(false)} className="close-drawer-btn">
               <CloseIcon />
             </IconButton>
           </Box>
           
-          <Divider sx={{ mb: 3 }} />
+          <Divider sx={{ mb: 3 }} className="divider-animate" />
           
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2 }} className="form-field-animate">
             <InputLabel id="status-filter-label">Estado</InputLabel>
             <Select
               labelId="status-filter-label"
@@ -583,7 +652,7 @@ const Tasks = () => {
             </Select>
           </FormControl>
           
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2 }} className="form-field-animate">
             <InputLabel id="priority-filter-label">Prioridad</InputLabel>
             <Select
               labelId="priority-filter-label"
@@ -600,28 +669,28 @@ const Tasks = () => {
             </Select>
           </FormControl>
           
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="course-filter-label">Curso</InputLabel>
+          <FormControl fullWidth sx={{ mb: 3 }} className="form-field-animate">
+            <InputLabel id="course-filter-label">Ramo</InputLabel>
             <Select
               labelId="course-filter-label"
               id="course-filter"
               name="course"
               value={filter.course}
-              label="Curso"
+              label="Ramo"
               onChange={handleFilterChange}
             >
               <MenuItem value="all">Todos</MenuItem>
               {courses.map(course => (
-                <MenuItem key={course._id} value={course._id}>
+                <MenuItem value={course._id} key={course._id}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box
-                      component="span"
-                      sx={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: '50%',
-                        bgcolor: course.color || '#9e9e9e',
-                      }}
+                    <Box sx={{ 
+                      display: 'inline-block',
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%',
+                      bgcolor: course.color || '#9e9e9e',
+                    }}
+                    className="course-color-dot"
                     />
                     {course.name}
                   </Box>
@@ -646,6 +715,7 @@ const Tasks = () => {
                   course: 'all'
                 });
               }}
+              className="reset-filters-btn"
             >
               Limpiar
             </Button>
@@ -653,6 +723,7 @@ const Tasks = () => {
               variant="contained" 
               fullWidth
               onClick={() => setDrawerOpen(false)}
+              className="apply-filters-btn"
             >
               Aplicar
             </Button>
@@ -661,58 +732,132 @@ const Tasks = () => {
       </Drawer>
       
       {/* Modal para crear/editar tarea */}
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {isEditing ? 'Editar Tarea' : 'Nueva Tarea'}
+      <Dialog 
+        open={open} 
+        onClose={handleClose} 
+        maxWidth="md" 
+        fullWidth
+        className="task-dialog-animate"
+        PaperProps={{
+          className: "task-form-paper"
+        }}
+      >
+        <DialogTitle sx={{ 
+          borderLeft: `4px solid ${
+            isEditing ? 
+              taskForm.priority === 'Alta' ? '#f44336' : 
+              taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+            : '#1976d2'
+          }`,
+          bgcolor: `${
+            isEditing ? 
+              taskForm.priority === 'Alta' ? '#f4433610' : 
+              taskForm.priority === 'Media' ? '#ff980010' : '#4caf5010' 
+            : '#1976d210'
+          }`,
+          display: 'flex',
+          alignItems: 'center',
+          p: 2
+        }} 
+        className="dialog-title-animate">
+          <Box component="span" sx={{ 
+            width: 40, 
+            height: 40, 
+            borderRadius: '50%', 
+            bgcolor: isEditing ? 
+              taskForm.priority === 'Alta' ? '#f44336' : 
+              taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+            : '#1976d2', 
+            mr: 2,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: `0 2px 8px ${
+              isEditing ? 
+                taskForm.priority === 'Alta' ? '#f4433680' : 
+                taskForm.priority === 'Media' ? '#ff980080' : '#4caf5080' 
+              : '#1976d280'
+            }`,
+          }}
+          className="pulse-effect">
+            {isEditing ? <EditIcon sx={{ color: 'white' }} /> : <AddIcon sx={{ color: 'white' }} />}
+          </Box>
+          <Typography variant="h6" className="slide-in-right">
+            {isEditing ? 'Editar Tarea' : 'Nueva Tarea'}
+          </Typography>
         </DialogTitle>
-        <DialogContent>
+
+        <DialogContent dividers className="dialog-content-animate">
           <Box component="form" sx={{ mt: 1 }}>
             <TextField
-              margin="normal"
-              required
               fullWidth
-              id="title"
               label="Título de la tarea"
               name="title"
               value={taskForm.title}
               onChange={handleChange}
+              variant="outlined"
+              margin="normal"
+              required
               autoFocus
+              className="form-field-animate"
+              InputProps={{
+                startAdornment: <TitleIcon fontSize="small" sx={{ mr: 1, color: isEditing ? 
+                  taskForm.priority === 'Alta' ? '#f44336' : 
+                  taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+                : '#1976d2' }} />,
+              }}
             />
             
             <TextField
-              margin="normal"
               fullWidth
-              id="description"
-              label="Descripción"
+              label="Descripción (opcional)"
               name="description"
-              multiline
-              rows={3}
               value={taskForm.description}
               onChange={handleChange}
+              variant="outlined"
+              margin="normal"
+              multiline
+              rows={3}
+              className="form-field-animate"
+              sx={{ animationDelay: '0.1s' }}
+              InputProps={{
+                startAdornment: <DescriptionIcon fontSize="small" sx={{ mr: 1, mt: 1, color: isEditing ? 
+                  taskForm.priority === 'Alta' ? '#f44336' : 
+                  taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+                : '#1976d2' }} />,
+              }}
             />
             
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="course-label">Curso</InputLabel>
+            <FormControl fullWidth margin="normal" className="form-field-animate" sx={{ animationDelay: '0.2s' }}>
+              <InputLabel id="course-label">Ramo asociado (opcional)</InputLabel>
               <Select
                 labelId="course-label"
                 id="course"
                 name="course"
                 value={taskForm.course}
-                label="Curso"
+                label="Ramo asociado (opcional)"
                 onChange={handleChange}
+                startAdornment={
+                  <SchoolIcon fontSize="small" sx={{ mr: 1, color: isEditing ? 
+                    taskForm.priority === 'Alta' ? '#f44336' : 
+                    taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+                  : '#1976d2' }} />
+                }
               >
-                <MenuItem value="">Ninguno</MenuItem>
+                <MenuItem value="">
+                  <em>Ninguno</em>
+                </MenuItem>
                 {courses.map(course => (
-                  <MenuItem key={course._id} value={course._id}>
+                  <MenuItem value={course._id} key={course._id}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box
-                        component="span"
-                        sx={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: '50%',
-                          bgcolor: course.color || '#9e9e9e',
-                        }}
+                      <Box sx={{ 
+                        display: 'inline-block',
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        bgcolor: course.color || '#9e9e9e',
+                      }}
+                      className="course-color-dot pulse-effect"
                       />
                       {course.name}
                     </Box>
@@ -721,18 +866,21 @@ const Tasks = () => {
               </Select>
             </FormControl>
             
-            <Box sx={{ mt: 2, mb: 2 }}>
+            <Box sx={{ mt: 2, mb: 2 }} className="form-field-animate" style={{ animationDelay: '0.3s' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
                 <DatePicker
                   label="Fecha de entrega"
                   value={taskForm.dueDate}
                   onChange={handleDateChange}
                   sx={{ width: '100%' }}
+                  slots={{
+                    openPickerIcon: () => <CalendarTodayIcon className="calendar-icon-animate" />
+                  }}
                 />
               </LocalizationProvider>
             </Box>
             
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" className="form-field-animate" sx={{ animationDelay: '0.4s' }}>
               <InputLabel id="priority-label">Prioridad</InputLabel>
               <Select
                 labelId="priority-label"
@@ -741,6 +889,13 @@ const Tasks = () => {
                 value={taskForm.priority}
                 label="Prioridad"
                 onChange={handleChange}
+                startAdornment={
+                  <FlagIcon fontSize="small" sx={{ 
+                    mr: 1, 
+                    color: taskForm.priority === 'Alta' ? '#f44336' : 
+                           taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+                  }} className="flag-icon-animate" />
+                }
               >
                 <MenuItem value="Alta">Alta</MenuItem>
                 <MenuItem value="Media">Media</MenuItem>
@@ -748,7 +903,7 @@ const Tasks = () => {
               </Select>
             </FormControl>
             
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" className="form-field-animate" sx={{ animationDelay: '0.5s' }}>
               <InputLabel id="status-label">Estado</InputLabel>
               <Select
                 labelId="status-label"
@@ -765,9 +920,31 @@ const Tasks = () => {
             </FormControl>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={saveTask} variant="contained">
+        
+        <DialogActions sx={{ px: 3, py: 2, backgroundColor: `${
+          isEditing ? 
+            taskForm.priority === 'Alta' ? '#f4433608' : 
+            taskForm.priority === 'Media' ? '#ff980008' : '#4caf5008'
+          : '#1976d208'
+        }` }}>
+          <Button onClick={handleClose} className="cancel-button-animate">Cancelar</Button>
+          <Button 
+            onClick={saveTask} 
+            variant="contained" 
+            className="save-button-animate"
+            sx={{ 
+              bgcolor: isEditing ? 
+                taskForm.priority === 'Alta' ? '#f44336' : 
+                taskForm.priority === 'Media' ? '#ff9800' : '#4caf50' 
+              : '#1976d2',
+              '&:hover': { 
+                bgcolor: isEditing ? 
+                  taskForm.priority === 'Alta' ? '#d32f2f' : 
+                  taskForm.priority === 'Media' ? '#e65100' : '#2e7d32' 
+                : '#1565c0',
+              } 
+            }}
+          >
             {isEditing ? 'Guardar cambios' : 'Crear'}
           </Button>
         </DialogActions>
@@ -778,8 +955,8 @@ const Tasks = () => {
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={deleteTask}
-        title="Eliminar Tarea"
-        content="¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer."
+        title="¿Eliminar tarea?"
+        content="Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar esta tarea?"
       />
     </Container>
   );

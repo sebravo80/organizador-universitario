@@ -38,10 +38,8 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
-}
-
-/* Variables temáticas aplicadas según el atributo data-theme */
-html[data-theme='dark'] {
+  
+  /* Variables de aplicación base (modo oscuro por defecto) */
   --bg-primary: var(--dark-bg-primary);
   --bg-secondary: var(--dark-bg-secondary);
   --bg-terciary: var(--dark-bg-tertiary);
@@ -53,8 +51,10 @@ html[data-theme='dark'] {
   --border-color-secondary: var(--dark-bg-tertiary);
   --card-bg: rgba(39, 39, 39, 0.9);
   --navbar-bg: var(--primary-color);
+  --focus-color: rgba(76, 0, 29, 0.5);
 }
 
+/* Variables para modo claro */
 html[data-theme='light'] {
   --bg-primary: var(--light-bg-primary);
   --bg-secondary: var(--light-bg-secondary);

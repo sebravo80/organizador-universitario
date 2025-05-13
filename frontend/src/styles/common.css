@@ -1,5 +1,6 @@
 /* Estilos comunes para todas las páginas */
 
+/* Títulos de páginas */
 .page-title {
   color: var(--primary-color) !important;
   background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
@@ -20,16 +21,6 @@
   margin-right: 4px;
 }
 
-/* Añadir este estilo para todos los títulos h1 a h6 en las páginas principales */
-.page-container h1,
-.page-container h2,
-.page-container h3,
-.page-container h4,
-.page-container h5,
-.page-container h6 {
-  color: var(--text-primary) !important;
-}
-
 /* Efecto de resplandor para títulos */
 .page-title::after {
   content: '';
@@ -42,13 +33,123 @@
   border-radius: 3px;
 }
 
-@media (max-width: 600px) {
-  .page-title {
-    font-size: 1.5rem !important;
-  }
-  
-  .page-title::after {
-    width: 40px;
-    height: 2px;
-  }
+/* Colores de texto para encabezados */
+.page-container h1,
+.page-container h2,
+.page-container h3,
+.page-container h4,
+.page-container h5,
+.page-container h6 {
+  color: var(--text-primary) !important;
+}
+
+/* Clases de utilidad para efectos comunes */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.15),
+    0 10px 10px -5px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Estados vacíos genéricos */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+html[data-theme='dark'] .empty-state {
+  background-color: rgba(30, 30, 30, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.empty-state-icon {
+  font-size: 48px !important;
+  margin-bottom: 16px;
+  opacity: 0.7;
+  color: var(--text-terciary);
+}
+
+/* Mensajes de estado */
+.state-message {
+  padding: 12px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.error-message {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.15);
+  border-left: 4px solid #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.25);
+}
+
+.success-message {
+  color: #2ecc71;
+  background-color: rgba(46, 204, 113, 0.15);
+  border-left: 4px solid #2ecc71;
+  box-shadow: 0 2px 8px rgba(46, 204, 113, 0.25);
+}
+
+.error-message::before {
+  content: '⚠️';
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.success-message::before {
+  content: '✓';
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Indicadores de estado/prioridad */
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  position: relative;
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.priority-high {
+  background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+
+.priority-medium {
+  background-color: #ff9800;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
+}
+
+.priority-low {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
 }

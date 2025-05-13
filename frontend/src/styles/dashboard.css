@@ -19,6 +19,7 @@
   box-shadow: 
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  animation-fill-mode: both;
 }
 
 /* Estilo para modo oscuro */
@@ -38,6 +39,11 @@ html[data-theme='dark'] .dashboard-card {
 .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
 .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
 .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+
+.dashboard-grid .MuiGrid-item:nth-child(1) .dashboard-card { animation-delay: 0.1s; }
+.dashboard-grid .MuiGrid-item:nth-child(2) .dashboard-card { animation-delay: 0.2s; }
+.dashboard-grid .MuiGrid-item:nth-child(3) .dashboard-card { animation-delay: 0.3s; }
+.dashboard-grid .MuiGrid-item:nth-child(4) .dashboard-card { animation-delay: 0.4s; }
 
 /* Cabeceras de tarjetas más llamativas */
 .dashboard-card .MuiCardHeader-root {
@@ -66,6 +72,14 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root {
 
 html[data-theme='dark'] .dashboard-card .MuiCardHeader-root::before {
   background-color: var(--primary-light);
+}
+
+.dashboard-card .MuiCardHeader-title {
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover .MuiCardHeader-title {
+  transform: translateX(5px);
 }
 
 /* Contenido de tarjetas con mejor estructuración */
@@ -101,13 +115,14 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root::before {
   border-radius: 8px;
   margin-bottom: 6px;
   padding: 8px 12px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
+  overflow: hidden;
 }
 
 .dashboard-card .MuiListItem-root:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-  transform: translateX(4px);
+  background-color: rgba(114, 0, 42, 0.05);
+  transform: translateX(5px) !important;
 }
 
 .dashboard-card .MuiListItem-root:after {
@@ -118,6 +133,11 @@ html[data-theme='dark'] .dashboard-card .MuiCardHeader-root::before {
   width: 90%;
   height: 1px;
   background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.dashboard-card .MuiListItem-root:hover::after {
+  left: 100%;
 }
 
 .dashboard-card .MuiListItem-root:last-child:after {
@@ -187,8 +207,6 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:after {
   font-weight: 500;
 }
 
-
-
 .task-section .MuiChip-root {
   margin: 2px;
   font-weight: 500;
@@ -211,29 +229,71 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:after {
   transition: all 0.3s ease;
   animation: slideInUp 0.5s ease forwards;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Asegura que el contenido no se desborde */
 }
 
+/* Quitamos el efecto anterior que causaba problemas */
 .greeting-card::after {
+  content: none;
+}
+
+/* Efecto de texto del saludo */
+.greeting-title {
+  background-size: 300% 300% !important;
+  background-image: linear-gradient(
+    -45deg, 
+    #72002a 0%, 
+    #a30044 25%, 
+    #ff4d97 50%, 
+    #a30044 75%, 
+    #72002a 100%
+  ) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: gradient-text 6s ease infinite !important;
+  text-shadow: none !important; /* Quitar sombra que pueda interferir */
+  position: relative;
+  display: inline-block;
+}
+
+/* Animación para el gradiente en movimiento */
+@keyframes gradient-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Efecto de subrayado animado */
+.greeting-title::after {
   content: '';
   position: absolute;
-  top: 0;
+  width: 0;
+  height: 3px;
+  bottom: -5px;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
+  background-image: linear-gradient(90deg, #72002a, #ff4d97);
+  transition: width 0.6s ease;
+  border-radius: 2px;
 }
 
-.greeting-card:hover {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+.greeting-card:hover .greeting-title::after {
+  width: 100%;
 }
 
-.greeting-card:hover::after {
-  transform: translateX(100%);
+/* Efectos para el emoji */
+.greeting-emoji {
+  display: inline-block;
+  margin-left: 5px;
+  transform: rotate(0deg);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.greeting-card:hover .greeting-emoji {
+  transform: rotate(15deg) scale(1.2);
+}
+
+/* Mantener los demás estilos */
 html[data-theme='dark'] .greeting-card {
   background: linear-gradient(135deg, rgba(114, 0, 42, 0.2), rgba(0, 0, 0, 0.3));
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -293,6 +353,19 @@ html[data-theme='dark'] .greeting-card {
   z-index: -1;
 }
 
+.status-indicator::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.4;
+  z-index: -1;
+  animation: pulse 2s infinite alternate;
+  transform: scale(1.5);
+}
+
 .priority-high {
   background-color: #f44336;
   box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
@@ -323,6 +396,11 @@ html[data-theme='dark'] .greeting-card {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.5); }
 }
 
 /* Ajustes responsivos */
@@ -375,6 +453,43 @@ html[data-theme='dark'] .greeting-card {
     padding: 4px 10px !important;
     font-size: 0.8rem;
   }
+}
 
+/* Efecto shimmer contenido para chips */
+.contained-shimmer {
+  position: relative;
+  overflow: hidden !important;
+}
 
+.contained-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmerContained 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmerContained {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Asegurar que los chips nunca se desborden */
+.MuiChip-root {
+  max-width: 100%;
+  overflow: hidden;
 }

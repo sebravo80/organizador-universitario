@@ -1,4 +1,3 @@
-/* Estilos mejorados para la página de cursos */
 .schedule-list {
   background-color: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
@@ -17,6 +16,7 @@ html[data-theme='dark'] .schedule-list {
 
 .schedule-list:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
 }
 
 .schedule-item {
@@ -49,51 +49,93 @@ html[data-theme='dark'] .schedule-item:not(:last-child) {
   font-size: 0.875rem;
 }
 
-/* Tarjetas de curso */
+/* Tarjetas de ramos */
 .course-card {
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(15px);
-  background-color: rgba(255, 255, 255, 0.85);
-  animation: slideInUp 0.5s ease forwards;
+  z-index: 1;
+  will-change: transform, box-shadow;
+  overflow: hidden !important;
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 70%);
+  pointer-events: none;
 }
 
 .course-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.15), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.08) !important;
 }
 
-html[data-theme='dark'] .course-card {
-  background-color: rgba(30, 30, 30, 0.85);
+.course-card:hover::before {
+  opacity: 1;
 }
 
-.course-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+/* Más efectos para los elementos dentro de la tarjeta */
+.course-title-animate {
   position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease;
 }
 
-.course-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+.course-card:hover .course-title-animate {
+  transform: translateX(5px);
 }
 
+/* Efecto para avatar */
 .course-avatar {
   transition: all 0.3s ease;
 }
 
 .course-card:hover .course-avatar {
   transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Información del ramo */
+.course-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+html[data-theme='dark'] .course-info {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.course-info:hover {
+  transform: translateX(5px);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme='dark'] .course-info:hover {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .course-schedule-title {
@@ -111,11 +153,22 @@ html[data-theme='dark'] .course-card {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding: 8px 16px;
   border-radius: 0 0 12px 12px;
+  transition: background-color 0.3s ease;
+  position: relative;
+  z-index: 5;
+}
+
+.course-card:hover .course-actions {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 html[data-theme='dark'] .course-actions {
   background-color: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] .course-card:hover .course-actions {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .color-preview {
@@ -130,13 +183,24 @@ html[data-theme='dark'] .course-actions {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
 }
 
-.schedule-input-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+.color-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.color-preview:hover::after {
+  transform: translateX(100%);
 }
 
 /* Sección de horarios en tarjetas */
@@ -171,6 +235,12 @@ html[data-theme='dark'] .course-actions {
   border-radius: 12px;
   border: 1px dashed rgba(0, 0, 0, 0.1);
   margin: 20px 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.courses-empty-state:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 html[data-theme='dark'] .courses-empty-state {
@@ -233,4 +303,219 @@ input[type="color"]::-moz-color-swatch {
 
 .color-preview:hover::after {
   transform: translateX(100%);
+}
+
+/* Animaciones para iconos */
+.icon-pulse {
+  animation: pulse 2s infinite alternate;
+}
+
+.icon-rotate {
+  animation: rotate 8s linear infinite;
+  font-size: 1.1rem;
+}
+
+.icon-bounce {
+  animation: bounce 5s infinite;
+}
+
+.rotate-on-hover {
+  transition: transform 0.4s ease;
+}
+
+.rotate-on-hover:hover {
+  transform: rotate(20deg);
+}
+
+/* Animación para el formulario */
+.form-field-animate {
+  animation: slideInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+/* Animación para el diálogo */
+.dialog-animate {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Animación para elementos escalonados */
+.schedule-form-container {
+  will-change: transform, opacity;
+  animation: slideInUp 0.5s ease forwards;
+}
+
+/* Animación para el botón flotante */
+.fab-button {
+  animation: popAndBounce 0.5s cubic-bezier(0.19, 1.27, 0.48, 1.31);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(114, 0, 42, 0.4);
+}
+
+@keyframes popAndBounce {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Animación para el divisor */
+.divider-animate {
+  position: relative;
+  overflow: hidden;
+}
+
+.divider-animate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(114, 0, 42, 0.3), transparent);
+  animation: shimmerDivider 2s infinite;
+}
+
+@keyframes shimmerDivider {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Animación para el botón de agregar horario */
+.add-schedule-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.add-schedule-button:hover {
+  transform: translateY(-3px);
+}
+
+.add-schedule-button svg {
+  transition: transform 0.3s ease;
+}
+
+.add-schedule-button:hover svg {
+  transform: scale(1.2);
+}
+
+/* Animación para el botón de borrar horario */
+.delete-schedule-button {
+  transition: all 0.3s ease;
+}
+
+.delete-schedule-button:hover {
+  transform: rotate(15deg);
+}
+
+/* Animaciones para los botones del diálogo */
+.save-button-animate {
+  animation: slideInFromRight 0.5s ease forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.save-button-animate:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-button-animate {
+  animation: slideInFromLeft 0.5s ease forwards;
+}
+
+/* Animaciones para los items de horario en la vista de tarjeta */
+.schedule-animate-0 { animation-delay: 0.1s; }
+.schedule-animate-1 { animation-delay: 0.15s; }
+.schedule-animate-2 { animation-delay: 0.2s; }
+.schedule-animate-3 { animation-delay: 0.25s; }
+.schedule-animate-4 { animation-delay: 0.3s; }
+
+/* Animación para el botón de añadir */
+.add-button-animate {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.add-button-animate::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+}
+
+.add-button-animate:hover::after {
+  transform: translateX(100%);
+  transition: transform 0.6s ease;
+}
+
+/* Contenedor de carga con animación */
+.loading-container {
+  position: relative;
+  height: 100px;
+}
+
+/* Animación de tipeo más lenta para textos largos */
+.typing-effect-slow {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid var(--primary-color);
+  width: 0;
+  animation: typing 3s steps(40, end) forwards, blink .75s step-end infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+/* Color input animation */
+.color-input-animate {
+  /* Sin animación */
+  transition: box-shadow 0.3s ease;
+}
+
+/* Añadir retraso para los items escalonados */
+.delay-0 { animation-delay: 0.05s !important; }
+.delay-1 { animation-delay: 0.1s !important; }
+.delay-2 { animation-delay: 0.15s !important; }
+.delay-3 { animation-delay: 0.2s !important; }
+.delay-4 { animation-delay: 0.25s !important; }
+.delay-5 { animation-delay: 0.3s !important; }
+.delay-6 { animation-delay: 0.35s !important; }
+.delay-7 { animation-delay: 0.4s !important; }
+.delay-8 { animation-delay: 0.45s !important; }
+.delay-9 { animation-delay: 0.5s !important; }
+
+/* Estilos mejorados para la página de ramos */
+.courses-container {
+  animation: fadeIn 0.6s ease;
+}
+
+/* Título de la página con efecto de gradiente mejorado */
+.courses-title .text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+  font-weight: 700;
+}
+
+/* Efecto al pasar sobre el ícono del título */
+.icon-spin-hover {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.courses-title:hover .icon-spin-hover {
+  transform: rotate(15deg) scale(1.2);
 }
