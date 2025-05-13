@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,13 +13,17 @@
     "open:android": "npx cap open android",
     "run:android": "npx cap run android"
   },
+
+
   "dependencies": {
     "@capacitor/android": "^7.2.0",
+    "@capacitor/app": "^7.0.1",
     "@capacitor/cli": "^7.2.0",
     "@capacitor/core": "^7.2.0",
     "@capacitor/device": "^7.0.1",
     "@capacitor/filesystem": "^7.0.1",
     "@capacitor/local-notifications": "^7.0.1",
+    "@capacitor/network": "^7.0.1",
     "@capacitor/preferences": "^7.0.1",
     "@capacitor/push-notifications": "^7.0.1",
     "@capacitor/share": "^7.0.1",
@@ -36,6 +41,7 @@
     "@mui/x-date-pickers": "^7.28.3",
     "axios": "^1.8.4",
     "date-fns": "^2.29.3",
+    "idb": "^8.0.3",
     "nodemailer": "^6.10.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -43,11 +49,16 @@
     "react-toastify": "^11.0.5",
     "vite-plugin-pwa": "^1.0.0"
   },
+
+
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^36.2.0",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^3.0.1",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -55,6 +66,8 @@
     "typescript": "^5.8.3",
     "vite": "^6.2.0"
   },
+
+
   "engines": {
     "node": ">=14.0.0"
   }

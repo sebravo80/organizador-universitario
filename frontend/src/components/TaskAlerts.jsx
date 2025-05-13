@@ -1,3 +1,4 @@
+// Se importan las bibliotecas
 import { useState, useEffect } from 'react';
 import { 
   Snackbar, Alert, Button, Dialog, DialogTitle, 
@@ -6,7 +7,7 @@ import {
 } from '@mui/material';
 import { getTasks } from '../services/taskService';
 
-// Funciones de cálculo de días
+// esta funcion es para el calculo de días
 const getDaysRemaining = (dueDate) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -20,6 +21,7 @@ const getDaysRemaining = (dueDate) => {
   return diffDays;
 };
 
+// con esto se obtiene el color del contador
 const getCountdownColor = (days) => {
   if (days < 0) return 'error';
   if (days === 0) return 'error';
@@ -28,6 +30,7 @@ const getCountdownColor = (days) => {
   return 'success';
 };
 
+// con esto se obtiene el texto del contador
 const getCountdownText = (days) => {
   if (days < 0) return `¡Vencida hace ${Math.abs(days)} ${Math.abs(days) === 1 ? 'día' : 'días'}!`;
   if (days === 0) return '¡Vence hoy!';
@@ -35,6 +38,7 @@ const getCountdownText = (days) => {
   return `Faltan ${days} días`;
 };
 
+// esta es la función encargada de mostrar las alertas
 function TaskAlerts() {
   const [urgentTasks, setUrgentTasks] = useState([]);
   const [overdueTasks, setOverdueTasks] = useState([]);
@@ -84,7 +88,7 @@ function TaskAlerts() {
 
     loadTasks();
     
-    // Verificar periódicamente (cada hora)
+    // Verificar cada hora
     const interval = setInterval(loadTasks, 60 * 60 * 1000);
     
     return () => clearInterval(interval);

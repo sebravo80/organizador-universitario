@@ -1,6 +1,9 @@
+// importamos las librerias
 import React from 'react';
 import { Grid, Skeleton, Card, CardContent, CardActions, Box } from '@mui/material';
 
+// este componente se encarga de mostrar un skeleton de carga
+// se llama así mientras carga la información de las tarjetas
 const SkeletonTaskCard = () => {
   return (
     <Card sx={{ height: '100%' }}>

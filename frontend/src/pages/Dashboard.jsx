@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx
+// Importamos las librerias necesarias
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -9,6 +9,8 @@ import {
   Card, CardContent, CardHeader, Button,
   Chip, Checkbox, ListItemIcon, Avatar
 } from '@mui/material';
+
+// Importamos los iconos de MUI
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -25,6 +27,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import '../styles/animations.css';
 import '../styles/dashboard.css';
 
+// este es el componente principal del dashboard
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
@@ -154,14 +157,14 @@ const Dashboard = () => {
             <Box>
               <Typography variant="h4" component="h1" sx={{ 
                 mb: 0.5, 
-                fontWeight: 700, 
+                fontWeight: 700,
                 background: 'linear-gradient(45deg, #72002a, #a30044)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 textShadow: '0px 2px 5px rgba(0,0,0,0.1)'
               }}>
-                ¡Hola, {user?.name}!
+                ¡Hola, {user?.name}! :D
               </Typography>
               <Typography variant="body1" sx={{ 
                 color: 'text.secondary',
@@ -169,7 +172,24 @@ const Dashboard = () => {
                 alignItems: 'center',
                 gap: 1
               }}>
-                <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box component="span" sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  gap: 0.5,
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  fontWeight: 500,
+                  color: '#72002a'
+                  
+                  
+              //EDITAR ESTAS COSAS EN OTRO MOMENTO
+                  // textShadow: '0px 1px 3px rgba(0,0,0,0.1)',
+                  //background: 'linear-gradient(45deg,rgb(158, 0, 53),rgb(230, 0, 0))',
+                  // backgroundClip: 'text',
+                  //WebkitBackgroundClip: 'text',
+                  //WebkitTextFillColor: 'transparent',
+                  //borderRadius: 1,
+
+                  }}>
                   <CalendarTodayIcon fontSize="small" sx={{ mr: 0.5 }} />
                   {new Date().toLocaleDateString('es-ES', { 
                     weekday: 'long', 
@@ -268,7 +288,7 @@ const Dashboard = () => {
                                   </Typography>
                                 )}
                                 {course.room && (
-                                  <Typography variant="body2" component="span" display="block" sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <Typography variant="body2" component="span" display="block" sx={{ display: 'flex', alignItems: 'center'}}>
                                     <RoomIcon fontSize="small" sx={{ mr: 0.5 }} />
                                     {course.room}
                                   </Typography>
@@ -291,7 +311,7 @@ const Dashboard = () => {
             </Card>
           </Grid>
           
-          {/* Tareas próximas */}
+          {/* Próximas Tareas */}
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card task-section">
               <CardHeader 
@@ -300,7 +320,7 @@ const Dashboard = () => {
                     <AssignmentOutlinedIcon sx={{ color: '#ffc107' }}/>
                   </Avatar>
                 }
-                title="Tareas Próximas" 
+                title="Próximas Tareas" 
                 action={
                   <Button component={Link} to="/tasks" size="small" variant="outlined">
                     Ver todas
@@ -374,7 +394,7 @@ const Dashboard = () => {
             </Card>
           </Grid>
           
-          {/* Eventos próximos */}
+          {/* Próximos Eventos */}
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card event-section">
               <CardHeader 
@@ -383,7 +403,7 @@ const Dashboard = () => {
                     <EventNoteOutlinedIcon sx={{ color: '#4caf50' }}/>
                   </Avatar>
                 }
-                title="Eventos Próximos" 
+                title="Próximos Eventos" 
                 action={
                   <Button component={Link} to="/weekly" size="small" variant="outlined">
                     Ver calendario
@@ -427,7 +447,7 @@ const Dashboard = () => {
             </Card>
           </Grid>
 
-          {/* Pendientes rápidos */}
+          {/* Lista de */}
           <Grid item xs={12} md={4}>
             <Card className="dashboard-card todo-section">
               <CardHeader 
@@ -436,7 +456,7 @@ const Dashboard = () => {
                     <CheckCircleOutlineIcon sx={{ color: '#2196f3' }}/>
                   </Avatar>
                 }
-                title="Pendientes Rápidos" 
+                title="Lista de Pendientes" 
                 action={
                   <Button component={Link} to="/todos" size="small" variant="outlined">
                     Ver todos

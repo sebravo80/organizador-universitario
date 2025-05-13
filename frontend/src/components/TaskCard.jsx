@@ -1,8 +1,11 @@
+// importamos bibliotecas
 import React, { memo } from 'react';
 import {
   Card, CardContent, CardActions, Typography, Box, 
   IconButton, Chip, Avatar, Tooltip, CardActionArea
 } from '@mui/material';
+
+// importamos iconos
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';

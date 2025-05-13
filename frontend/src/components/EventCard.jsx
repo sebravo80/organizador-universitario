@@ -1,3 +1,4 @@
+// se importan las librerías necesarias
 import React, { memo } from 'react';
 import {
   Card, CardContent, CardActions, Typography, Box, IconButton
@@ -9,19 +10,19 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { format, differenceInMinutes } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-// Formatear fecha
+// Esto es para que la fecha sea en español
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return format(date, 'PPP', { locale: es });
 };
 
-// Formatear hora
+// cambiamos el formato de la hora a 24 horas
 const formatTime = (dateString) => {
   const date = new Date(dateString);
   return format(date, 'p', { locale: es });
 };
 
-// Calcular duración del evento en horas y minutos
+// con este componente se calcula la duración del evento en horas y minutos
 const getEventDuration = (startDate, endDate) => {
   const minutes = differenceInMinutes(new Date(endDate), new Date(startDate));
   const hours = Math.floor(minutes / 60);
@@ -36,6 +37,8 @@ const getEventDuration = (startDate, endDate) => {
   }
 };
 
+// se define el componente de la tarjeta de evento con memo para evitar renderizados innecesarios
+// esto con fin de tener un mejor rendimiento
 const EventCard = memo(({ 
   event, 
   onEdit, 
@@ -111,7 +114,7 @@ const EventCard = memo(({
   );
 });
 
-// Asignar displayName para herramientas de desarrollo
+// Asignar displayName para herramientas de desarrollo 
 EventCard.displayName = 'EventCard';
 
 export default EventCard;

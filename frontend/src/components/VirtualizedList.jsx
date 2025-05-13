@@ -1,9 +1,11 @@
+// importamos las librerías necesarias
 import React from 'react';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Box } from '@mui/material';
 
-// Componente para renderizar listas virtualizadas (eficiente para miles de elementos)
+// Componente para renderizar listas virtualizadas
+// esto será eficiente en caso de que hayan muchos elementos
 const VirtualizedList = ({ items, renderItem, itemHeight = 72, emptyMessage = "No hay elementos" }) => {
   if (items.length === 0) {
     return <Box sx={{ p: 2 }}>{emptyMessage}</Box>;

@@ -1,6 +1,9 @@
+// importamos las librerías necesarias
 import React from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
+// el componente de carga se encarga de mostrar un mensaje de carga y un spinner
+// para que sea menos molesto esperar que cargue la pagina
 const Loading = ({ message = "Cargando..." }) => {
   return (
     <Box

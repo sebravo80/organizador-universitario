@@ -1,8 +1,9 @@
-// src/components/TaskCountdown.jsx
+// Importamos las librerías necesarias
 import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Chip } from '@mui/material';
 import AlarmIcon from '@mui/icons-material/Alarm';
 
+// Este componente se encarga de mostrar un chip con el tiempo restante para la entrega de una tarea
 const TaskCountdown = memo(({ dueDate }) => {
   const [timeRemaining, setTimeRemaining] = useState('');
   

@@ -1,4 +1,4 @@
-// src/components/Navbar.jsx
+// Primero importamos las librerías necesarias
 import { useState, useContext, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
@@ -7,6 +7,8 @@ import {
   ListItemText, Divider, Avatar, Menu, MenuItem,
   Tooltip, useMediaQuery, useTheme
 } from '@mui/material';
+
+// luego importamos los iconos de MUI
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BookIcon from '@mui/icons-material/Book';
@@ -25,6 +27,8 @@ import { ThemeContext } from '../context/ThemeContext';
 import '../styles/navbar.css';
 import { styled } from '@mui/material/styles';
 
+// Se crea el componente del avatar del perfil
+// y se le da un estilo personalizado
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
   width: 42,
   height: 42,
@@ -46,6 +50,10 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     fontSize: '0.9rem'
   }
 }));
+
+
+// el componente NavButton es para los botones de navegación
+// y también se modifica el estilo
 
 const NavButton = styled(Button)(({ theme, active }) => ({
   color: 'white', 
@@ -99,6 +107,8 @@ const NavButton = styled(Button)(({ theme, active }) => ({
   }
 }));
 
+// se crea la funcion para el navbar, el cual se encarga de mostrar el menú como tal
+// el componente anterior era para tener los botones, y esta para las funciones de cada boton
 function Navbar() {
   const { user, isAuth, logout } = useContext(AuthContext);
   const { darkMode, toggleTheme } = useContext(ThemeContext);
@@ -147,7 +157,8 @@ function Navbar() {
     handleMenuClose();
     navigate('/login');
   };
-  
+ 
+  // Aqui se definen los items del menú, cada uno con su respectivo icono y ruta
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Ramos', icon: <BookIcon />, path: '/courses' },
@@ -206,11 +217,7 @@ function Navbar() {
               {item.icon}
             </ListItemIcon>
             <ListItemText 
-              primary={item.text} 
-              primaryTypographyProps={{
-                fontWeight: isActive(item.path) ? 600 : 400
-              }}
-            />
+              primary={item.text}/>
           </ListItem>
         ))}
         <Divider sx={{ my: 2 }} />
@@ -365,27 +372,8 @@ function Navbar() {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                className="navbar-menu"
-                PaperProps={{
-                  elevation: 3,
-                  sx: { 
-                    minWidth: 220,
-                    mt: 1.5,
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                    '& .MuiMenuItem-root': {
-                      py: 1.5
-                    },
-                    backdropFilter: 'blur(10px)',
-                    backgroundColor: theme => theme.palette.mode === 'dark' 
-                      ? 'rgba(30, 30, 30, 0.85)'
-                      : 'rgba(255, 255, 255, 0.85)',
-                  }
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              >
+                className="navbar-menu">
+                  
                 <Box sx={{ 
                   px: 2, 
                   py: 1.5, 
@@ -404,7 +392,7 @@ function Navbar() {
                         width: 32, 
                         height: 32,
                         bgcolor: 'rgba(255,255,255,0.2)',
-                        border: '2px solid rgba(255,255,255,0.6)'
+                        border: '2px solid rgba(255,255,255,0.6)' 
                       }}
                     >
                       {user?.name?.charAt(0).toUpperCase()}
@@ -460,15 +448,7 @@ function Navbar() {
         anchor="left"
         open={drawerOpen}
         onClose={handleDrawerToggle}
-        className="mobile-drawer"
-        PaperProps={{
-          sx: {
-            width: 280,
-            borderRadius: '0 16px 16px 0',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-          }
-        }}
-      >
+        className="mobile-drawer">
         {drawer}
       </Drawer>
     </Box>

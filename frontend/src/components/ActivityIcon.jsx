@@ -1,7 +1,10 @@
+// importamos las librerías necesarias
 import React from 'react';
 import { FaBook, FaClipboardList, FaFlask, FaLaptopCode, FaUserFriends } from 'react-icons/fa';
 import { MdAssignment } from 'react-icons/md';
 
+
+// se define el componente para mostrar el icono de la actividad
 const ActivityIcon = ({ type, size = 24 }) => {
   switch (type?.toLowerCase()) {
     case 'tarea':

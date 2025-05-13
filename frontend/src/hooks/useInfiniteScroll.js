@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 // Hook personalizado para implementar scroll infinito
+// permite seguir cargando los elementos a medida que el usuario hace scroll
 const useInfiniteScroll = (items, itemsPerPage = 9) => {
   const [displayedItems, setDisplayedItems] = useState([]);
   const [page, setPage] = useState(1);

@@ -1,3 +1,4 @@
+// Se importan las librerías necesarias y los componentes de MUI para el formulario de Eventos 
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -43,6 +44,7 @@ const eventColors = [
   { value: "#E91E63", label: "Rosa" },
 ];
 
+// se define el componente par el formulario de los eventos
 const EventForm = ({ open, onClose, onSave, event }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -58,22 +60,22 @@ const EventForm = ({ open, onClose, onSave, event }) => {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
   
-  // Cargar cursos al iniciar
+  // función para cargar los ramos al iniciar
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const response = await api.get('/courses');
         setCourses(response.data);
       } catch (error) {
-        console.error('Error al cargar cursos:', error);
-        alert('Error al cargar los cursos');
+        console.error('Error al cargar ramos:', error);
+        alert('Error al cargar los ramos');
       }
     };
     
     fetchCourses();
   }, []);
   
-  // Cargar datos del evento al editar
+  // función para cargar los datos del evento al editar
   useEffect(() => {
     if (event) {
       setTitle(event.title);
@@ -84,7 +86,8 @@ const EventForm = ({ open, onClose, onSave, event }) => {
       setColor(event.color || '#4CAF50');
       setCourseId(event.course ? event.course._id : '');
     } else {
-      // Valores predeterminados para nuevo evento
+
+      // Se establecen los valores predeterminados para nuevo evento
       setTitle('');
       setDescription('');
       setStartDate(new Date());
@@ -95,7 +98,7 @@ const EventForm = ({ open, onClose, onSave, event }) => {
     }
   }, [event]);
   
-  // Validar formulario
+  // componente para validar el formulario
   const isFormValid = () => {
     if (!title.trim()) {
       alert('El título es obligatorio');
@@ -110,7 +113,7 @@ const EventForm = ({ open, onClose, onSave, event }) => {
     return true;
   };
   
-  // Manejar guardado
+  // componente para manejar el guardado
   const handleSubmit = async () => {
     if (!isFormValid()) return;
     
@@ -138,14 +141,8 @@ const EventForm = ({ open, onClose, onSave, event }) => {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      fullScreen={fullScreen} // Usar pantalla completa en móviles
-      PaperProps={{
-        sx: {
-          borderRadius: { xs: 0, sm: 2 }, // Sin bordes redondeados en móviles para mejor uso del espacio
-          maxHeight: { xs: '100%', sm: '90vh' }
-        }
-      }}
-    >
+      fullScreen={fullScreen} // Con esto usamos la pantalla completa en dispositivos n
+      >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Typography variant="h6">
           {event ? 'Editar Evento' : 'Nuevo Evento'}
@@ -155,6 +152,8 @@ const EventForm = ({ open, onClose, onSave, event }) => {
         </IconButton>
       </DialogTitle>
       
+      
+      // esto es para definir el contenido del formulario
       <DialogContent dividers>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, py: 1 }}>
@@ -222,6 +221,7 @@ const EventForm = ({ open, onClose, onSave, event }) => {
                       onChange={(e) => setCourseId(e.target.value)}
                       label="Curso relacionado"
                     >
+                      
                       <MenuItem value="">
                         <em>Ninguno</em>
                       </MenuItem>

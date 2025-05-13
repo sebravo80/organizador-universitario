@@ -160,7 +160,7 @@ const Events = () => {
         alignItems: 'center',
         mb: 3 
       }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography variant="h4" component="h1" sx={{display: 'flex', alignItems: 'center', gap: 1, color: '#72002a', fontWeight: 'bold',}}>
           <CalendarMonthIcon color="primary" fontSize="large" />
           Eventos
         </Typography>

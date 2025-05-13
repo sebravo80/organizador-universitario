@@ -187,6 +187,12 @@ html[data-theme='dark'] .dashboard-card .MuiListItem-root:after {
   font-weight: 500;
 }
 
+.css-1uxivf5-MuiChip-root {
+  color: #6600ff !important;
+  font-weight: bold !important;
+}
+
+
 .task-section .MuiChip-root {
   margin: 2px;
   font-weight: 500;
@@ -373,4 +379,6 @@ html[data-theme='dark'] .greeting-card {
     padding: 4px 10px !important;
     font-size: 0.8rem;
   }
+
+
 }

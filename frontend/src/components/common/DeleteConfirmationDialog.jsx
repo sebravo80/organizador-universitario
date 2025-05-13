@@ -1,3 +1,4 @@
+// Primero importamos las librerías necesarias
 import React from 'react';
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
 } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
+// Se define un componente para poder confirmar la eliminación de un elemento
 const DeleteConfirmationDialog = ({ 
   open, 
   onClose, 
@@ -23,8 +25,8 @@ const DeleteConfirmationDialog = ({
       open={open}
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
+           
       <DialogTitle id="alert-dialog-title">
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <DeleteForeverIcon color="error" />

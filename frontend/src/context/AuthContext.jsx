@@ -1,11 +1,11 @@
-// src/context/AuthContext.jsx
+// importamos las librerías necesarias
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 
-// Crear el contexto
 export const AuthContext = createContext();
 
 // Proveedor del contexto
+// esto es lo que maneja la autenticación de los usuarios
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth', { email, password });
       
       // Guardar token en localStorage
+      // Esto es importante para mantener la sesión del usuario
       localStorage.setItem('token', response.data.token);
       
       // Configurar token en headers
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Modificar la función register para que no inicie sesión automáticamente después del registro
+  // Modificamos la funcion del registro para que no inicie sesión de inmediato
   const register = async (name, email, password) => {
     try {
       setLoading(true);

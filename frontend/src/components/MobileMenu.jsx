@@ -1,10 +1,11 @@
+// Importamos las librerías necesarias
 import React, { useState, useContext } from 'react';
 import { IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-// Importa tus iconos aquí
+// Aquí se importan los iconos de MUI
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -13,16 +14,20 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 
+
+// Se crea el componente de menú movil que cambia en los dispositivos móviles
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
 
+  // Esta función se encarga de navegar a la ruta que se indique
   const handleNavigate = (path) => {
     navigate(path);
     setOpen(false);
   };
 
+  // y esta se encarga de cerrar la sesión del usuario
   const handleLogout = () => {
     logout();
     setOpen(false);
@@ -39,7 +44,8 @@ const MobileMenu = () => {
       >
         <MenuIcon />
       </IconButton>
-      
+
+      // Con el drawer y anchor: "left" se indica que el menú se abrirá desde la izquierda
       <Drawer
         anchor="left"
         open={open}
