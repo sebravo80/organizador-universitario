@@ -1,3 +1,4 @@
+// se importan las dependencias necesarias
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -10,11 +11,10 @@ import {
   Stack
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
-// Importamos los iconos de MUI
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+// Importamos los iconos de MUI
 import CodeIcon from '@mui/icons-material/Code';
 import RoomIcon from '@mui/icons-material/Room';
 import PersonIcon from '@mui/icons-material/Person';
@@ -26,6 +26,7 @@ import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+// se importan los archivos de estilos
 import '../styles/animations.css';
 import '../styles/dashboard.css';
 
@@ -74,7 +75,7 @@ const Dashboard = () => {
     }
   }, [isAuth]);
   
-  // Obtener tareas próximas (ordenadas por fecha de vencimiento) usando useMemo
+  // Obtener tareas ordenadas por fecha de vencimiento
   const upcomingTasks = useMemo(() => {
     return tasks
       .filter(task => task.status !== 'Completada')
@@ -82,7 +83,7 @@ const Dashboard = () => {
       .slice(0, 5);
   }, [tasks]);
   
-  // Obtener eventos próximos (ordenados por fecha de inicio) usando useMemo
+  // Obtener eventos próximos ordenados por fecha de inicio
   const upcomingEvents = useMemo(() => {
     const now = new Date();
     return events
