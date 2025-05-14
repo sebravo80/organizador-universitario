@@ -1,35 +1,35 @@
 import { format, parse, addDays, startOfWeek } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-// Mapeo de días abreviados a números (0 = domingo, 1 = lunes, etc.)
+// se asocia un numero a cada dia abreviado
 const dayToNumber = {
   'Dom': 0,
   'Lun': 1,
   'Mar': 2,
   'Mié': 3,
-  'Mie': 3,  // Añadir esta variante sin acento
+  'Mie': 3,  // se añade variante sin tilde para evitar errores
   'Jue': 4,
   'Vie': 5,
   'Sáb': 6,
-  'Sab': 6   // También añadir esta variante sin acento
+  'Sab': 6   // lo mismo que con el miercoles
 };
 
 // Función para convertir horarios de cursos en eventos para el calendario
 export const convertCoursesToEvents = (courses) => {
   const currentDate = new Date();
-  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Semana comienza en lunes
+  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // con esto se define que la semana comienza los lunes
 
   const courseEvents = [];
 
   courses.forEach(course => {
-    // Omitir cursos sin horarios
+    // se omiten los ramos sin horarios
     if (!course.scheduleStrings || !course.scheduleStrings.length) return;
 
     course.scheduleStrings.forEach(schedule => {
       try {
         console.log(`Procesando horario: "${schedule}"`);
         
-        // Extracción más flexible del día y el horario
+        // con esto se asegura que tome los dias con todas las puntuaciones de forma correcta
         const dayMatch = schedule.match(/^([A-Za-zÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÑñ]{3})\s+(\d{1,2}:\d{2})-(\d{1,2}:\d{2})$/);
         
         if (!dayMatch) {
@@ -39,18 +39,18 @@ export const convertCoursesToEvents = (courses) => {
         
         const [_, dayAbbr, startTimeStr, endTimeStr] = dayMatch;
         
-        // Normalizar la abreviatura del día (eliminar acentos)
+        // se normaliza la abreviatura del día, se quitan los tildes
         const normalizedDayAbbr = dayAbbr
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "");
         
-        // Obtener número de día desde la versión normalizada o la original
+        // se obtienen los numeros correspondientes a los dias de ambas formas, normalizada y orignal
         let dayNum;
         if (normalizedDayAbbr === "Mie") {
-          dayNum = 3;  // Miércoles
+          dayNum = 3; 
           console.log(`Día miércoles detectado (normalizado): "${dayAbbr}" -> ${dayNum}`);
         } else if (normalizedDayAbbr === "Sab") {
-          dayNum = 6;  // Sábado
+          dayNum = 6; 
           console.log(`Día sábado detectado (normalizado): "${dayAbbr}" -> ${dayNum}`);
         } else {
           dayNum = dayToNumber[dayAbbr];
@@ -62,7 +62,7 @@ export const convertCoursesToEvents = (courses) => {
           return;
         }
         
-        // Mapeo de abreviaturas a nombres completos de días
+        // Mapeo de abreviaturas a nombres completos 
         const dayNames = {
           'Dom': 'Domingo',
           'Lun': 'Lunes', 
@@ -75,15 +75,15 @@ export const convertCoursesToEvents = (courses) => {
           'Sab': 'Sábado' 
         };
         
-        // Crear fechas para este horario en la semana actual
+        // se crea una fecha para este horario en la semana actual
         const eventDate = addDays(weekStart, dayNum);
         
-        // Convertir strings de hora a objetos Date
+        // se convierte de string a date
         const startTimeFormat = 'HH:mm';
         const parsedStartTime = parse(startTimeStr, startTimeFormat, new Date());
         const parsedEndTime = parse(endTimeStr, startTimeFormat, new Date());
         
-        // Crear fechas completas para el evento
+        // se crean las fechas completas para el evento
         const startDate = new Date(eventDate);
         startDate.setHours(parsedStartTime.getHours(), parsedStartTime.getMinutes());
         
@@ -93,7 +93,7 @@ export const convertCoursesToEvents = (courses) => {
         // Mostrar información de depuración
         console.log(`Creando evento para curso "${course.name}": ${dayNames[dayAbbr] || 'Día desconocido'} ${startTimeStr}-${endTimeStr}`);
         
-        // Crear el evento para este horario
+        // Se crea el evento para este horario
         courseEvents.push({
           id: `course-${course._id}-${dayAbbr}-${startTimeStr}`,
           title: course.name,
@@ -105,7 +105,7 @@ export const convertCoursesToEvents = (courses) => {
           daysOfWeek: [dayNum],
           startTime: startTimeStr,
           endTime: endTimeStr,
-          // Propiedades adicionales útiles
+          // Propiedades adicionales
           extendedProps: {
             courseId: course._id,
             type: 'course-schedule',
@@ -117,7 +117,8 @@ export const convertCoursesToEvents = (courses) => {
             endTime: endTimeStr,
             description: `${course.courseCode || ''} ${course.professor ? '- Prof: ' + course.professor : ''}`
           },
-          // Esta propiedad hace que se repita semanalmente
+          
+          // con esto se hace que se repita todas las semanas
           rrule: {
             freq: 'weekly',
             interval: 1,
