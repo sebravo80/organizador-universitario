@@ -84,7 +84,7 @@ button:focus-visible {
   }
 }
 
-/* Mejoras generales para dispositivos móviles */
+/* Mejoras para dispositivos móviles */
 @media (max-width: 600px) {
   body {
     font-size: 14px;
@@ -103,7 +103,6 @@ button:focus-visible {
   }
 }
 
-/* Mejoras adicionales para dispositivos móviles */
 @media (max-width: 600px) {
   .MuiContainer-root {
     padding-left: 8px !important;
@@ -123,7 +122,7 @@ button:focus-visible {
     margin: 12px !important;
   }
   
-  /* Ajustes específicos para calendarios */
+  /* Ajustes para el calendario */
   .fc .fc-toolbar {
     flex-direction: column;
     gap: 10px;
@@ -148,7 +147,7 @@ button:focus-visible {
     grid-template-columns: 1fr !important;
   }
   
-  /* Estilos adicionales para MobileMenu */
+  /* Estilos adicionales para el menú movil */
   .mobile-menu-drawer .MuiPaper-root {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
