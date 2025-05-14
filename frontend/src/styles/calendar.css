@@ -3,7 +3,7 @@
 .calendar-day-cell,
 .calendar-day-header,
 .calendar-slot-lane {
-  background-color: rgba(0, 0, 0, 0.1) !important; /* Fondo ligeramente oscuro */
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Personalización adicional para las celdas de hora */
@@ -11,12 +11,12 @@
   background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Ajustar el color de las líneas divisorias para mejor contraste */
+/* Se ajusta el color de las líneas para mejor contraste */
 .fc-timegrid-slot-lane {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Para el modo oscuro (opcional) */
+/* estilos opcionales para el modo oscuro */
 .darkMode .calendar-slot-label,
 .darkMode .calendar-day-cell,
 .darkMode .calendar-day-header,
@@ -30,22 +30,22 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Encabezados de día más oscuros */
+/* Encabezados de día */
 .fc .fc-col-header-cell {
   background-color: rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Columna de horas más oscura */
+/* Columna de horas */
 .fc .fc-timegrid-axis {
   background-color: rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Líneas divisorias más sutiles */
+/* Líneas divisorias */
 .fc .fc-timegrid-slot-lane {
   border-color: rgba(100, 100, 100, 0.2) !important;
 }
 
-/* Hover sobre las celdas para mejor interactividad */
+/* Hover sobre las celdas */
 .fc .fc-timegrid-slot:hover {
   background-color: rgba(0, 0, 0, 0.15);
 }
@@ -55,7 +55,7 @@
   background-color: rgba(66, 165, 245, 0.1) !important;
 }
 
-/* Mejora la apariencia de las celdas alternando colores ligeramente */
+/* Se mejora la apariencia de las celdas alternando colores */
 .fc-timegrid-col:nth-child(even) .fc-timegrid-col-frame {
   background-color: rgba(0, 0, 0, 0.05);
 }
@@ -81,13 +81,13 @@
   background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
-/* Usar clases más específicas pero evitando selectores excesivamente largos */
+/* Usar clases más específicas evitando selectores excesivamente largos */
 .fc-timegrid-bg,
 .fc-daygrid-bg,
 .fc-scrollgrid-sync-inner,
 .fc-timegrid-slots table,
 .fc-timegrid-cols table {
-  /* Estilos comunes */
+
 }
 
 /* Estilos para los encabezados del día con mayor especificidad */
@@ -96,7 +96,7 @@
   background-color: rgba(0, 0, 0, 0.18) !important;
 }
 
-/* Asegurar que los eventos se vean bien sobre el fondo oscuro */
+/* Se asegura de que los eventos se vean bien sobre el fondo oscuro */
 .fc-event {
   border-radius: 6px !important;
   border: none !important;
@@ -115,14 +115,14 @@
   will-change: transform, opacity;
 }
 
-/* Hacer que las líneas divisorias sean más visibles */
+/* Líneas divisorias sean más visibles */
 .fc-theme-standard td, 
 .fc-theme-standard th,
 .fc-theme-standard .fc-scrollgrid {
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Añadir versiones para tema claro */
+/* Versiones para tema claro */
 html[data-theme='light'] .fc-timegrid-slot, 
 html[data-theme='light'] .fc-daygrid-day {
   background-color: rgba(0, 0, 0, 0.02) !important;
@@ -179,7 +179,7 @@ html[data-theme='dark'] .fc-header-toolbar {
   transform: translateY(-2px);
 }
 
-/* Añadir optimización para dispositivos móviles */
+/* Optimización para dispositivos móviles */
 @media (max-width: 768px) {
   .fc-toolbar {
     flex-direction: column;
