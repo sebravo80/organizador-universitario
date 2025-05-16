@@ -1,12 +1,9 @@
-// backend/routes/courses.js
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Course = require('../models/Course');
 
-// @route   GET api/courses
-// @desc    Get all user's courses
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const courses = await Course.find({ user: req.user.id }).sort({ date: -1 });
@@ -17,9 +14,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/courses
-// @desc    Add new course
-// @access  Private
+
 router.post('/', auth, async (req, res) => {
   try {
     const { name, professor, courseCode, room, scheduleStrings, color } = req.body;
@@ -52,9 +47,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/courses/:id
-// @desc    Get course by ID
-// @access  Private
+
 router.get('/:id', auth, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -81,9 +74,6 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/courses/:id
-// @desc    Update course
-// @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
     const { name, professor, courseCode, room, scheduleStrings, color } = req.body;
@@ -128,9 +118,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/courses/:id
-// @desc    Delete course
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -160,9 +148,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/courses/count
-// @desc    Get count of user's courses
-// @access  Private
+
 router.get('/count', auth, async (req, res) => {
   try {
     console.log('Usuario solicitando conteo de cursos:', req.user.id);
