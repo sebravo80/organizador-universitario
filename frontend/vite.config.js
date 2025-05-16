@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa'; // Instalar: npm install vite-plugin-pwa
+import { VitePWA } from 'vite-plugin-pwa'; 
 
 export default defineConfig({
   plugins: [
