@@ -1,4 +1,3 @@
-// src/services/eventService.js
 import api from './api';
 
 // Obtener todos los eventos
