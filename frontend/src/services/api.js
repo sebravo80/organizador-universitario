@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 
-// Determinar URL base según el entorno
+// se determina la url segun el entorno
 let baseURL = 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
 
-// No es necesario cambiar la URL para dispositivos móviles
-// pues usaremos la misma URL de producción
+
 if (Capacitor.isNativePlatform()) {
   console.log('Ejecutando en dispositivo nativo, usando URL:', baseURL);
 }
@@ -18,7 +17,6 @@ const api = axios.create({
   timeout: 30000
 });
 
-// Para depuración detallada
 api.interceptors.request.use(request => {
   console.log(`[${new Date().toISOString()}] Enviando ${request.method} a: ${request.url}`);
   console.log('Headers:', JSON.stringify(request.headers));
