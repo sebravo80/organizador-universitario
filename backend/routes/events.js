@@ -1,12 +1,9 @@
-// backend/routes/events.js
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Event = require('../models/Event');
 
-// @route   GET api/events
-// @desc    Get all user's events
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const events = await Event.find({ user: req.user.id })
@@ -19,9 +16,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/events
-// @desc    Add new event
-// @access  Private
+
 router.post('/', auth, async (req, res) => {
   try {
     const { title, description, startDate, endDate, location, color, course } = req.body;
@@ -51,9 +46,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/events/:id
-// @desc    Get event by ID
-// @access  Private
+
 router.get('/:id', auth, async (req, res) => {
   try {
     const event = await Event.findById(req.params.id).populate('course', 'name color');
@@ -80,9 +73,7 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/events/:id
-// @desc    Update event
-// @access  Private
+
 router.put('/:id', auth, async (req, res) => {
   try {
     const { title, description, startDate, endDate, location, color, course } = req.body;
@@ -134,9 +125,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/events/:id
-// @desc    Delete event
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -166,9 +155,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/events/count
-// @desc    Get count of user's events
-// @access  Private
+
 router.get('/count', auth, async (req, res) => {
   try {
     const count = await Event.countDocuments({ user: req.user.id });
