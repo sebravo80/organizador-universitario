@@ -1,4 +1,3 @@
-// backend/models/Task.js
 const mongoose = require('mongoose');
 
 const TaskSchema = mongoose.Schema({
