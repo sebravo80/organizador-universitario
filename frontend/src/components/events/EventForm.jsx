@@ -142,7 +142,7 @@ const eventColors = [
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      fullScreen={fullScreen} // Con esto usamos la pantalla completa en dispositivos n
+      fullScreen={fullScreen} // Con esto usamos la pantalla completa en dispositivos móviles 
       >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Typography variant="h6">
@@ -153,8 +153,6 @@ const eventColors = [
         </IconButton>
       </DialogTitle>
       
-      
-      // esto es para definir el contenido del formulario
       <DialogContent dividers>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, py: 1 }}>
