@@ -4,9 +4,7 @@ const auth = require('../middleware/auth');
 const Event = require('../models/Event');
 const Course = require('../models/Course');
 
-// @route   GET api/schedule
-// @desc    Obtener todos los eventos del usuario
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const events = await Event.find({ user: req.user.id })
@@ -19,9 +17,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/schedule
-// @desc    Crear un evento
-// @access  Private
+
 router.post('/', auth, async (req, res) => {
   const { title, start, end, allDay, color, course } = req.body;
 
@@ -60,9 +56,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/schedule/:id
-// @desc    Actualizar un evento
-// @access  Private
+
 router.put('/:id', auth, async (req, res) => {
   const { title, start, end, allDay, color, course } = req.body;
 
@@ -110,9 +104,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/schedule/:id
-// @desc    Eliminar un evento
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     let event = await Event.findById(req.params.id);
@@ -133,9 +125,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/schedule/course/:courseId
-// @desc    Obtener eventos por curso
-// @access  Private
+
 router.get('/course/:courseId', auth, async (req, res) => {
   try {
     const events = await Event.find({ 

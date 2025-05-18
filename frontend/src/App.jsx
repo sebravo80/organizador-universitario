@@ -8,12 +8,12 @@ import './App.css';
 import './styles/theme.css';
 import { styled } from '@mui/system';
 
-// Componentes esenciales (no lazy)
+// Componentes esenciales sin lazy
 import Navbar from './components/Navbar';
 import TaskAlerts from './components/TaskAlerts';
 import Loading from './components/Loading';
 
-// Páginas con lazy loading
+// Páginas con lazy loading para optimizar
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Courses = lazy(() => import('./pages/Courses'));
 const Tasks = lazy(() => import('./pages/Tasks'));
@@ -26,8 +26,8 @@ const NewLogin = lazy(() => import('./pages/NewLogin'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
-// Modificar el componente Main para añadir la clase has-fab-button:
-const DRAWER_WIDTH = 240; // Definir el ancho del drawer si no está definido
+
+const DRAWER_WIDTH = 240;
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     flexGrow: 1,
@@ -46,12 +46,12 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     }),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(2),
-      paddingBottom: theme.spacing(8), // Añadir espacio para botón flotante
+      paddingBottom: theme.spacing(8), 
     },
   }),
 );
 
-// Ruta privada (requiere autenticación)
+// Ruta privada, requiere inicio de sesión
 const PrivateRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
@@ -66,7 +66,7 @@ const PrivateRoute = () => {
   return isAuth ? <Outlet /> : <Navigate to="/login" />;
 };
 
-// Ruta pública (solo accesibles si el usuario no está autenticado)
+// Ruta pública, sólo se accede si no se ha iniciado sesión
 const PublicRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
@@ -83,8 +83,8 @@ const PublicRoute = () => {
 
 function App() {
   const { isAuth } = useContext(AuthContext);
-  const theme = useTheme(); // Obtener el tema desde el contexto
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Usar el tema correctamente
+  const theme = useTheme(); // se solicita el tema
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // se usa el tema
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -96,7 +96,7 @@ function App() {
         className={isMobile ? "has-fab-button" : ""}
       >
         <Routes>
-          {/* Rutas públicas (solo accesibles si el usuario no está autenticado) */}
+          {/* Rutas públicas, solo accesibles si el usuario no está autenticado) */}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={
               <Suspense fallback={<Loading message="Preparando inicio de sesión..." />}>
@@ -115,7 +115,7 @@ function App() {
             } />
           </Route>
           
-          {/* Rutas privadas (se requiere autenticación) */}
+          {/* Rutas privadas, accesible con inicio de sesión*/}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={
               <Suspense fallback={<Loading message="Cargando dashboard..." />}>
@@ -159,17 +159,17 @@ function App() {
             } />
           </Route>
           
-          {/* Ruta por defecto al acceder: redirigir a login o dashboard dependiendo de autenticación */}
+          {/* Ruta por defecto al acceder, se redirige al login o al dashboard dependiendo del tipo de autenticación */}
           <Route path="*" element={
             isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
           } />
         </Routes>
       </Main>
       
-      {/* Alertas de tareas (solo visible si está autenticado) */}
+      {/* Alertas de tareas */}
       {isAuth && <TaskAlerts />}
 
-      {/* Contenedor de Toast para las notificaciones */}
+      {/* Contenedor para las notificaciones */}
       <ToastContainer 
         position="bottom-right"
         autoClose={3000}

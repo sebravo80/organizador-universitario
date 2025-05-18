@@ -116,7 +116,7 @@ html[data-theme='dark'] .empty-state {
   font-size: 16px;
 }
 
-/* Indicadores de estado/prioridad */
+/* Indicadores de prioridad */
 .status-indicator {
   width: 10px;
   height: 10px;
@@ -139,16 +139,17 @@ html[data-theme='dark'] .empty-state {
   z-index: -1;
 }
 
+/* Prioridad Alta*/
 .priority-high {
   background-color: #f44336;
   box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
 }
-
+/* Prioridad Media*/
 .priority-medium {
   background-color: #ff9800;
   box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
 }
-
+/* Prioridad Baja*/
 .priority-low {
   background-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);

@@ -1,18 +1,13 @@
-// backend/routes/users.js
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-// Agregar la importación de nodemailer
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-// Añade esta importación al inicio del archivo
 const { logEmailActivity } = require('../utils/emailLogger');
 
-// @route   POST api/users
-// @desc    Register a user
-// @access  Public
+
 router.post('/', async (req, res) => {
   console.log('Recibida solicitud de registro. Body:', req.body);
   
@@ -105,14 +100,14 @@ router.post('/', async (req, res) => {
             })
           });
           
-          // Configurar el mensaje
+          // Configuración del mensaje
           const mailOptions = {
             to: user.email,
             from: {
               name: "Organizador Universitario",
               address: process.env.EMAIL_USER
             },
-            subject: '¡Bienvenido a Organizador Universitario!',
+            subject: '¡Bienvenid@ al Organizador Universitario de la Diatomea!',
             html: `
               <!DOCTYPE html>
               <html lang="es">
@@ -134,8 +129,8 @@ router.post('/', async (req, res) => {
                         <tr>
                           <td style="padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                             <h2 style="color: #72002a; margin-top: 0;">¡Hola ${user.name}!</h2>
-                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Gracias por registrarte en <strong>Organizador Universitario</strong>.</p>
-                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Tu cuenta ha sido creada exitosamente y ya puedes comenzar a utilizar todas nuestras herramientas:</p>
+                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Gracias por registrarte en el <strong>Organizador Universitario de la Diatomea</strong>.</p>
+                            <p style="font-size: 16px; line-height: 1.5; color: #333;">Tu cuenta ha sido creada exitosamente y ya puedes comenzar a utilizar todas las herramientas:</p>
                             <ul style="font-size: 15px; line-height: 1.5; color: #333;">
                               <li>Gestión de tareas y recordatorios</li>
                               <li>Calendario de eventos y clases</li>
@@ -153,7 +148,7 @@ router.post('/', async (req, res) => {
                   </tr>
                   <tr>
                     <td style="padding: 20px; text-align: center; color: #666; font-size: 12px; background-color: #f1f1f1;">
-                      <p>© ${new Date().getFullYear()} Organizador Universitario. Todos los derechos reservados.</p>
+                      <p>© ${new Date().getFullYear()} Organizador Universitario de la Diatomea. Todos los derechos reservados.</p>
                       <p>Este es un mensaje automatizado. Por favor no respondas a este correo.</p>
                     </td>
                   </tr>

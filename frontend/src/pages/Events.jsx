@@ -1,19 +1,9 @@
+// importar dependencias 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  CircularProgress,
-  TextField,
-  InputAdornment,
-  Tabs,
-  Tab,
-  Paper,
-  Fab,
-  Fade,
-  Grid
-} from '@mui/material';
+  Container, Typography, Box, Button, CircularProgress, TextField, InputAdornment, Tabs, Tab, Paper, Fab, Fade, Grid} 
+  from '@mui/material';
+//importar iconos de mui
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -21,6 +11,7 @@ import EventIcon from '@mui/icons-material/Event';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import TodayIcon from '@mui/icons-material/Today';
 import UpcomingIcon from '@mui/icons-material/Upcoming';
+//importar los componentes
 import EventItem from '../components/events/EventItem';
 import EventForm from '../components/events/EventForm';
 import DeleteConfirmationDialog from '../components/common/DeleteConfirmationDialog';
@@ -29,7 +20,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
-
+// componente de los eventos
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,9 +40,6 @@ const Events = () => {
       const response = await api.get('/events');
       setEvents(response.data);
     } catch (error) {
-      // Si tienes react-toastify:
-      // toast.error('Error al cargar eventos');
-      // Si no tienes react-toastify:
       console.error('Error al cargar eventos:', error);
     } finally {
       setLoading(false);
@@ -110,14 +98,8 @@ const Events = () => {
     try {
       await api.delete(`/events/${eventToDelete}`);
       setEvents(events.filter(event => event._id !== eventToDelete));
-      // Si tienes react-toastify:
-      // toast.success('Evento eliminado');
-      // Si no tienes react-toastify:
       console.log('Evento eliminado');
     } catch (error) {
-      // Si tienes react-toastify:
-      // toast.error('Error al eliminar evento');
-      // Si no tienes react-toastify:
       console.error('Error al eliminar evento:', error);
     } finally {
       setOpenDeleteDialog(false);
@@ -130,24 +112,15 @@ const Events = () => {
         // Actualizar evento
         const response = await api.put(`/events/${currentEvent._id}`, eventData);
         setEvents(events.map(event => event._id === currentEvent._id ? response.data : event));
-        // Si tienes react-toastify:
-        // toast.success('Evento actualizado');
-        // Si no tienes react-toastify:
         console.log('Evento actualizado');
       } else {
         // Crear evento
         const response = await api.post('/events', eventData);
         setEvents([...events, response.data]);
-        // Si tienes react-toastify:
-        // toast.success('Evento creado');
-        // Si no tienes react-toastify:
         console.log('Evento creado');
       }
       setOpenForm(false);
     } catch (error) {
-      // Si tienes react-toastify:
-      // toast.error('Error al guardar evento');
-      // Si no tienes react-toastify:
       console.error('Error al guardar evento:', error);
     }
   };
@@ -267,7 +240,7 @@ const Events = () => {
         </Grid>
       )}
       
-      {/* Botón flotante para añadir eventos (solo en móvil) */}
+      {/* Botón flotante para añadir eventos, solo para moviles */}
       <Fade in={true}>
         <Fab
           color="primary"

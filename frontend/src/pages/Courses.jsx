@@ -1,3 +1,4 @@
+// Importar las dependencias necesarias
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -10,6 +11,7 @@ import {
   InputLabel, CircularProgress, Divider, List, ListItem,
   Paper, Fab, Avatar
 } from '@mui/material';
+// importar iconos de mui
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -26,15 +28,17 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Alert from '@mui/material/Alert';
 import { toast } from 'react-toastify';
+// importar los estilos correspondientes
 import '../styles/animations.css';
 import '../styles/courses.css';
 
+// compotente que permite acceder a la creación y edición de los ramos
 const Courses = () => {
   const { isAuth } = useContext(AuthContext);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentCourseId, setCurrentCourseId] = useState(null);
@@ -52,7 +56,8 @@ const Courses = () => {
     startTime: null,
     endTime: null
   });
-  
+
+  // abreviaturas de los dias
   const dayAbbreviations = {
     'Lunes': 'Lun',
     'Martes': 'Mar',
@@ -84,7 +89,8 @@ const Courses = () => {
       fetchCourses();
     }
   }, [isAuth]);
-  
+
+  // abre el formulario para crear
   const handleOpenCreate = () => {
     setIsEditing(false);
     setCurrentCourseId(null);
@@ -98,7 +104,7 @@ const Courses = () => {
     });
     setOpen(true);
   };
-  
+  //abre formulario de edicion
   const handleOpenEdit = (course) => {
     setIsEditing(true);
     setCurrentCourseId(course._id);
@@ -112,7 +118,7 @@ const Courses = () => {
     });
     setOpen(true);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
     setIsEditing(false);
@@ -154,10 +160,10 @@ const Courses = () => {
     const formattedStartTime = format(tempSchedule.startTime, 'HH:mm');
     const formattedEndTime = format(tempSchedule.endTime, 'HH:mm');
     
-    // Asegurarse de que 'Miércoles' siempre se traduzca a 'Mié' con acento
+    // Asegurarse de que 'Miércoles' se traduzca a "Mié"
     let dayAbbr = dayAbbreviations[tempSchedule.day] || tempSchedule.day;
     if (tempSchedule.day === 'Miércoles') {
-      dayAbbr = 'Mié';  // Forzar el acento
+      dayAbbr = 'Mié'; 
     }
     
     const scheduleString = `${dayAbbr} ${formattedStartTime}-${formattedEndTime}`;

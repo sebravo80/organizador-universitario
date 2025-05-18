@@ -1,4 +1,3 @@
-// backend/routes/auth.js
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -9,9 +8,6 @@ require('dotenv').config();
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
-// @route   GET api/auth
-// @desc    Get logged in user
-// @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -22,9 +18,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/auth
-// @desc    Auth user & get token
-// @access  Public
 router.post('/', async (req, res) => {
   console.log('Recibida solicitud de login:', { email: req.body.email });
   
@@ -80,9 +73,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @route   POST api/auth/forgot-password
-// @desc    Process forgot password request
-// @access  Public
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -95,7 +85,7 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     
     // Si no existe el usuario no mostramos error por seguridad
-    // pero no hacemos nada (evita recolección de emails)
+    // pero no se hace nada (evita recolección de emails)
     if (!user) {
       return res.status(200).json({ 
         msg: 'Si el correo existe, recibirás un enlace para restablecer tu contraseña' 
@@ -157,9 +147,7 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// @route   POST api/auth/reset-password/:token
-// @desc    Reset password
-// @access  Public
+
 router.post('/reset-password/:token', async (req, res) => {
   try {
     const { password } = req.body;
@@ -206,9 +194,7 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-// @route   PUT api/auth/user
-// @desc    Actualizar perfil de usuario
-// @access  Private
+
 router.put('/user', auth, async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -247,9 +233,7 @@ router.put('/user', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/auth/password
-// @desc    Cambiar contraseña de usuario
-// @access  Private
+
 router.put('/password', auth, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;

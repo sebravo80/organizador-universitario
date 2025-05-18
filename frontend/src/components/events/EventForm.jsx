@@ -1,4 +1,4 @@
-// Se importan las librerías necesarias y los componentes de MUI para el formulario de Eventos 
+// Se importan las librerías necesarias 
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -27,6 +27,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import CloseIcon from '@mui/icons-material/Close';
 import api from '../../services/api';
+// importar iconos 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PaletteIcon from '@mui/icons-material/Palette';
@@ -45,7 +46,7 @@ const eventColors = [
 ];
 
 // se define el componente par el formulario de los eventos
-const EventForm = ({ open, onClose, onSave, event }) => {
+  const EventForm = ({ open, onClose, onSave, event }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -141,7 +142,7 @@ const EventForm = ({ open, onClose, onSave, event }) => {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      fullScreen={fullScreen} // Con esto usamos la pantalla completa en dispositivos n
+      fullScreen={fullScreen} // Con esto usamos la pantalla completa en dispositivos móviles 
       >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Typography variant="h6">
@@ -152,8 +153,6 @@ const EventForm = ({ open, onClose, onSave, event }) => {
         </IconButton>
       </DialogTitle>
       
-      
-      // esto es para definir el contenido del formulario
       <DialogContent dividers>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, py: 1 }}>

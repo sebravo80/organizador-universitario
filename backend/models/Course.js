@@ -1,4 +1,3 @@
-// backend/models/Course.js
 const mongoose = require('mongoose');
 
 const CourseSchema = mongoose.Schema({

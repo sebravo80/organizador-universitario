@@ -1,13 +1,10 @@
-// backend/routes/tasks.js
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Task = require('../models/Task');
 const Course = require('../models/Course');
 
-// @route   GET api/tasks
-// @desc    Get all user's tasks
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const tasks = await Task.find({ user: req.user.id })
@@ -20,9 +17,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/tasks
-// @desc    Add new task
-// @access  Private
+
 router.post('/', auth, async (req, res) => {
   try {
     const { title, description, course, dueDate, priority, status } = req.body;
@@ -90,9 +85,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/tasks/:id
-// @desc    Get task by ID
-// @access  Private
+
 router.get('/:id', auth, async (req, res) => {
   try {
     const task = await Task.findById(req.params.id).populate('course');
@@ -119,9 +112,7 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/tasks/:id
-// @desc    Update task
-// @access  Private
+
 router.put('/:id', auth, async (req, res) => {
   try {
     const { title, description, course, dueDate, priority, status } = req.body;
@@ -202,9 +193,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/tasks/:id
-// @desc    Delete task
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -234,9 +223,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/tasks/count
-// @desc    Get count of user's tasks
-// @access  Private
+
 router.get('/count', auth, async (req, res) => {
   try {
     console.log('Usuario solicitando conteo de tareas:', req.user.id);

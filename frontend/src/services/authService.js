@@ -1,4 +1,4 @@
-// src/services/authService.js
+
 import api from './api';
 
 // Registrar usuario
@@ -25,7 +25,6 @@ export const login = async (credentials) => {
     return response.data;
   } catch (error) {
     console.error('Error en login:', error.response?.data || error);
-    // Lanza el error para que pueda ser capturado por el componente
     throw error.response?.data || { msg: 'Error de autenticación' };
   }
 };

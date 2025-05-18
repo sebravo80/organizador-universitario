@@ -3,9 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Todo = require('../models/Todo');
 
-// @route   GET api/todos
-// @desc    Get all user's todos
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const todos = await Todo.find({ user: req.user.id }).sort({ date: -1 });
@@ -16,9 +14,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/todos
-// @desc    Add new todo
-// @access  Private
+
 router.post('/', auth, async (req, res) => {
   try {
     const { text } = req.body;
@@ -40,9 +36,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/todos/:id
-// @desc    Update todo
-// @access  Private
+
 router.put('/:id', auth, async (req, res) => {
   try {
     const { text, completed } = req.body;
@@ -77,9 +71,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/todos/:id
-// @desc    Delete todo
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
@@ -101,9 +93,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/todos/count
-// @desc    Get count of user's todos
-// @access  Private
+
 router.get('/count', auth, async (req, res) => {
   try {
     const count = await Todo.countDocuments({ user: req.user.id });

@@ -1,3 +1,4 @@
+// se importan las dependencias necesarias
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -11,6 +12,7 @@ import { ThemeProvider as CustomThemeProvider } from './context/ThemeContext';
 import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import App from './App.jsx';
+// importar archivos de estilos
 import './index.css';
 import './styles/variables.css';
 import './styles/theme.css';
@@ -24,16 +26,15 @@ import './styles/profile.css';
 import './styles/responsive.css';
 import './styles/common.css';
 
-// Inicializar sistema de notificaciones si estamos en un dispositivo nativo
+// el sistema de notificaciones de momento funciona en un dispositivo nativo, como un movil
 if (Capacitor.isNativePlatform()) {
   console.log('Inicializando sistema de notificaciones nativas');
   initializeNotifications();
   registerNotificationChannels();
 }
 
-// Crear un tema por defecto para MUI
+// se crea un tema estandar para MUI
 const defaultTheme = createTheme({
-  // Puedes personalizar tu tema aquí
   palette: {
     primary: {
       main: '#72002a',
