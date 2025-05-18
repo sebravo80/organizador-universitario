@@ -1,4 +1,3 @@
-// src/pages/WeeklyView.jsx
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -52,14 +51,12 @@ const WeeklyView = () => {
     color: '#4CAF50'
   });
 
-  // Añadir este estado
   const [showCourseSchedules, setShowCourseSchedules] = useState(true);
 
-  // Añade este nuevo estado
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [selectedCourseInfo, setSelectedCourseInfo] = useState(null);
 
-  // Añadir estos nuevos estados para los modales de tareas y eventos
+  // se añaden nuevos estados para los modales de tareas y eventos
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [selectedTaskInfo, setSelectedTaskInfo] = useState(null);
   const [eventModalOpen, setEventModalOpen] = useState(false);
@@ -97,24 +94,20 @@ const WeeklyView = () => {
     }
   }, [isAuth]);
   
-  // Añade este useEffect para aplicar estilos directamente a los elementos del DOM
   useEffect(() => {
     if (!loading) {
       const applyStyles = () => {
-        // Selecciona todas las celdas del calendario
         const cells = document.querySelectorAll('.fc-timegrid-slot, .fc-daygrid-day, .fc-col-header-cell, .fc-timegrid-axis');
         cells.forEach(cell => {
           cell.style.backgroundColor = 'rgba(0, 0, 0, 0.12)';
         });
         
-        // Selecciona los encabezados
         const headers = document.querySelectorAll('.fc-col-header-cell, .fc-timegrid-axis');
         headers.forEach(header => {
           header.style.backgroundColor = 'rgba(0, 0, 0, 0.18)';
         });
       };
-      
-      // Aplica los estilos iniciales y configura un observer para cambios en el DOM
+
       applyStyles();
       const observer = new MutationObserver(applyStyles);
       observer.observe(document.querySelector('.fc'), { 
@@ -269,7 +262,7 @@ const WeeklyView = () => {
         setEventModalOpen(true);
       }
     }
-  }, [courses, events, tasks]); // Dependencias actualizadas
+  }, [courses, events, tasks]);
   
   // Manejar cambios en el formulario de evento rápido
   const handleQuickEventChange = (e) => {
