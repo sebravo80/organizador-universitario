@@ -17,6 +17,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { toast } from 'react-toastify';
 import '../styles/todo.css';
+import Loading from '../components/Loading';
 
 const TodoList = () => {
   const { isAuth } = useContext(AuthContext);
@@ -141,16 +142,7 @@ const TodoList = () => {
   const totalPages = Math.ceil(todos.length / itemsPerPage);
   
   if (loading) {
-    return (
-      <Container maxWidth="md" className="page-transition">
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-          <Box sx={{ textAlign: 'center' }}>
-            <FormatListBulletedIcon sx={{ fontSize: 60, color: 'primary.main', opacity: 0.7, mb: 2 }} />
-            <Typography variant="h6" color="text.secondary">Cargando pendientes...</Typography>
-          </Box>
-        </Box>
-      </Container>
-    );
+    return <Loading message="Cargando pendientes" showLogo={true} />;
   }
   
   return (

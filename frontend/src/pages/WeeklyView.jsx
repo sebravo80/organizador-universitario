@@ -33,6 +33,7 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import { Link } from 'react-router-dom';
 import '../styles/calendar.css';
 import { convertCoursesToEvents } from '../utils/scheduleHelper';
+import Loading from '../components/Loading';
 
 const WeeklyView = () => {
   const { isAuth } = useContext(AuthContext);
@@ -343,6 +344,10 @@ const WeeklyView = () => {
       setError('Error al crear el evento. Por favor, intenta nuevamente.');
     }
   };
+  
+  if (loading) {
+    return <Loading message="Cargando calendario" showLogo={true} />;
+  }
   
   return (
     <Container maxWidth="lg">

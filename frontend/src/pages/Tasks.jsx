@@ -35,6 +35,7 @@ import TaskCard from '../components/TaskCard';
 import { toast } from 'react-toastify';
 import '../styles/animations.css';
 import '../styles/tasks.css';
+import Loading from '../components/Loading';
 
 // Función para calcular si debe usarse texto blanco o negro según el color de fondo
 const calculateContrastColor = (bgColor) => {
@@ -360,25 +361,7 @@ const Tasks = () => {
   const totalPages = Math.ceil(sortedTasks.length / rowsPerPage);
   
   if (loading) {
-    return (
-      <Container maxWidth="lg" className="task-loading-container">
-        <Box sx={{ 
-          mt: 4, 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          flexDirection: 'column', 
-          height: '50vh',
-          gap: 3
-        }}>
-          <AssignmentIcon className="animate-pulse-scale" sx={{ fontSize: 60, color: 'primary.main' }} />
-          <Typography variant="h6" color="text.secondary" className="typing-effect">
-            Cargando tareas...
-          </Typography>
-          <CircularProgress className="rotate-effect" size={24} />
-        </Box>
-      </Container>
-    );
+    return <Loading message="Cargando tareas" showLogo={true} />;
   }
   
   return (

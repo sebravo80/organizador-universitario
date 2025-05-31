@@ -15,6 +15,7 @@ import UpcomingIcon from '@mui/icons-material/Upcoming';
 import EventItem from '../components/events/EventItem';
 import EventForm from '../components/events/EventForm';
 import DeleteConfirmationDialog from '../components/common/DeleteConfirmationDialog';
+import Loading from '../components/Loading';
 import { format, isAfter, isBefore, isToday, startOfToday, addDays, isWithinInterval } from 'date-fns';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -124,6 +125,10 @@ const Events = () => {
       console.error('Error al guardar evento:', error);
     }
   };
+  
+  if (loading) {
+    return <Loading message="Cargando eventos" showLogo={true} />;
+  }
   
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>

@@ -31,7 +31,7 @@ import { toast } from 'react-toastify';
 // importar los estilos correspondientes
 import '../styles/animations.css';
 import '../styles/courses.css';
-
+import Loading from '../components/Loading'; 
 // compotente que permite acceder a la creación y edición de los ramos
 const Courses = () => {
   const { isAuth } = useContext(AuthContext);

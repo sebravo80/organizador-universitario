@@ -14,6 +14,7 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import TargetIcon from '@mui/icons-material/GpsFixed';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ClassIcon from '@mui/icons-material/Class';
+import Loading from '../components/Loading';
 
 const GradeCalculator = () => {
   const [grades, setGrades] = useState([
@@ -28,6 +29,7 @@ const GradeCalculator = () => {
   const [missingGrade, setMissingGrade] = useState(null);
   const [savedConfigs, setSavedConfigs] = useState({});
   const [configName, setConfigName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -247,6 +249,10 @@ const GradeCalculator = () => {
   useEffect(() => {
     loadSavedConfigs();
   }, [loadSavedConfigs]);
+
+  if (loading) {
+    return <Loading message="Cargando calculadora" showLogo={true} />;
+  }
 
   return (
     <Container maxWidth="lg">
