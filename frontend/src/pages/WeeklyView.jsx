@@ -30,8 +30,10 @@ import FlagIcon from '@mui/icons-material/Flag';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EventIcon from '@mui/icons-material/Event';
 import DateRangeIcon from '@mui/icons-material/DateRange';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { Link } from 'react-router-dom';
 import '../styles/calendar.css';
+import '../styles/animations.css';
 import { convertCoursesToEvents } from '../utils/scheduleHelper';
 import Loading from '../components/Loading';
 
@@ -352,500 +354,504 @@ const WeeklyView = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1" 
-            className="page-title"
-            sx={{ 
-              display: 'flex',
-              alignItems: 'center', 
-              gap: 1,
-              mb: 3
-            }}
-          >
-            <EventIcon fontSize="large" />
-            Calendario Semanal
-          </Typography>
+        <Box>
+          {error && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
           
-          <Box>
-            <Button   
-              component={Link}
-              to="/events"
-              variant="contained" 
-              startIcon={<AddIcon />}
-              sx={{ mr: 1 }}
-            >
-              Gestionar Eventos
-            </Button>
-          </Box>
-        </Box>
-        
-        {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
-            {error}
-          </Typography>
-        )}
-        
-        {loading ? (
-          <Typography>Cargando calendario...</Typography>
-        ) : (
-          <>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <FormControlLabel
-                control={
-                  <Switch 
-                    checked={showCourseSchedules}
-                    onChange={(e) => setShowCourseSchedules(e.target.checked)}
-                    color="primary"
+          {loading ? (
+            <Typography>Cargando calendario...</Typography>
+          ) : (
+            <>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 2 
+              }}>
+                <Typography variant="h4" className="page-title calendar-title">
+                  <CalendarTodayIcon 
+                    className="icon-spin-hover"
+                    sx={{ 
+                      mr: 1,
+                      fontSize: '2rem',
+                      color: 'var(--primary-color)'
+                    }} 
+                  /> 
+                  <span className="text-gradient">Horario</span>
+                </Typography>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FormControlLabel
+                    control={
+                      <Switch 
+                        checked={showCourseSchedules}
+                        onChange={(e) => setShowCourseSchedules(e.target.checked)}
+                        color="primary"
+                      />
+                    }
+                    label={
+                      <Typography sx={{ color: 'var(--text-primary)' }}>
+                        Mostrar horario de clases
+                      </Typography>
+                    }
                   />
-                }
-                label={
-                  <Typography sx={{ color: 'white' }}>
-                    Mostrar horario de clases
-                  </Typography>
-                }
-              />
-            </Box>
-            <Box 
-              sx={{ 
-                height: { xs: 'calc(100vh - 160px)', sm: 'calc(100vh - 200px)' }, 
-                minHeight: { xs: '500px', sm: '600px' },
-                '& .fc': {
-                  '--fc-page-bg-color': 'transparent',
-                  '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
-                  '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
-                  '--fc-event-border-color': 'transparent',
-                  '--fc-today-bg-color': 'rgba(114, 0, 42, 0.1)'
-                }
-              }}
-              className="custom-calendar-container"
-            >
-              <FullCalendar
-                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                  initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
-                  headerToolbar={{
-                    left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
-                    center: 'title',
-                    right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
-                  }}
-                  locale={esLocale}
-                  events={calendarEvents} // Mantener esto igual
-                  eventClick={handleEventClick}
-                  dateClick={handleDateClick}
-                  editable={false}
-                  selectable={true}
-                  selectMirror={true}
-                  dayMaxEvents={true}
-                  weekends={true}
-                  allDaySlot={true}
-                  slotMinTime="07:00:00"
-                  slotMaxTime="22:00:00"
-                  height="100%"
-                  eventTimeFormat={{
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    meridiem: false
-                  }}
-                  slotLabelFormat={{
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                  }}
-                  // Añadir esta propiedad para manejar eventos recurrentes en vista diaria
-                  datesSet={(dateInfo) => {
-                    // Este callback se ejecuta cuando cambia la vista o la fecha
-                    const currentView = dateInfo.view.type;
-                    const currentDate = dateInfo.start;
-                    
-                    // Si estamos en vista diaria, necesitamos asegurarnos que se muestren
-                    // los eventos recurrentes del horario para el día actual
-                    if (currentView === 'timeGridDay') {
-                      console.log('Vista diaria activa, fecha:', currentDate);
-                    }
-                  }}
-                  eventDidMount={(info) => {
-                    // Configuración para eventos de horario
-                    if (info.event.extendedProps.type === 'course-schedule') {
-                      info.el.classList.add('course-schedule-event');
-                      const titleEl = info.el.querySelector('.fc-event-title');
-                      if (titleEl) {
-                        titleEl.innerHTML = `<span style="font-weight:bold;">🎓 ${info.event.title}</span>`;
-                        if (info.event.extendedProps.location) {
-                          titleEl.innerHTML += `<br><small>Sala: ${info.event.extendedProps.location}</small>`;
-                        }
-                      }
-                    } else if (info.event.extendedProps.type === 'event') {
-                    info.el.classList.add('custom-event');
-                    // Personalizar eventos regulares
-                    const titleEl = info.el.querySelector('.fc-event-title');
-                    if (titleEl) {
-                      titleEl.innerHTML = `<span style="font-weight:bold;">📅 ${info.event.title}</span>`;
-                      if (info.event.extendedProps.location) {
-                        titleEl.innerHTML += `<br><small>Lugar: ${info.event.extendedProps.location}</small>`;
-                      }
-                    }
+                  
+                  <Button   
+                    component={Link}
+                    to="/events"
+                    variant="contained" 
+                    startIcon={<AddIcon />}
+                    sx={{ ml: 1 }}
+                  >
+                    Gestionar Eventos
+                  </Button>
+                </Box>
+              </Box>
+              <Box 
+                sx={{ 
+                  height: { xs: 'calc(100vh - 160px)', sm: 'calc(100vh - 200px)' }, 
+                  minHeight: { xs: '500px', sm: '600px' },
+                  '& .fc': {
+                    '--fc-page-bg-color': 'transparent',
+                    '--fc-neutral-bg-color': 'rgba(0, 0, 0, 0.12)',
+                    '--fc-border-color': 'rgba(255, 255, 255, 0.15)',
+                    '--fc-event-border-color': 'transparent',
+                    '--fc-today-bg-color': 'rgba(114, 0, 42, 0.1)'
                   }
                 }}
+                className="custom-calendar-container"
+              >
+                <FullCalendar
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView={window.innerWidth < 768 ? "timeGridDay" : "timeGridWeek"}
+                    headerToolbar={{
+                      left: window.innerWidth < 768 ? 'prev,next' : 'prev,next today',
+                      center: 'title',
+                      right: window.innerWidth < 768 ? 'timeGridDay,dayGridMonth' : 'timeGridDay,timeGridWeek,dayGridMonth'
+                    }}
+                    locale={esLocale}
+                    events={calendarEvents} // Mantener esto igual
+                    eventClick={handleEventClick}
+                    dateClick={handleDateClick}
+                    editable={false}
+                    selectable={true}
+                    selectMirror={true}
+                    dayMaxEvents={true}
+                    weekends={true}
+                    allDaySlot={true}
+                    slotMinTime="07:00:00"
+                    slotMaxTime="22:00:00"
+                    height="100%"
+                    eventTimeFormat={{
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      meridiem: false
+                    }}
+                    slotLabelFormat={{
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false
+                    }}
+                    // Añadir esta propiedad para manejar eventos recurrentes en vista diaria
+                    datesSet={(dateInfo) => {
+                      // Este callback se ejecuta cuando cambia la vista o la fecha
+                      const currentView = dateInfo.view.type;
+                      const currentDate = dateInfo.start;
+                      
+                      // Si estamos en vista diaria, necesitamos asegurarnos que se muestren
+                      // los eventos recurrentes del horario para el día actual
+                      if (currentView === 'timeGridDay') {
+                        console.log('Vista diaria activa, fecha:', currentDate);
+                      }
+                    }}
+                    eventDidMount={(info) => {
+                      // Configuración para eventos de horario
+                      if (info.event.extendedProps.type === 'course-schedule') {
+                        info.el.classList.add('course-schedule-event');
+                        const titleEl = info.el.querySelector('.fc-event-title');
+                        if (titleEl) {
+                          titleEl.innerHTML = `<span style="font-weight:bold;">🎓 ${info.event.title}</span>`;
+                          if (info.event.extendedProps.location) {
+                            titleEl.innerHTML += `<br><small>Sala: ${info.event.extendedProps.location}</small>`;
+                          }
+                        }
+                      } else if (info.event.extendedProps.type === 'event') {
+                      info.el.classList.add('custom-event');
+                      // Personalizar eventos regulares
+                      const titleEl = info.el.querySelector('.fc-event-title');
+                      if (titleEl) {
+                        titleEl.innerHTML = `<span style="font-weight:bold;">📅 ${info.event.title}</span>`;
+                        if (info.event.extendedProps.location) {
+                          titleEl.innerHTML += `<br><small>Lugar: ${info.event.extendedProps.location}</small>`;
+                        }
+                      }
+                    }
+                  }}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+        
+        {/* Diálogo para crear evento rápido */}
+        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+          <DialogTitle>Nuevo Evento Rápido</DialogTitle>
+          <DialogContent>
+            <Box component="form" sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="title"
+                label="Título del evento"
+                name="title"
+                value={quickEvent.title}
+                onChange={handleQuickEventChange}
+              />
+              
+              <Box sx={{ mt: 2, mb: 2 }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+                  <DateTimePicker
+                    label="Fecha y hora de inicio"
+                    value={quickEvent.startDate}
+                    onChange={handleStartDateChange}
+                    slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
+                  />
+                </LocalizationProvider>
+              </Box>
+              
+              <Box sx={{ mt: 2, mb: 2 }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+                  <DateTimePicker
+                    label="Fecha y hora de fin"
+                    value={quickEvent.endDate}
+                    onChange={handleEndDateChange}
+                    slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
+                    minDateTime={quickEvent.startDate}
+                  />
+                </LocalizationProvider>
+              </Box>
+              
+              <TextField
+                margin="normal"
+                fullWidth
+                id="color"
+                label="Color"
+                name="color"
+                type="color"
+                value={quickEvent.color}
+                onChange={handleQuickEventChange}
               />
             </Box>
-          </>
-        )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button onClick={createQuickEvent} variant="contained">
+              Crear
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Modal de detalles del curso */}
+        <Dialog 
+          open={courseModalOpen} 
+          onClose={() => setCourseModalOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          {selectedCourseInfo && (
+            <>
+              <DialogTitle sx={{ 
+                borderLeft: `4px solid ${selectedCourseInfo.color}`,
+                bgcolor: `${selectedCourseInfo.color}15`,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ bgcolor: selectedCourseInfo.color, mr: 1 }}>
+                    <SchoolIcon />
+                  </Avatar>
+                  {selectedCourseInfo.title}
+                </Box>
+                <Chip 
+                  label={selectedCourseInfo.courseCode} 
+                  size="small"
+                  sx={{ bgcolor: `${selectedCourseInfo.color}30`, fontWeight: 'bold' }}
+                />
+              </DialogTitle>
+              
+              <DialogContent sx={{ pt: 2 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemIcon>
+                      <ScheduleIcon sx={{ color: selectedCourseInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Horario" 
+                      secondary={selectedCourseInfo.dayTime} 
+                    />
+                  </ListItem>
+                  
+                  <ListItem>
+                    <ListItemIcon>
+                      <RoomIcon sx={{ color: selectedCourseInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Sala" 
+                      secondary={selectedCourseInfo.location} 
+                    />
+                  </ListItem>
+                  
+                  <ListItem>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: selectedCourseInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Profesor" 
+                      secondary={selectedCourseInfo.professor} 
+                    />
+                  </ListItem>
+                </List>
+              </DialogContent>
+              
+              <DialogActions sx={{ px: 3, pb: 2 }}>
+                <Button 
+                  onClick={() => setCourseModalOpen(false)} 
+                  color="primary"
+                >
+                  Cerrar
+                </Button>
+                <Button 
+                  component={Link} 
+                  to={`/courses?id=${selectedCourseInfo.id}`}
+                  variant="contained" 
+                  sx={{ 
+                    bgcolor: selectedCourseInfo.color,
+                    '&:hover': { bgcolor: selectedCourseInfo.color, filter: 'brightness(0.9)' }
+                  }}
+                  startIcon={<EditIcon />}
+                >
+                  Ver Curso
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+
+        {/* Modal de detalles de tarea */}
+        <Dialog 
+          open={taskModalOpen} 
+          onClose={() => setTaskModalOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          {selectedTaskInfo && (
+            <>
+              <DialogTitle sx={{ 
+                borderLeft: `4px solid ${selectedTaskInfo.color}`,
+                bgcolor: `${selectedTaskInfo.color}15`,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ bgcolor: selectedTaskInfo.color, mr: 1 }}>
+                    <AssignmentIcon />
+                  </Avatar>
+                  {selectedTaskInfo.title}
+                </Box>
+                <Chip 
+                  label={selectedTaskInfo.status} 
+                  color={selectedTaskInfo.status === 'Completada' ? 'success' : 'default'}
+                  size="small"
+                  sx={{ fontWeight: 'bold' }}
+                />
+              </DialogTitle>
+              
+              <DialogContent sx={{ pt: 2 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemIcon>
+                      <AccessTimeIcon sx={{ color: selectedTaskInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Fecha de vencimiento" 
+                      secondary={format(selectedTaskInfo.dueDate, 'PPP, p', { locale: es })}
+                    />
+                  </ListItem>
+                  
+                  <ListItem>
+                    <ListItemIcon>
+                      <FlagIcon sx={{ color: selectedTaskInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Prioridad" 
+                      secondary={selectedTaskInfo.priority} 
+                    />
+                  </ListItem>
+                  
+                  {selectedTaskInfo.courseId && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <SchoolIcon sx={{ color: selectedTaskInfo.courseColor || selectedTaskInfo.color }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Curso" 
+                        secondary={selectedTaskInfo.course} 
+                      />
+                    </ListItem>
+                  )}
+                  
+                  {selectedTaskInfo.description && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <DescriptionIcon sx={{ color: selectedTaskInfo.color }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Descripción" 
+                        secondary={selectedTaskInfo.description} 
+                      />
+                    </ListItem>
+                  )}
+                </List>
+              </DialogContent>
+              
+              <DialogActions sx={{ px: 3, pb: 2 }}>
+                <Button 
+                  onClick={() => setTaskModalOpen(false)} 
+                  color="primary"
+                >
+                  Cerrar
+                </Button>
+                <Button 
+                  component={Link} 
+                  to={`/tasks?id=${selectedTaskInfo.id}`}
+                  variant="contained" 
+                  sx={{ 
+                    bgcolor: selectedTaskInfo.color,
+                    '&:hover': { bgcolor: selectedTaskInfo.color, filter: 'brightness(0.9)' }
+                  }}
+                  startIcon={<EditIcon />}
+                >
+                  Ver Tarea
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+
+        {/* Modal de detalles de evento */}
+        <Dialog 
+          open={eventModalOpen} 
+          onClose={() => setEventModalOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          {selectedEventInfo && (
+            <>
+              <DialogTitle sx={{ 
+                borderLeft: `4px solid ${selectedEventInfo.color}`,
+                bgcolor: `${selectedEventInfo.color}15`,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ bgcolor: selectedEventInfo.color, mr: 1 }}>
+                    <EventIcon />
+                  </Avatar>
+                  {selectedEventInfo.title}
+                </Box>
+              </DialogTitle>
+              
+              <DialogContent sx={{ pt: 2 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemIcon>
+                      <DateRangeIcon sx={{ color: selectedEventInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Fecha" 
+                      secondary={format(selectedEventInfo.startDate, 'PPP', { locale: es })}
+                    />
+                  </ListItem>
+                  
+                  <ListItem>
+                    <ListItemIcon>
+                      <AccessTimeIcon sx={{ color: selectedEventInfo.color }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Horario" 
+                      secondary={`${format(selectedEventInfo.startDate, 'p', { locale: es })} - ${format(selectedEventInfo.endDate, 'p', { locale: es })}`}
+                    />
+                  </ListItem>
+                  
+                  {selectedEventInfo.location !== 'No especificada' && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <RoomIcon sx={{ color: selectedEventInfo.color }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Ubicación" 
+                        secondary={selectedEventInfo.location} 
+                      />
+                    </ListItem>
+                  )}
+                  
+                  {selectedEventInfo.courseId && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <SchoolIcon sx={{ color: selectedEventInfo.color }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Curso relacionado" 
+                        secondary={selectedEventInfo.course} 
+                      />
+                    </ListItem>
+                  )}
+                  
+                  {selectedEventInfo.description !== 'Sin descripción' && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <DescriptionIcon sx={{ color: selectedEventInfo.color }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Descripción" 
+                        secondary={selectedEventInfo.description} 
+                      />
+                    </ListItem>
+                  )}
+                </List>
+              </DialogContent>
+              
+              <DialogActions sx={{ px: 3, pb: 2 }}>
+                <Button 
+                  onClick={() => setEventModalOpen(false)} 
+                  color="primary"
+                >
+                  Cerrar
+                </Button>
+                <Button 
+                  component={Link} 
+                  to={`/events?id=${selectedEventInfo.id}`}
+                  variant="contained" 
+                  sx={{ 
+                    bgcolor: selectedEventInfo.color,
+                    '&:hover': { bgcolor: selectedEventInfo.color, filter: 'brightness(0.9)' }
+                  }}
+                  startIcon={<EditIcon />}
+                >
+                  Ver Evento
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
       </Box>
-      
-      {/* Diálogo para crear evento rápido */}
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Nuevo Evento Rápido</DialogTitle>
-        <DialogContent>
-          <Box component="form" sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="title"
-              label="Título del evento"
-              name="title"
-              value={quickEvent.title}
-              onChange={handleQuickEventChange}
-            />
-            
-            <Box sx={{ mt: 2, mb: 2 }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                <DateTimePicker
-                  label="Fecha y hora de inicio"
-                  value={quickEvent.startDate}
-                  onChange={handleStartDateChange}
-                  slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
-                />
-              </LocalizationProvider>
-            </Box>
-            
-            <Box sx={{ mt: 2, mb: 2 }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                <DateTimePicker
-                  label="Fecha y hora de fin"
-                  value={quickEvent.endDate}
-                  onChange={handleEndDateChange}
-                  slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
-                  minDateTime={quickEvent.startDate}
-                />
-              </LocalizationProvider>
-            </Box>
-            
-            <TextField
-              margin="normal"
-              fullWidth
-              id="color"
-              label="Color"
-              name="color"
-              type="color"
-              value={quickEvent.color}
-              onChange={handleQuickEventChange}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={createQuickEvent} variant="contained">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Modal de detalles del curso */}
-      <Dialog 
-        open={courseModalOpen} 
-        onClose={() => setCourseModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        {selectedCourseInfo && (
-          <>
-            <DialogTitle sx={{ 
-              borderLeft: `4px solid ${selectedCourseInfo.color}`,
-              bgcolor: `${selectedCourseInfo.color}15`,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: selectedCourseInfo.color, mr: 1 }}>
-                  <SchoolIcon />
-                </Avatar>
-                {selectedCourseInfo.title}
-              </Box>
-              <Chip 
-                label={selectedCourseInfo.courseCode} 
-                size="small"
-                sx={{ bgcolor: `${selectedCourseInfo.color}30`, fontWeight: 'bold' }}
-              />
-            </DialogTitle>
-            
-            <DialogContent sx={{ pt: 2 }}>
-              <List dense>
-                <ListItem>
-                  <ListItemIcon>
-                    <ScheduleIcon sx={{ color: selectedCourseInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Horario" 
-                    secondary={selectedCourseInfo.dayTime} 
-                  />
-                </ListItem>
-                
-                <ListItem>
-                  <ListItemIcon>
-                    <RoomIcon sx={{ color: selectedCourseInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Sala" 
-                    secondary={selectedCourseInfo.location} 
-                  />
-                </ListItem>
-                
-                <ListItem>
-                  <ListItemIcon>
-                    <PersonIcon sx={{ color: selectedCourseInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Profesor" 
-                    secondary={selectedCourseInfo.professor} 
-                  />
-                </ListItem>
-              </List>
-            </DialogContent>
-            
-            <DialogActions sx={{ px: 3, pb: 2 }}>
-              <Button 
-                onClick={() => setCourseModalOpen(false)} 
-                color="primary"
-              >
-                Cerrar
-              </Button>
-              <Button 
-                component={Link} 
-                to={`/courses?id=${selectedCourseInfo.id}`}
-                variant="contained" 
-                sx={{ 
-                  bgcolor: selectedCourseInfo.color,
-                  '&:hover': { bgcolor: selectedCourseInfo.color, filter: 'brightness(0.9)' }
-                }}
-                startIcon={<EditIcon />}
-              >
-                Ver Curso
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-
-      {/* Modal de detalles de tarea */}
-      <Dialog 
-        open={taskModalOpen} 
-        onClose={() => setTaskModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        {selectedTaskInfo && (
-          <>
-            <DialogTitle sx={{ 
-              borderLeft: `4px solid ${selectedTaskInfo.color}`,
-              bgcolor: `${selectedTaskInfo.color}15`,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: selectedTaskInfo.color, mr: 1 }}>
-                  <AssignmentIcon />
-                </Avatar>
-                {selectedTaskInfo.title}
-              </Box>
-              <Chip 
-                label={selectedTaskInfo.status} 
-                color={selectedTaskInfo.status === 'Completada' ? 'success' : 'default'}
-                size="small"
-                sx={{ fontWeight: 'bold' }}
-              />
-            </DialogTitle>
-            
-            <DialogContent sx={{ pt: 2 }}>
-              <List dense>
-                <ListItem>
-                  <ListItemIcon>
-                    <AccessTimeIcon sx={{ color: selectedTaskInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Fecha de vencimiento" 
-                    secondary={format(selectedTaskInfo.dueDate, 'PPP, p', { locale: es })}
-                  />
-                </ListItem>
-                
-                <ListItem>
-                  <ListItemIcon>
-                    <FlagIcon sx={{ color: selectedTaskInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Prioridad" 
-                    secondary={selectedTaskInfo.priority} 
-                  />
-                </ListItem>
-                
-                {selectedTaskInfo.courseId && (
-                  <ListItem>
-                    <ListItemIcon>
-                      <SchoolIcon sx={{ color: selectedTaskInfo.courseColor || selectedTaskInfo.color }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Curso" 
-                      secondary={selectedTaskInfo.course} 
-                    />
-                  </ListItem>
-                )}
-                
-                {selectedTaskInfo.description && (
-                  <ListItem>
-                    <ListItemIcon>
-                      <DescriptionIcon sx={{ color: selectedTaskInfo.color }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Descripción" 
-                      secondary={selectedTaskInfo.description} 
-                    />
-                  </ListItem>
-                )}
-              </List>
-            </DialogContent>
-            
-            <DialogActions sx={{ px: 3, pb: 2 }}>
-              <Button 
-                onClick={() => setTaskModalOpen(false)} 
-                color="primary"
-              >
-                Cerrar
-              </Button>
-              <Button 
-                component={Link} 
-                to={`/tasks?id=${selectedTaskInfo.id}`}
-                variant="contained" 
-                sx={{ 
-                  bgcolor: selectedTaskInfo.color,
-                  '&:hover': { bgcolor: selectedTaskInfo.color, filter: 'brightness(0.9)' }
-                }}
-                startIcon={<EditIcon />}
-              >
-                Ver Tarea
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-
-      {/* Modal de detalles de evento */}
-      <Dialog 
-        open={eventModalOpen} 
-        onClose={() => setEventModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        {selectedEventInfo && (
-          <>
-            <DialogTitle sx={{ 
-              borderLeft: `4px solid ${selectedEventInfo.color}`,
-              bgcolor: `${selectedEventInfo.color}15`,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: selectedEventInfo.color, mr: 1 }}>
-                  <EventIcon />
-                </Avatar>
-                {selectedEventInfo.title}
-              </Box>
-            </DialogTitle>
-            
-            <DialogContent sx={{ pt: 2 }}>
-              <List dense>
-                <ListItem>
-                  <ListItemIcon>
-                    <DateRangeIcon sx={{ color: selectedEventInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Fecha" 
-                    secondary={format(selectedEventInfo.startDate, 'PPP', { locale: es })}
-                  />
-                </ListItem>
-                
-                <ListItem>
-                  <ListItemIcon>
-                    <AccessTimeIcon sx={{ color: selectedEventInfo.color }} />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Horario" 
-                    secondary={`${format(selectedEventInfo.startDate, 'p', { locale: es })} - ${format(selectedEventInfo.endDate, 'p', { locale: es })}`}
-                  />
-                </ListItem>
-                
-                {selectedEventInfo.location !== 'No especificada' && (
-                  <ListItem>
-                    <ListItemIcon>
-                      <RoomIcon sx={{ color: selectedEventInfo.color }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Ubicación" 
-                      secondary={selectedEventInfo.location} 
-                    />
-                  </ListItem>
-                )}
-                
-                {selectedEventInfo.courseId && (
-                  <ListItem>
-                    <ListItemIcon>
-                      <SchoolIcon sx={{ color: selectedEventInfo.color }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Curso relacionado" 
-                      secondary={selectedEventInfo.course} 
-                    />
-                  </ListItem>
-                )}
-                
-                {selectedEventInfo.description !== 'Sin descripción' && (
-                  <ListItem>
-                    <ListItemIcon>
-                      <DescriptionIcon sx={{ color: selectedEventInfo.color }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Descripción" 
-                      secondary={selectedEventInfo.description} 
-                    />
-                  </ListItem>
-                )}
-              </List>
-            </DialogContent>
-            
-            <DialogActions sx={{ px: 3, pb: 2 }}>
-              <Button 
-                onClick={() => setEventModalOpen(false)} 
-                color="primary"
-              >
-                Cerrar
-              </Button>
-              <Button 
-                component={Link} 
-                to={`/events?id=${selectedEventInfo.id}`}
-                variant="contained" 
-                sx={{ 
-                  bgcolor: selectedEventInfo.color,
-                  '&:hover': { bgcolor: selectedEventInfo.color, filter: 'brightness(0.9)' }
-                }}
-                startIcon={<EditIcon />}
-              >
-                Ver Evento
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
     </Container>
   );
 };

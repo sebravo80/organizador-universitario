@@ -1,0 +1,17 @@
+/* Si no existe este archivo, créalo */
+
+/* Estilos para el título de la página con efecto de gradiente */
+.calculator-title .text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+  font-weight: 700;
+}
+
+/* Efecto al pasar sobre el ícono del título */
+.calculator-title:hover .icon-spin-hover {
+  transform: rotate(15deg) scale(1.2);
+}

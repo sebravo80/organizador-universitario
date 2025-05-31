@@ -4,29 +4,20 @@
   padding-bottom: 40px;
 }
 
-.todo-title {
-  color: var(--primary-color) !important;
-  background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+/* Estilos para el título de la página con efecto de gradiente */
+.todo-title .text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 300% 300%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 700 !important;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  margin-bottom: 1.5rem;
+  animation: gradientFlow 6s ease infinite;
+  font-weight: 700;
 }
 
-.todo-title::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-color), transparent);
-  border-radius: 3px;
+/* Efecto al pasar sobre el ícono del título */
+.todo-title:hover .icon-spin-hover {
+  transform: rotate(15deg) scale(1.2);
 }
 
 .todo-form-card {

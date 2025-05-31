@@ -6,9 +6,9 @@ import {
   Container, Typography, Box, TextField, Button, 
   FormControl, InputLabel, Select, MenuItem,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Grid, Chip, Paper, Pagination, Stack, Fab, Drawer,
-  IconButton, Tabs, Tab, CircularProgress, Divider,
-  InputAdornment, Alert, useMediaQuery, useTheme, Avatar
+  Grid, Paper, Pagination, Fab, Drawer,
+  IconButton, Tabs, Tab, Divider,
+  InputAdornment, Alert, useMediaQuery, useTheme
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -371,23 +371,18 @@ const Tasks = () => {
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center', 
-          mb: 3,
-          flexWrap: { xs: 'wrap', sm: 'nowrap' },
-          gap: { xs: 2, sm: 1 }
+          mb: 3
         }}>
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            className="tasks-title"
-            sx={{ 
-              display: 'flex',
-              alignItems: 'center', 
-              gap: 1,
-              mb: { xs: 1, sm: 0 }
-            }}
-          >
-            <AssignmentIcon fontSize="large" className="icon-float" />
-            <span className="text-gradient">Mis Tareas</span>
+          <Typography variant="h4" className="page-title tasks-title">
+            <AssignmentIcon 
+              className="icon-spin-hover"
+              sx={{ 
+                mr: 1,
+                fontSize: '2rem',
+                color: 'var(--primary-color)'
+              }} 
+            /> 
+            <span className="text-gradient">Tareas</span>
           </Typography>
           
           <Button 

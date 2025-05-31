@@ -16,10 +16,14 @@ import EventItem from '../components/events/EventItem';
 import EventForm from '../components/events/EventForm';
 import DeleteConfirmationDialog from '../components/common/DeleteConfirmationDialog';
 import Loading from '../components/Loading';
-import { format, isAfter, isBefore, isToday, startOfToday, addDays, isWithinInterval } from 'date-fns';
+import { isAfter, isBefore, isToday, startOfToday, addDays, isWithinInterval } from 'date-fns';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+
+// importar estilos
+import '../styles/animations.css';
+import '../styles/events.css';
 
 // componente de los eventos
 const Events = () => {
@@ -138,9 +142,16 @@ const Events = () => {
         alignItems: 'center',
         mb: 3 
       }}>
-        <Typography variant="h4" component="h1" sx={{display: 'flex', alignItems: 'center', gap: 1, color: '#72002a', fontWeight: 'bold',}}>
-          <CalendarMonthIcon color="primary" fontSize="large" />
-          Eventos
+        <Typography variant="h4" component="h1" className="page-title events-title">
+          <CalendarMonthIcon 
+            className="icon-spin-hover"
+            sx={{ 
+              mr: 1,
+              fontSize: '2rem',
+              color: 'var(--primary-color)'
+            }} 
+          /> 
+          <span className="text-gradient">Eventos</span>
         </Typography>
       </Box>
       

@@ -15,6 +15,8 @@ import TargetIcon from '@mui/icons-material/GpsFixed';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ClassIcon from '@mui/icons-material/Class';
 import Loading from '../components/Loading';
+import '../styles/animations.css';
+import '../styles/gradeCalculator.css';
 
 const GradeCalculator = () => {
   const [grades, setGrades] = useState([
@@ -29,7 +31,7 @@ const GradeCalculator = () => {
   const [missingGrade, setMissingGrade] = useState(null);
   const [savedConfigs, setSavedConfigs] = useState({});
   const [configName, setConfigName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -266,16 +268,22 @@ const GradeCalculator = () => {
         }
       }}>
         <Typography variant="h4" component="h1" 
-          className="page-title"
+          className="page-title calculator-title"
           sx={{ 
             display: 'flex',
             alignItems: 'center', 
-            gap: 1,
             mb: 3
           }}
         >
-          <CalculateIcon fontSize="large" />
-          Calculadora de Notas
+          <CalculateIcon 
+            className="icon-spin-hover"
+            sx={{ 
+              mr: 1,
+              fontSize: '2rem',
+              color: 'var(--primary-color)'
+            }} 
+          />
+          <span className="text-gradient">Calculadora de Notas</span>
         </Typography>
         
         {error && (

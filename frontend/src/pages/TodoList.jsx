@@ -5,18 +5,18 @@ import {
   Container, Box, Typography, TextField, Button, 
   Card, CardContent, Paper, List, ListItem, 
   ListItemText, ListItemIcon, Checkbox, 
-  IconButton, Pagination, Divider, InputAdornment
+  IconButton, Pagination, InputAdornment
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import { toast } from 'react-toastify';
 import '../styles/todo.css';
+import '../styles/animations.css';
 import Loading from '../components/Loading';
 
 const TodoList = () => {
@@ -28,7 +28,7 @@ const TodoList = () => {
   const [editMode, setEditMode] = useState(null);
   const [editText, setEditText] = useState('');
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(10);
   
   // Cargar pendientes al iniciar
   useEffect(() => {
@@ -148,9 +148,16 @@ const TodoList = () => {
   return (
     <Container maxWidth="md" className="todo-container page-transition">
       <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" className="todo-title" gutterBottom>
-          <FormatListBulletedIcon fontSize="large" sx={{ mr: 1 }} />
-          Lista de Pendientes
+        <Typography variant="h4" component="h1" className="page-title todo-title">
+          <FormatListBulletedIcon 
+            className="icon-spin-hover"
+            sx={{ 
+              mr: 1,
+              fontSize: '2rem',
+              color: 'var(--primary-color)'
+            }} 
+          />
+          <span className="text-gradient">Lista de Pendientes</span>
         </Typography>
         
         {error && (

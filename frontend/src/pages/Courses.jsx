@@ -245,6 +245,10 @@ const Courses = () => {
     }
   };
   
+  if (loading) {
+    return <Loading message="Cargando ramos" showLogo={true} />;
+  }
+  
   return (
     <Container maxWidth="lg" className="page-transition courses-container">
       <Box sx={{ mt: 4, mb: 4 }}>
@@ -278,20 +282,7 @@ const Courses = () => {
           </Alert>
         )}
         
-        {loading && courses.length === 0 ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }} className="loading-container">
-            <CircularProgress className="pulse-effect" />
-            <SchoolIcon 
-              sx={{ 
-                position: 'absolute', 
-                fontSize: 40, 
-                color: 'primary.main',
-                opacity: 0.7
-              }} 
-              className="rotate-effect"
-            />
-          </Box>
-        ) : courses.length === 0 ? (
+        {courses.length === 0 ? (
           <Paper 
             elevation={1}
             className="courses-empty-state fade-in-up"

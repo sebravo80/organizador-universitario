@@ -1,0 +1,39 @@
+/* Estilos para el título de la página con efecto de gradiente */
+.events-title .text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+  font-weight: 700;
+}
+
+/* Efecto al pasar sobre el ícono del título */
+.events-title:hover .icon-spin-hover {
+  transform: rotate(15deg) scale(1.2);
+}
+
+/* Estilos para las tarjetas de eventos */
+.event-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación para los elementos al cargar */
+.staggered-item {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .staggered-item:nth-child(1) { animation-delay: 0.1s; }
+  .staggered-item:nth-child(2) { animation-delay: 0.2s; }
+  .staggered-item:nth-child(3) { animation-delay: 0.3s; }
+  .staggered-item:nth-child(4) { animation-delay: 0.4s; }
+  .staggered-item:nth-child(5) { animation-delay: 0.5s; }
+}

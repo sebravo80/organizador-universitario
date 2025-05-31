@@ -36,12 +36,16 @@ const EventItem = ({ event, onEdit, onDelete }) => {
   
   return (
     <Card 
+      className="event-item"
       elevation={2}
       sx={{ 
         mb: 2, 
         position: 'relative',
         overflow: 'visible',
-        borderLeft: `5px solid ${event.color || '#4CAF50'}`,
+        borderLeft: `4px solid ${event.color || '#4CAF50'}`,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Box 
