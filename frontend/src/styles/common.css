@@ -154,3 +154,69 @@ html[data-theme='dark'] .empty-state {
   background-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
 }
+
+/* Estilos para pantalla de carga */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: rgba(255, 255, 255, 0) !important;
+  transition: all 0.3s ease;
+}
+
+.loading-text {
+  color: var(--text-primary) !important;
+  margin-top: 16px;
+  font-weight: 600 !important;
+  animation: fadeInUp 0.8s ease forwards;
+  opacity: 0;
+  animation-delay: 0.3s;
+}
+
+.loading-icon-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-icon-pulse {
+  animation: iconPulse 1.5s infinite alternate;
+  filter: drop-shadow(0 0 8px rgba(114, 0, 42, 0.4));
+}
+
+/* Animación para el icono */
+@keyframes iconPulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px rgba(114, 0, 42, 0.3));
+  }
+  100% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(114, 0, 42, 0.6));
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Específicamente para el tema oscuro */
+html[data-theme='dark'] .loading-text {
+  color: #ffffff !important;
+}
+
+html[data-theme='dark'] .loading-icon-pulse {
+  filter: drop-shadow(0 0 8px rgba(255, 77, 151, 0.5));
+}

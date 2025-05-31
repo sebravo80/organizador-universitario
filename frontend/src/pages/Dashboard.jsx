@@ -29,7 +29,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 // se importan los archivos de estilos
 import '../styles/animations.css';
 import '../styles/dashboard.css';
-
+import Loading from '../components/Loading';
 // este es el componente principal del dashboard
 const Dashboard = () => {
   const { user, isAuth } = useContext(AuthContext);
@@ -124,35 +124,7 @@ const Dashboard = () => {
   };
   
   if (loading) {
-    return (
-      <Container maxWidth="lg">
-        <Box sx={{ 
-          mt: 4, 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '70vh',
-          flexDirection: 'column'
-        }}>
-          <SchoolIcon 
-            sx={{ 
-              fontSize: 60, 
-              color: 'primary.main', 
-              mb: 2 
-            }} 
-            className="pulse-effect"
-          />
-          <Typography 
-            variant="h5" 
-            color="text.secondary" 
-            className="typing-effect"
-            sx={{ maxWidth: '250px' }}
-          >
-            Cargando datos...
-          </Typography>
-        </Box>
-      </Container>
-    );
+    return <Loading message="Cargando dashboard" showLogo={true}/>;
   }
   
   return (

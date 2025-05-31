@@ -1,4 +1,3 @@
-// backend/test-bcrypt.js
 const bcrypt = require('bcryptjs');
 
 const testBcrypt = async () => {

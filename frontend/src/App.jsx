@@ -56,11 +56,7 @@ const PrivateRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
   if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading message="Cargando datos" showLogo={true}/>;
   }
   
   return isAuth ? <Outlet /> : <Navigate to="/login" />;
@@ -71,11 +67,7 @@ const PublicRoute = () => {
   const { isAuth, loading } = useContext(AuthContext);
   
   if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading message="Autenticando" showLogo={true}/>;
   }
   
   return isAuth ? <Navigate to="/dashboard" /> : <Outlet />;
@@ -99,17 +91,17 @@ function App() {
           {/* Rutas públicas, solo accesibles si el usuario no está autenticado) */}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={
-              <Suspense fallback={<Loading message="Preparando inicio de sesión..." />}>
+              <Suspense fallback={<Loading message="Preparando inicio de sesión..." showLogo={true}/>}>
                 <NewLogin />
               </Suspense>
             } />
             <Route path="/forgot-password" element={
-              <Suspense fallback={<Loading message="Cargando..." />}>
+              <Suspense fallback={<Loading message="Cargando..." showLogo={true}/>}>
                 <ForgotPassword />
               </Suspense>
             } />
             <Route path="/reset-password/:token" element={
-              <Suspense fallback={<Loading message="Preparando restablecimiento de contraseña..." />}>
+              <Suspense fallback={<Loading message="Preparando restablecimiento de contraseña..." showLogo={true}/>}>
                 <ResetPassword />
               </Suspense>
             } />
@@ -118,42 +110,42 @@ function App() {
           {/* Rutas privadas, accesible con inicio de sesión*/}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={
-              <Suspense fallback={<Loading message="Cargando dashboard..." />}>
+              <Suspense fallback={<Loading message="Cargando dashboard..." showLogo={true}/>}>
                 <Dashboard />
               </Suspense>
             } />
             <Route path="/courses" element={
-              <Suspense fallback={<Loading message="Cargando cursos..." />}>
+              <Suspense fallback={<Loading message="Cargando cursos..." showLogo={true}/>}>
                 <Courses />
               </Suspense>
             } />
             <Route path="/tasks" element={
-              <Suspense fallback={<Loading message="Cargando tareas..." />}>
+              <Suspense fallback={<Loading message="Cargando tareas..." showLogo={true}/>}>
                 <Tasks />
               </Suspense>
             } />
             <Route path="/weekly" element={
-              <Suspense fallback={<Loading message="Cargando calendario..." />}>
+              <Suspense fallback={<Loading message="Cargando calendario..." showLogo={true}/>}>
                 <WeeklyView />
               </Suspense>
             } />
             <Route path="/events" element={
-              <Suspense fallback={<Loading message="Cargando eventos..." />}>
+              <Suspense fallback={<Loading message="Cargando eventos..." showLogo={true}/>}>
                 <Events />
               </Suspense>
             } />
             <Route path="/profile" element={
-              <Suspense fallback={<Loading message="Cargando perfil..." />}>
+              <Suspense fallback={<Loading message="Cargando perfil..." showLogo={true}/>}>
                 <Profile />
               </Suspense>
             } />
             <Route path="/grade-calculator" element={
-              <Suspense fallback={<Loading message="Cargando calculadora..." />}>
+              <Suspense fallback={<Loading message="Cargando calculadora..." showLogo={true}/>}>
                 <GradeCalculator />
               </Suspense>
             } />
             <Route path="/todos" element={
-              <Suspense fallback={<Loading message="Cargando pendientes..." />}>
+              <Suspense fallback={<Loading message="Cargando pendientes..." showLogo={true}/>}>
                 <TodoList />
               </Suspense>
             } />
