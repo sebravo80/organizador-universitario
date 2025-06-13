@@ -445,7 +445,7 @@ const WeeklyView = () => {
                     slotMinTime="07:00:00"
                     slotMaxTime="22:00:00"
                     height="100%"
-                    eventTimeFormat={{
+                    eventTimeFormat={{ 
                       hour: '2-digit',
                       minute: '2-digit',
                       meridiem: false

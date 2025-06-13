@@ -157,6 +157,7 @@ html[data-theme='dark'] .empty-state {
 
 /* Estilos para pantalla de carga */
 .loading-screen {
+  object-fit: contain !important;
   display: flex;
   flex-direction: column;
   align-items: center;
