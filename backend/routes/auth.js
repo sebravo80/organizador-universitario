@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
+const { upload, cloudinary } = require('../config/cloudinary');
 require('dotenv').config();
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -267,6 +268,63 @@ router.put('/password', auth, async (req, res) => {
     res.json({ msg: 'Contraseña actualizada correctamente' });
   } catch (err) {
     console.error('Error al cambiar contraseña:', err.message);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
+// @route   POST /api/auth/upload-profile-picture
+// @desc    Subir foto de perfil
+// @access  Private
+router.post('/upload-profile-picture', auth, upload.single('profilePicture'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ msg: 'No se ha subido ningún archivo' });
+    }
+
+    // Obtener el usuario
+    const user = await User.findById(req.user.id).select('-password');
+    
+    // Si el usuario ya tiene una foto, eliminarla de Cloudinary
+    if (user.profilePicture && user.profilePicture.publicId) {
+      await cloudinary.uploader.destroy(user.profilePicture.publicId);
+    }
+    
+    // Guardar la info de la nueva foto
+    user.profilePicture = {
+      url: req.file.path,
+      publicId: req.file.filename
+    };
+    
+    await user.save();
+    
+    res.json({ profilePicture: user.profilePicture });
+  } catch (err) {
+    console.error('Error al subir foto de perfil:', err);
+    res.status(500).json({ msg: 'Error del servidor' });
+  }
+});
+
+// @route   DELETE /api/auth/profile-picture
+// @desc    Eliminar foto de perfil
+// @access  Private
+router.delete('/profile-picture', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    
+    if (user.profilePicture && user.profilePicture.publicId) {
+      await cloudinary.uploader.destroy(user.profilePicture.publicId);
+    }
+    
+    user.profilePicture = {
+      url: '',
+      publicId: ''
+    };
+    
+    await user.save();
+    
+    res.json({ msg: 'Foto de perfil eliminada' });
+  } catch (err) {
+    console.error('Error al eliminar foto de perfil:', err);
     res.status(500).json({ msg: 'Error del servidor' });
   }
 });

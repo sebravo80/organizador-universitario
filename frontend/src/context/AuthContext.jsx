@@ -117,6 +117,14 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
+  // Añadimos función para actualizar la foto de perfil en el contexto
+  const updateProfilePicture = (profilePicture) => {
+    setUser(prevUser => ({
+      ...prevUser,
+      profilePicture
+    }));
+  };
+
   // Memo para el valor del contexto
   const contextValue = useMemo(() => ({
     isAuth,
@@ -125,7 +133,8 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     logout,
-    register
+    register,
+    updateProfilePicture // Exportamos el nuevo método
   }), [isAuth, user, loading, error]);
 
   return (

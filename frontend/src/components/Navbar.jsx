@@ -363,7 +363,7 @@ function Navbar() {
                       bgcolor: '#a0003b',
                     }}
                   >
-                    {user?.name?.charAt(0).toUpperCase() || <AccountCircleIcon />}
+                    {(!user?.profilePicture || !user?.profilePicture.url) && user?.name?.charAt(0).toUpperCase()}
                   </ProfileAvatar>
                 </IconButton>
               </Tooltip>

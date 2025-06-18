@@ -1,33 +1,36 @@
-import { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { 
-  Container, Typography, Box, TextField, 
-  Button, Avatar, Grid, Alert, CircularProgress,
-  Divider, Card, CardContent, Tabs, Tab, InputAdornment,
-  Paper, IconButton, Switch, FormControlLabel, Slider
+  Container, Card, CardContent, Typography, TextField, Button, Box, Avatar, Paper, InputAdornment, IconButton, Switch, FormControlLabel, Grid, Slider, Alert, CircularProgress, Tab, Tabs, Divider, Dialog, Fade, Backdrop 
 } from '@mui/material';
-import { AuthContext } from '../context/AuthContext';
-import { changePassword, getUserInfo } from '../services/authService';
-import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import SaveIcon from '@mui/icons-material/Save';
-import SchoolIcon from '@mui/icons-material/School';
-import TaskIcon from '@mui/icons-material/Task';
 import KeyIcon from '@mui/icons-material/Key';
 import PasswordIcon from '@mui/icons-material/Password';
+import LockIcon from '@mui/icons-material/Lock';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import SchoolIcon from '@mui/icons-material/School';
+import TaskIcon from '@mui/icons-material/Task';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import BadgeIcon from '@mui/icons-material/Badge';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import CloseIcon from '@mui/icons-material/Close';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import '../styles/animations.css';
 import '../styles/profile.css';
 import api from '../services/api';
-import { checkNotificationsPermission, getNotificationPreferences, saveNotificationPreferences } from '../services/notificationService';
+import { AuthContext } from '../context/AuthContext';
+import { changePassword, getUserInfo } from '../services/authService';
+import { checkNotificationsPermission, getNotificationPreferences, saveNotificationPreferences } from '../services/notificationService.js';
 
 function Profile() {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -60,6 +63,15 @@ function Profile() {
     taskNotificationTime: 60, // 1 hora por defecto
     eventNotificationTime: 15 // 15 minutos por defecto
   });
+
+  // Estado para controlar el diálogo de la imagen
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  
+  // Referencia para el input de archivo
+  const fileInputRef = useRef(null);
+  
+  // Estado para la previsualización de la imagen
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     const checkPermission = async () => {
@@ -277,6 +289,93 @@ function Profile() {
     }
   };
   
+  // Manejador para activar el input de archivo
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+  
+  // Manejador para el cambio de archivo
+  const handleFileChange = async (e) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    const file = e.target.files[0];
+    
+    // Validar que sea una imagen
+    if (!file.type.match('image.*')) {
+      setError('Solo puedes subir imágenes');
+      return;
+    }
+    
+    // Validar tamaño (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('La imagen no puede superar los 5MB');
+      return;
+    }
+    
+    // Crear URL temporal para previsualización
+    const previewURL = URL.createObjectURL(file);
+    setImagePreview(previewURL);
+    
+    // Subir imagen
+    await uploadProfilePicture(file);
+  };
+  
+  // Función para subir la imagen al servidor
+  const uploadProfilePicture = async (file) => {
+    setUploadLoading(true);
+    setError(null);
+    setSuccess(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+      
+      const response = await api.post('/auth/upload-profile-picture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      // Actualizar la imagen del usuario en el contexto
+      if (response.data && response.data.profilePicture) {
+        setSuccess('Foto de perfil actualizada correctamente');
+      }
+    } catch (err) {
+      console.error('Error al subir foto:', err);
+      setError('Error al subir la foto. Inténtalo nuevamente.');
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+  
+  // Función para eliminar la foto de perfil
+  const handleDeletePhoto = async () => {
+    if (!user.profilePicture || !user.profilePicture.url) return;
+    
+    setUploadLoading(true);
+    setError(null);
+    setSuccess(null);
+    
+    try {
+      await api.delete('/auth/profile-picture');
+      setImagePreview(null);
+      setSuccess('Foto de perfil eliminada correctamente');
+    } catch (err) {
+      console.error('Error al eliminar foto:', err);
+      setError('Error al eliminar la foto. Inténtalo nuevamente.');
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+  
+  // Función para abrir el diálogo de la imagen
+  const handleOpenImageDialog = () => {
+    // Solo abrir si hay una imagen
+    if ((user.profilePicture && user.profilePicture.url) || imagePreview) {
+      setOpenImageDialog(true);
+    }
+  };
+  
   if (!user) {
     return (
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -323,14 +422,14 @@ function Profile() {
         <Box 
           className="profile-header-bg" 
           sx={{ 
-            height: '140px',  // Aumentado de 120px a 140px para dar más espacio
+            height: '140px',
             width: '100%', 
             background: 'linear-gradient(45deg, var(--primary-color), var(--primary-light))',
             position: 'absolute',
             top: 0,
             left: 0,
             zIndex: 0,
-            '&::after': {  // Añadir un patrón sutil al fondo
+            '&::after': {
               content: '""',
               position: 'absolute',
               top: 0,
@@ -357,21 +456,125 @@ function Profile() {
             justifyContent: 'center'
           }}
         >
-          <Avatar
-            className="profile-avatar"
-            sx={{ 
-              width: 130,
-              height: 130,
-              fontSize: '3rem',
-              border: '3px solid white',
-              boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
-              background: 'linear-gradient(45deg, var(--primary-color), var(--primary-light))',
-              mb: 3,
-              zIndex: 2
-            }}
-          >
-            {user.name?.charAt(0) || 'U'}
-          </Avatar>
+          <Box sx={{ position: 'relative' }}>
+            {/* Avatar del usuario con foto o iniciales */}
+            <Avatar
+              className="profile-avatar image-preview-enabled"
+              src={imagePreview || (user.profilePicture && user.profilePicture.url) || ''}
+              alt={user.name}
+              onClick={handleOpenImageDialog}
+              sx={{ 
+                width: 130,
+                height: 130,
+                fontSize: '3rem',
+                border: '3px solid white',
+                boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
+                background: 'linear-gradient(45deg, var(--primary-color), var(--primary-light))',
+                mb: 3,
+                zIndex: 2,
+                cursor: (user.profilePicture && user.profilePicture.url) || imagePreview ? 'pointer' : 'default'
+              }}
+            >
+              {!imagePreview && (!user.profilePicture || !user.profilePicture.url) && (user.name?.charAt(0) || 'U')}
+              
+              {/* Indicador de zoom para imagen */}
+              {((user.profilePicture && user.profilePicture.url) || imagePreview) && (
+                <Box 
+                  className="zoom-indicator"
+                  sx={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    color: 'white',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    '&:hover': {
+                      opacity: 1
+                    }
+                  }}
+                >
+                  <ZoomOutMapIcon />
+                </Box>
+              )}
+            </Avatar>
+            
+            {/* Botón para cambiar foto */}
+            <Box 
+              className="avatar-upload-button"
+              onClick={handleUploadClick}
+              sx={{
+                position: 'absolute',
+                right: -5,
+                bottom: 30,
+                backgroundColor: 'var(--primary-color)',
+                color: '#fff',
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                border: '2px solid white',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  backgroundColor: 'var(--primary-dark)'
+                }
+              }}
+            >
+              {uploadLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                <CameraAltIcon fontSize="small" />
+              )}
+            </Box>
+            
+            {/* Input de archivo oculto */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+            
+            {/* Botón para eliminar foto (solo visible si hay foto) */}
+            {(user.profilePicture && user.profilePicture.url || imagePreview) && (
+              <Box 
+                className="avatar-delete-button"
+                onClick={handleDeletePhoto}
+                sx={{
+                  position: 'absolute',
+                  left: -5,
+                  bottom: 30,
+                  backgroundColor: 'rgba(211, 47, 47, 0.8)',
+                  color: '#fff',
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                  border: '2px solid white',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                    backgroundColor: '#d32f2f'
+                  }
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+              </Box>
+            )}
+          </Box>
           
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Box sx={{ 
@@ -585,7 +788,7 @@ function Profile() {
               {notificationsEnabled && (
               <Box sx={{ 
                 mt: 3, 
-                p: 3, 
+                p: 3,
                 bgcolor: theme => theme.palette.mode === 'dark' 
                   ? 'rgba(255, 255, 255, 0.08)' 
                   : 'rgba(0, 0, 0, 0.04)', 
@@ -852,6 +1055,66 @@ function Profile() {
           )}
         </CardContent>
       </Card>
+      
+      {/* Diálogo para vista previa de imagen */}
+      <Dialog 
+        open={openImageDialog}
+        onClose={() => setOpenImageDialog(false)}
+        maxWidth="md"
+        PaperProps={{
+          sx: {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+            overflow: 'hidden'
+          }
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: 'rgba(0,0,0,0.8)'
+          }
+        }}
+        TransitionComponent={Fade}
+        transitionDuration={{
+          enter: 300,
+          exit: 200
+        }}
+      >
+        <Box 
+          sx={{
+            position: 'relative',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+          }}
+          className="image-preview-dialog"
+        >
+          <img 
+            src={imagePreview || (user.profilePicture && user.profilePicture.url) || ''}
+            alt={user.name}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '80vh',
+              objectFit: 'contain',
+              borderRadius: '4px',
+              animation: 'zoomIn 0.3s ease forwards'
+            }}
+          />
+          <IconButton
+            onClick={() => setOpenImageDialog(false)}
+            sx={{
+              position: 'absolute',
+              top: '-20px',
+              right: '-20px',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+              }
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Dialog>
     </Container>
   );
 }
