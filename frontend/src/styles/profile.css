@@ -246,18 +246,37 @@
 
 .image-preview-dialog {
   animation: fadeIn 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  transition: all 0.3s ease;
 }
 
-.image-preview-dialog img {
-  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+.image-preview {
+  transition: transform 0.3s ease;
 }
 
-/* Efecto de zoom para la vista ampliada */
-.image-preview-dialog img:hover {
-  cursor: zoom-out;
+.image-preview:hover {
+  transform: scale(1.02);
+}
+
+/* Efecto pulsante para el borde */
+@keyframes borderPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+  }
+}
+
+/* Asegúrate de que tienes una variable CSS con el color primario en formato RGB */
+:root {
+  --primary-rgb: 160, 0, 59; /* Esto debería corresponder a tu color primario #a0003b en RGB */
+}
+
+.image-preview-active {
+  animation: borderPulse 2s infinite;
 }
 
 /* Modo responsivo */

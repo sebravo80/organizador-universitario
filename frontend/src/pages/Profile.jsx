@@ -1065,12 +1065,13 @@ function Profile() {
           sx: {
             backgroundColor: 'transparent',
             boxShadow: 'none',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            borderRadius: '12px'
           }
         }}
         BackdropProps={{
           style: {
-            backgroundColor: 'rgba(0,0,0,0.8)'
+            backgroundColor: 'rgba(0,0,0,0.85)'
           }
         }}
         TransitionComponent={Fade}
@@ -1084,30 +1085,94 @@ function Profile() {
             position: 'relative',
             maxWidth: '90vw',
             maxHeight: '90vh',
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            padding: '20px',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            overflow: 'hidden',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
           }}
           className="image-preview-dialog"
         >
-          <img 
-            src={imagePreview || (user.profilePicture && user.profilePicture.url) || ''}
-            alt={user.name}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '80vh',
-              objectFit: 'contain',
-              borderRadius: '4px',
-              animation: 'zoomIn 0.3s ease forwards'
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: 'white', 
+              mb: 2, 
+              textAlign: 'center',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
             }}
-          />
+          >
+            Foto de Perfil
+          </Typography>
+          
+          <Box 
+            sx={{ 
+              position: 'relative',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <img 
+              src={imagePreview || (user.profilePicture && user.profilePicture.url) || ''}
+              alt={user.name}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '70vh',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                animation: 'zoomIn 0.3s ease forwards',
+                border: '3px solid rgba(255,255,255,0.2)',
+                boxShadow: '0 5px 20px rgba(0,0,0,0.4)'
+              }}
+              className="image-preview"
+            />
+          </Box>
+          
+          <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'center' }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => setOpenImageDialog(false)}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.5)',
+                '&:hover': {
+                  borderColor: 'white',
+                  backgroundColor: 'rgba(255,255,255,0.1)'
+                }
+              }}
+            >
+              Cerrar
+            </Button>
+            
+            {(user.profilePicture && user.profilePicture.url || imagePreview) && (
+              <Button 
+                variant="contained" 
+                color="primary"
+                onClick={handleUploadClick}
+                startIcon={<PhotoCameraIcon />}
+              >
+                Cambiar Foto
+              </Button>
+            )}
+          </Box>
+          
           <IconButton
             onClick={() => setOpenImageDialog(false)}
             sx={{
               position: 'absolute',
-              top: '-20px',
-              right: '-20px',
-              backgroundColor: 'rgba(0,0,0,0.6)',
+              top: '8px',
+              right: '8px',
+              backgroundColor: 'rgba(0,0,0,0.4)',
               color: 'white',
               '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.8)',
+                backgroundColor: 'rgba(0,0,0,0.7)',
               }
             }}
           >
