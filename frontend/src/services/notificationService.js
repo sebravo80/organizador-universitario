@@ -37,7 +37,6 @@ export const getNotificationPreferences = async () => {
     const { value } = await Preferences.get({ key: 'notificationPreferences' });
     
     if (!value) {
-      // Valores predeterminados
       const defaultPrefs = {
         taskNotificationTime: DEFAULT_TASK_NOTIFICATION_TIME,
         eventNotificationTime: DEFAULT_EVENT_NOTIFICATION_TIME,

@@ -9,7 +9,6 @@ export const checkForUpdates = async () => {
     const info = await Device.getInfo();
     const currentVersion = info.appVersion;
     
-    // Llamada a tu API para verificar la versión más reciente
     const response = await api.get('/version');
     const latestVersion = response.data.version;
     

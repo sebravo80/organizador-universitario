@@ -22,7 +22,7 @@ const TaskSchema = mongoose.Schema({
   },
   priority: {
     type: String,
-    enum: ['Alta', 'Media', 'Baja'], // Cambiado a mayúsculas iniciales
+    enum: ['Alta', 'Media', 'Baja'],
     default: 'Media'
   },
   status: {

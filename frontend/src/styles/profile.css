@@ -270,9 +270,8 @@
   }
 }
 
-/* Asegúrate de que tienes una variable CSS con el color primario en formato RGB */
 :root {
-  --primary-rgb: 160, 0, 59; /* Esto debería corresponder a tu color primario #a0003b en RGB */
+  --primary-rgb: 160, 0, 59; 
 }
 
 .image-preview-active {

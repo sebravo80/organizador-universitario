@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 
-// se determina la url segun el entorno
 let baseURL = 'https://organizador-universitario-api-49b169773d7f.herokuapp.com/api';
 
 

@@ -279,47 +279,49 @@ const Dashboard = () => {
                                 </Box>
                               }
                               secondary={
-                                <Stack spacing={0.5} sx={{ mt: 0.5 }}>
-                                  {course.courseCode && (
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                      <CodeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
-                                      <Typography variant="body2" component="span">
-                                        {course.courseCode}
-                                      </Typography>
-                                    </Box>
-                                  )}
-                                  
-                                  {course.professor && (
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                      <PersonIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
-                                      <Typography variant="body2" component="span">
-                                        {course.professor}
-                                      </Typography>
-                                    </Box>
-                                  )}
-                                  
-                                  {course.room && (
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                      <RoomIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
-                                      <Typography variant="body2" component="span">
-                                        {course.room}
-                                      </Typography>
-                                    </Box>
-                                  )}
-                                  
-                                  {course.scheduleStrings && course.scheduleStrings.length > 0 && (
-                                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, mt: 0.2, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
-                                      <Typography variant="body2" component="span">
-                                        {course.scheduleStrings.map((schedule, idx) => (
-                                          <Box key={idx} component="span" sx={{ display: 'block' }}>
-                                            {schedule}
-                                          </Box>
-                                        ))}
-                                      </Typography>
-                                    </Box>
-                                  )}
-                                </Stack>
+                                <Box component="span" sx={{ display: 'block' }}>
+                                  <Stack spacing={0.5} sx={{ mt: 0.5 }}>
+                                    {course.courseCode && (
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <CodeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
+                                        <Typography variant="body2" component="span">
+                                          {course.courseCode}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                    
+                                    {course.professor && (
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <PersonIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
+                                        <Typography variant="body2" component="span">
+                                          {course.professor}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                    
+                                    {course.room && (
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <RoomIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
+                                        <Typography variant="body2" component="span">
+                                          {course.room}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                    
+                                    {course.scheduleStrings && course.scheduleStrings.length > 0 && (
+                                      <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                                        <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, mt: 0.2, fontSize: '0.9rem', color: `${course.color || '#1976d2'}99` }} />
+                                        <Typography variant="body2" component="span">
+                                          {course.scheduleStrings.map((schedule, idx) => (
+                                            <Box key={idx} component="span" sx={{ display: 'block' }}>
+                                              {schedule}
+                                            </Box>
+                                          ))}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                  </Stack>
+                                </Box>
                               }
                             />
                           </ListItem>
@@ -398,47 +400,49 @@ const Dashboard = () => {
                                 </Box>
                               }
                               secondary={
-                                <Stack spacing={0.5} sx={{ mt: 0.5 }}>
-                                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
-                                    <Typography variant="body2" component="span">
-                                      {formatDate(task.dueDate)}
-                                    </Typography>
-                                  </Box>
-                                  {task.description && task.description.length > 0 && (
-                                    <Typography 
-                                      variant="body2" 
-                                      component="div"
-                                      sx={{
-                                        display: '-webkit-box',
-                                        overflow: 'hidden',
-                                        WebkitBoxOrient: 'vertical',
-                                        WebkitLineClamp: 1,
-                                        textOverflow: 'ellipsis',
-                                        color: 'text.secondary',
-                                        mt: 0.5
-                                      }}
-                                    >
-                                      {task.description}
-                                    </Typography>
-                                  )}
-                                  {task.course && (
-                                    <Chip
-                                      label={task.course.name}
-                                      size="small"
-                                      sx={{ 
-                                        bgcolor: task.course.color || '#1976d2',
-                                        color: 'white',
-                                        maxWidth: '100%',
-                                        ml: 0,
-                                        mt: 0.5,
-                                        height: 22,
-                                        overflow: 'hidden' // Añadimos overflow hidden para controlar la animación
-                                      }}
-                                      className="contained-shimmer"
-                                    />
-                                  )}
-                                </Stack>
+                                <Box component="span" sx={{ display: 'block' }}>
+                                  <Stack spacing={0.5} sx={{ mt: 0.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
+                                      <Typography variant="body2" component="span">
+                                        {formatDate(task.dueDate)}
+                                      </Typography>
+                                    </Box>
+                                    {task.description && task.description.length > 0 && (
+                                      <Typography 
+                                        variant="body2" 
+                                        component="div"
+                                        sx={{
+                                          display: '-webkit-box',
+                                          overflow: 'hidden',
+                                          WebkitBoxOrient: 'vertical',
+                                          WebkitLineClamp: 1,
+                                          textOverflow: 'ellipsis',
+                                          color: 'text.secondary',
+                                          mt: 0.5
+                                        }}
+                                      >
+                                        {task.description}
+                                      </Typography>
+                                    )}
+                                    {task.course && (
+                                      <Chip
+                                        label={task.course.name}
+                                        size="small"
+                                        sx={{ 
+                                          bgcolor: task.course.color || '#1976d2',
+                                          color: 'white',
+                                          maxWidth: '100%',
+                                          ml: 0,
+                                          mt: 0.5,
+                                          height: 22,
+                                          overflow: 'hidden' 
+                                        }}
+                                        className="contained-shimmer"
+                                      />
+                                    )}
+                                  </Stack>
+                                </Box>
                               }
                             />
                           </ListItem>
@@ -508,28 +512,30 @@ const Dashboard = () => {
                                 </Box>
                               }
                               secondary={
-                                <Stack spacing={0.5} sx={{ mt: 0.5 }}>
-                                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <CalendarTodayIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
-                                    <Typography variant="body2" component="span">
-                                      {formatDate(event.startDate)}
-                                    </Typography>
-                                  </Box>
-                                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
-                                    <Typography variant="body2" component="span">
-                                      {formatTime(event.startDate)} - {formatTime(event.endDate)}
-                                    </Typography>
-                                  </Box>
-                                  {event.location && (
+                                <Box component="span" sx={{ display: 'block' }}>
+                                  <Stack spacing={0.5} sx={{ mt: 0.5 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                      <RoomIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} className="bounce-effect" />
+                                      <CalendarTodayIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
                                       <Typography variant="body2" component="span">
-                                        {event.location}
+                                        {formatDate(event.startDate)}
                                       </Typography>
                                     </Box>
-                                  )}
-                                </Stack>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                      <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} />
+                                      <Typography variant="body2" component="span">
+                                        {formatTime(event.startDate)} - {formatTime(event.endDate)}
+                                      </Typography>
+                                    </Box>
+                                    {event.location && (
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <RoomIcon fontSize="small" sx={{ mr: 0.5, fontSize: '0.9rem' }} className="bounce-effect" />
+                                        <Typography variant="body2" component="span">
+                                          {event.location}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                  </Stack>
+                                </Box>
                               }
                             />
                           </ListItem>
